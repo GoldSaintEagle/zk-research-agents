@@ -25,10 +25,24 @@ The same gate list is in `agents/pi-orchestrator.md`; change both together.
 ## Multi-agent workflows (run with Claude Code's Workflow tool, `scriptPath`)
 | script | phase | pattern |
 |---|---|---|
-| `lit-sweep.js` | P1 | multi-modal sweep → per-item existence verification → synthesis |
-| `idea-tournament.js` | P2 | 5 mining angles → falsifier screening pipeline → 3-criterion judge panel |
-| `falsify-round.js` | P6 | per claim: 3 diverse-lens falsifiers, majority vote → ledger |
-| `mock-review-panel.js` | P8 | 3 reviewer personas → meta-review with routed action items |
+| `lit-sweep.js` | P1 | 5 search modes (ePrint, DBLP venues, citation graph, grey literature, code-first) → per-item existence verification (grey sources: URL + Wayback + access date) → synthesis |
+| `idea-tournament.js` | P2 | 5 ZK design axes from `skills/idea-mining-loop` (LDT/PCS, field, arithmetization shape, lookup vs native, recursion vs folding) → falsifier screening with `constraint-cost` / `prover-cost-model` at equal soundness + pre-emption check → 3-criterion judge panel |
+| `falsify-round.js` | P6 | per claim: 3 lenses (definitions & model; Fiat–Shamir & soundness budget; fairness & precedent), plus a circuit-audit lens for circuit claims → pure tally (below) → ledger |
+| `mock-review-panel.js` | P8 | brief → personas by paper type (mandatory one first, optional data / desk-reject auditors) → every finding verified → meta-review + `SUBMIT-FIXES.md`, confirmed findings routed to the owning agent (soundness / FS / circuit fixes re-checked by the falsifier) |
+
+`falsify-round.js` tally (function `tally`, tested in `workflows/tests/`):
+
+| valid votes | outcome |
+|---|---|
+| none (every attacker failed) | `open`, reported as an error in the log and the return value |
+| ≥ 2 refuted | `refuted` |
+| 1 refuted or ≥ 1 weakened | `weakened`, with the wording of the vote whose evidence is most specific (has a script/log, then refuted before weakened, then longer evidence, then lens order); no wording proposed → `open` |
+| all survived, ≥ 2 votes (for circuit claims including the circuit-audit vote) | `survived` |
+| all survived, fewer than 2 votes or no circuit-audit vote on a circuit claim | `open` |
+
+A claim counts as a circuit claim when its CLAIMS row is tagged `[circuit]` or mentions circuits,
+constraints, gadgets, R1CS / Plonkish / AIR, range checks or witness uniqueness.
+Tests: `node --test workflows/tests/` (mocked `agent` / `parallel` / `pipeline`; Node ≥ 18).
 
 Example: `Workflow({scriptPath: "workflows/falsify-round.js", args: {project: "/abs/path/my-paper"}})`.
 Without the Workflow tool, ask the orchestrator: "run P6 using agents/falsifier.md on every open claim".
