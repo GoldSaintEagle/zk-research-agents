@@ -7,31 +7,37 @@ and a typical command template (run from the baseline's build directory, see
 
 Fairness reminders printed by ``crbench adapters NAME`` come from the manifest's
 fairness checklist: same parameters, same thread count, same compiler and flags,
-same machine, interleaved rounds.
+same machine, interleaved rounds, every timed proof verified. Recipes for arkworks, gnark and circom match
+the MANIFEST rows; the others are the commands experimenter needs for the remaining parsers.
 """
 from __future__ import annotations
 
 ADAPTERS: dict[str, dict] = {
-    "openfhe": {"parser": "openfhe", "cmd": "./bin/examples/pke/{target}",
-                "notes": "Build with -DCMAKE_BUILD_TYPE=Release; WITH_NATIVEOPT only if the other arm is also -march=native. Library preset parameter sets may differ from those printed in papers -- print and record them."},
-    "openfhe-gbench": {"parser": "gbench", "cmd": "./bin/benchmark/{target} --benchmark_repetitions=5 --benchmark_report_aggregates_only=true",
-                       "notes": "Google-benchmark binaries; set OMP_NUM_THREADS explicitly."},
-    "helib": {"parser": "helib", "cmd": "./bin/{target}",
-              "notes": "Enable timers (setTimersOn) and printAllTimers; single-thread unless NTL threads are matched."},
-    "seal": {"parser": "generic", "cmd": "./bin/sealbench --benchmark_filter={target}",
-             "notes": "sealbench uses google-benchmark: use parser gbench if output is console table."},
-    "lattigo": {"parser": "gobench", "cmd": "go test -run=^$ -bench={target} -benchtime=10x -count=5 ./...",
-                "notes": "Set GOMAXPROCS to match the other arm."},
-    "tfhe-rs": {"parser": "criterion", "cmd": "cargo bench --bench {target} -- --noplot",
-                "notes": "RAYON_NUM_THREADS controls parallelism; compare single-thread vs single-thread first."},
-    "tfhe-cpp": {"parser": "generic", "cmd": "./build/test/{target}", "notes": "Wrap in your own timing loop if no timer is printed."},
-    "concrete": {"parser": "generic", "cmd": "python {target}.py", "notes": "Record compiler (optimizer) version; circuits are re-parameterised per program."},
-    "lattice-estimator": {"parser": "lattice-estimator", "cmd": "sage -python {target}.py",
-                          "notes": "Record estimator commit, cost model (e.g. MATZOV / ADPS16) and secret/error distributions."},
-    "mp-spdz": {"parser": "mpspdz", "cmd": "Scripts/{target}.sh", "notes": "Report both time and communication; LAN vs WAN simulated with tc netem."},
-    "emp-toolkit": {"parser": "generic", "cmd": "./bin/{target} 1 12345 & ./bin/{target} 2 12345", "notes": "Two-party: run both parties; measure on the slower one."},
-    "apsi": {"parser": "generic", "cmd": "./bin/receiver_cli ...", "notes": "Server preprocessing vs online time must be reported separately."},
-    "sat": {"parser": "sat", "cmd": "cadical {target}.cnf", "notes": "Fix the random seed; report solver version and the CNF hash."},
+    # MANIFEST entries: arkworks, gnark, circom (compiler) + snarkjs / rapidsnark (provers)
+    "arkworks": {"parser": "criterion", "cmd": "cargo bench --bench {target} -- --noplot",
+                 "notes": "Record the curve / field and the asm and parallel features; RAYON_NUM_THREADS={threads} on both arms."},
+    "gnark": {"parser": "gobench", "cmd": "go test -run=^$ -bench={target} -benchtime=10x -count=5 ./...",
+              "notes": "GOMAXPROCS={threads}. Report the constraint count next to the time and name the backend (Groth16 / PLONK) and curve."},
+    "gnark-log": {"parser": "gnark", "cmd": "go run ./cmd/{target}",
+                  "notes": "Debug-level gnark logs give nbConstraints and 'prover done ... took=' (ms); set the logger level to debug."},
+    "circom": {"parser": "circom", "cmd": "circom {target}.circom --r1cs --wasm --sym -o build",
+               "notes": "Pin the compiler version and the optimisation flag (--O0/--O1/--O2): it changes the linear-constraint count."},
+    "snarkjs": {"parser": "snarkjs", "cmd": "time snarkjs groth16 prove build/{target}.zkey build/{target}.wtns proof.json public.json",
+                "notes": "snarkjs prints no timings: keep the shell time output in the log. 'snarkjs r1cs info build/{target}.r1cs' gives the counts. Node version matters."},
+    "rapidsnark": {"parser": "rapidsnark", "cmd": "time ./prover build/{target}.zkey build/{target}.wtns proof.json public.json",
+                   "notes": "Witness generation (wasm or C++) is a separate step: time it separately and say which one the paper reports."},
+    "halo2": {"parser": "criterion", "cmd": "cargo bench --bench {target} -- --noplot",
+              "notes": "State k (rows = 2^k), the commitment scheme (KZG / IPA) and the halo2 fork; RAYON_NUM_THREADS={threads}."},
+    "plonky3": {"parser": "criterion", "cmd": "cargo bench --bench {target} -- --noplot",
+                "notes": "Record the field (BabyBear / Goldilocks / Mersenne31), extension degree, FRI blowup and query count."},
+    "nargo": {"parser": "nargo-info", "cmd": "nargo info --package {target}",
+              "notes": "ACIR opcodes are not backend gates: record the backend gate count separately with the backend's own tool."},
+    "risc0": {"parser": "risc0", "cmd": "RISC0_INFO=1 RUST_LOG=info cargo run --release -p {target}",
+              "notes": "Report segments, rows / cycles and the prover (CPU / CUDA / Metal); pin the toolchain (rzup) version."},
+    "sp1": {"parser": "sp1", "cmd": "RUST_LOG=info cargo run --release --bin {target}",
+            "notes": "Cycles from the execution report; time execute and prove separately and state the proof type (core / compressed / Groth16)."},
+    "sat": {"parser": "sat", "cmd": "cadical {target}.cnf",
+            "notes": "For solver-based circuit audits: fix the random seed; report solver version and the CNF hash."},
     "gnu-time": {"parser": "gnu-time", "cmd": "/usr/bin/time -v {target}", "notes": "Peak memory (max RSS)."},
 }
 
