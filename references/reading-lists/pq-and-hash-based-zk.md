@@ -1,0 +1,26 @@
+# Post-quantum and hash-based zero knowledge
+
+Zero-knowledge proofs believed to resist quantum adversaries: MPC-in-the-head (IKOS07, KKW18, Limbo, threshold computation in the head) and the signatures built on it (Picnic, Banquet, SDitH, VOLE-in-the-head/FAEST), hash-based IOP SNARKs (Ligero, Aurora, STARK, Orion, Brakedown, Basefold, Blaze), lattice-based succinct arguments (LaBRADOR, Greyhound), and the quantum security of the compilers (Micali/BCS in the QROM, Fiat-Shamir in the QROM). Lyu12 is kept as the Fiat-Shamir-with-aborts reference point for lattice signatures. This list absorbs the ZK-relevant part of the former post-quantum signatures list. ZKBoo (USENIX Security 2016) is left out because no DOI could be verified for it; KKW18 and later MPCitH papers supersede it in practice. Entries partly drawn from the bibliographic notes of [CY24 §Bibliographic notes, section:bibliographic-notes].
+
+Suggested order: IKOS07 -> KKW18 -> CDGORRSZ17 -> BDKOSZ21 -> DOT21 -> FJR22 -> FR25 (MPC-in-the-head, signatures); BBDKORS23 (VOLE-in-the-head); AHIV23 [in pcs] -> BCRSVW19 [in piop-arithmetization] -> BBHR19 [in piop-arithmetization] -> XZS22 -> GLSTW23 [in pcs] -> ZCF24 [in pcs] -> BCFRRZ25 [in pcs] (hash-based SNARKs); Lyu12 -> BS23 -> NS24 (lattices); DFMS19 -> CMS19 (quantum security of the compilers).
+
+BibTeX: [`pq-and-hash-based-zk.bib`](pq-and-hash-based-zk.bib) — 14 entries, verified on 2026-11-01 through Crossref / DataCite DOIs with skills/bib-verify/scripts/verify_bib.py; ePrint ids omitted because eprint.iacr.org refused this machine on that date — add `eprint=` after an ePrint-reachable re-run. The venue column is informational and was not machine-checked. Re-run the verifier before copying entries into a paper.
+
+Also part of this direction, listed once elsewhere to avoid duplicates (marked `[in …]` in the order above): `AHIV23` Ligero: lightweight sublinear arguments without a trusted setup ([pcs](pcs.md)); `GLSTW23` Brakedown: Linear-Time and Field-Agnostic SNARKs for R1CS ([pcs](pcs.md)); `ZCF24` BaseFold: Efficient Field-Agnostic Polynomial Commitment Schemes from Foldable Codes ([pcs](pcs.md)); `BCFRRZ25` Blaze: Fast SNARKs from Interleaved RAA Codes ([pcs](pcs.md)); `BBHR19` Scalable Zero Knowledge with No Trusted Setup ([piop-arithmetization](piop-arithmetization.md)); `BCRSVW19` Aurora: Transparent Succinct Arguments for R1CS ([piop-arithmetization](piop-arithmetization.md)).
+
+| key | DOI | year | title | venue | why read |
+|---|---|---|---|---|---|
+| `IKOS07` | [doi](https://doi.org/10.1145/1250790.1250794) | 2007 | Zero-knowledge from secure multiparty computation | STOC 2007 (SIAM J. Comput. 2009) | MPC-in-the-head |
+| `Lyu12` | [doi](https://doi.org/10.1007/978-3-642-29011-4_43) | 2012 | Lattice Signatures without Trapdoors | EUROCRYPT 2012 | Fiat-Shamir with aborts |
+| `CDGORRSZ17` | [doi](https://doi.org/10.1145/3133956.3133997) | 2017 | Post-Quantum Zero-Knowledge and Signatures from Symmetric-Key Primitives | CCS 2017 | Picnic |
+| `KKW18` | [doi](https://doi.org/10.1145/3243734.3243805) | 2018 | Improved Non-Interactive Zero Knowledge with Applications to Post-Quantum Signatures | CCS 2018 | MPCitH with preprocessing |
+| `CMS19` | [doi](https://doi.org/10.1007/978-3-030-36033-7_1) | 2019 | Succinct Arguments in the Quantum Random Oracle Model | TCC 2019 | Micali/BCS in the QROM |
+| `DFMS19` | [doi](https://doi.org/10.1007/978-3-030-26951-7_13) | 2019 | Security of the Fiat-Shamir Transformation in the Quantum Random-Oracle Model | CRYPTO 2019 | FS in the QROM |
+| `BDKOSZ21` | [doi](https://doi.org/10.1007/978-3-030-75245-3_11) | 2021 | Banquet: Short and Fast Signatures from AES | PKC 2021 | MPCitH signature from AES |
+| `DOT21` | [doi](https://doi.org/10.1145/3460120.3484595) | 2021 | Limbo: Efficient Zero-knowledge MPCitH-based Arguments | CCS 2021 | MPCitH arguments |
+| `FJR22` | [doi](https://doi.org/10.1007/978-3-031-15979-4_19) | 2022 | Syndrome Decoding in the Head: Shorter Signatures from Zero-Knowledge Proofs | CRYPTO 2022 | SDitH |
+| `XZS22` | [doi](https://doi.org/10.1007/978-3-031-15985-5_11) | 2022 | Orion: Zero Knowledge Proof with Linear Prover Time | CRYPTO 2022 | linear-time code-based SNARK |
+| `BBDKORS23` | [doi](https://doi.org/10.1007/978-3-031-38554-4_19) | 2023 | Publicly Verifiable Zero-Knowledge and Post-Quantum Signatures from VOLE-in-the-Head | CRYPTO 2023 | VOLE-in-the-head, FAEST basis |
+| `BS23` | [doi](https://doi.org/10.1007/978-3-031-38554-4_17) | 2023 | LaBRADOR: Compact Proofs for R1CS from Module-SIS | CRYPTO 2023 | lattice succinct argument |
+| `NS24` | [doi](https://doi.org/10.1007/978-3-031-68403-6_8) | 2024 | Greyhound: Fast Polynomial Commitments from Lattices | CRYPTO 2024 | lattice PCS |
+| `FR25` | [doi](https://doi.org/10.1007/s00145-025-09543-8) | 2025 | Threshold Computation in the Head: Improved Framework for Post-Quantum Signatures and Zero-Knowledge Arguments | J. Cryptology 2025 | TCitH framework |
