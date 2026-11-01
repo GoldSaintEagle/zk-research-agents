@@ -7,13 +7,13 @@ and a typical command template (run from the baseline's build directory, see
 
 Fairness reminders printed by ``crbench adapters NAME`` come from the manifest's
 fairness checklist: same parameters, same thread count, same compiler and flags,
-same machine, interleaved rounds, every timed proof verified. Recipes for arkworks, gnark and circom match
-the MANIFEST rows; the others are the commands experimenter needs for the remaining parsers.
+same machine, interleaved rounds, every timed proof verified. Every MANIFEST row names one of these
+parsers (``references/baselines/fetch.sh --selftest`` checks the names); the adapter keys below are
+the libraries whose recipe differs from plain ``cargo bench`` + ``criterion``.
 """
 from __future__ import annotations
 
 ADAPTERS: dict[str, dict] = {
-    # MANIFEST entries: arkworks, gnark, circom (compiler) + snarkjs / rapidsnark (provers)
     "arkworks": {"parser": "criterion", "cmd": "cargo bench --bench {target} -- --noplot",
                  "notes": "Record the curve / field and the asm and parallel features; RAYON_NUM_THREADS={threads} on both arms."},
     "gnark": {"parser": "gobench", "cmd": "go test -run=^$ -bench={target} -benchtime=10x -count=5 ./...",
