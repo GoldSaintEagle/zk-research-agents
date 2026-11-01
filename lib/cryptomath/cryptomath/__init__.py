@@ -9,18 +9,16 @@ broken optional subpackage never breaks ``import cryptomath``::
 
 Subpackages
 -----------
-algebra    finite fields, cyclotomics, Galois group of Q(zeta_m), slots, NTT,
-           Z_{p^e} helpers (Hensel, digit extraction, null polynomials), characters
-lattice    LWE/RLWE/MLWE/NTRU toy samplers, error distributions, security
-           estimation (core-SVP, primal uSVP, dual), GSA/BKZ simulator, toy LLL
-fhe        TOY BGV / BFV / CKKS / TFHE, noise estimators, bootstrapping blocks
-costmodel  abstract operation counting and symbolic cost formulas
-symmetric  S-box / Boolean-function analysis, toy ciphers (separate owner)
-protocols  secret sharing, OT, PSI cost models (separate owner)
-ec         small prime-field elliptic curves (separate owner)
+algebra    prime and extension fields, polynomials, roots of unity, NTT
+costmodel  abstract operation counting; ZK primitive counts (MSM, NTT, Merkle,
+           sum-check, PCS commit/open) as code and as sympy formulas
+symmetric  arithmetization-oriented primitive costs (Poseidon, MiMC, ...), GF(2^n)
+protocols  hash / Pedersen commitments, Fiat--Shamir transcript, Schnorr
+ec         small prime-field elliptic curves, toy groups, generic DLP
 
 Everything here is for experimentation and teaching. Nothing is constant-time
-and all FHE / lattice code is insecure by construction.
+and every proof-system component is insecure by construction (small fields,
+no zero-knowledge, simulated groups).
 """
 from __future__ import annotations
 
@@ -28,7 +26,7 @@ import importlib
 
 __version__ = "0.1.0"
 
-SUBPACKAGES = ("algebra", "lattice", "fhe", "costmodel", "symmetric", "protocols", "ec")
+SUBPACKAGES = ("algebra", "costmodel", "symmetric", "protocols", "ec")
 
 __all__ = list(SUBPACKAGES) + ["available", "__version__"]
 
