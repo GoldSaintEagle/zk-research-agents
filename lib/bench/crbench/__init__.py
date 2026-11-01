@@ -1,4 +1,4 @@
-"""crbench -- a small, dependency-light benchmark harness for crypto research.
+"""crbench -- a small, dependency-light benchmark harness for ZK proof research.
 
 Modules
 -------
@@ -6,7 +6,8 @@ stats      median / IQR / bootstrap CI / speedup-with-CI
 runner     interleaved A/B/... subprocess runner with warm-up and repeats
 envcapture machine / compiler / git / env-var snapshot
 lock       advisory file lock so two benches never overlap
-parsers    regex-based pluggable log-parser registry
+parsers    regex-based pluggable log-parser registry (snarkjs, circom, gnark, criterion, nargo, zkVMs, ...)
+adapters   per-library benchmark recipes (parser + command + fairness note)
 tables     Markdown and LaTeX (booktabs) table generation with EVIDENCE footnotes
 evidence   EVIDENCE.md ledger reader/writer and the ``audit-tex`` checker
 cli        ``crbench`` command-line entry point
