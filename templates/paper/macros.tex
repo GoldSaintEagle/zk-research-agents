@@ -1,45 +1,51 @@
 % macros.tex -- notation conventions (keep in sync with paper/NOTATION.md).
 % Rule: one concept, one macro. Change the macro, never the call sites.
 
-% ---- number sets and rings
-\newcommand{\NN}{\mathbb{N}}
-\newcommand{\ZZ}{\mathbb{Z}}
-\newcommand{\QQ}{\mathbb{Q}}
-\newcommand{\RR}{\mathbb{R}}
-\newcommand{\FF}{\mathbb{F}}
-\newcommand{\Fp}{\mathbb{F}_p}
-\newcommand{\Zq}{\mathbb{Z}_q}
-\newcommand{\Rq}{\mathcal{R}_q}                 % R_q = Z_q[X]/(Phi_m(X))
-\newcommand{\Torus}{\mathbb{T}}
+% ---- protocol boxes: cryptocode (\pseudocode, \sendmessageright*, \sample, ...).
+% The options are the ones skills/paper-playbook/sections/08_main_construction.md uses; keep the two identical.
+% 'lambda' makes \secpar render as \lambda. cryptocode also provides \NN, \ZZ, \FF, \negl, \poly, \bigO{.},
+% \pk, \sk, \sample, \mle (the notion name "MLE") and \pp: do not redefine them here.
+\usepackage[lambda,advantage,operators,sets,adversary,landau,probability,notions,%
+            logic,ff,mm,primitives,events,complexity,asymptotics,keys]{cryptocode}
 
-% ---- vectors, matrices, distributions
+% ---- fields and sets (\NN, \ZZ, \QQ, \RR, \FF come from cryptocode's 'sets' option)
+\newcommand{\Fp}{\mathbb{F}_p}
+\newcommand{\KK}{\mathbb{K}}                      % extension field the verifier's challenges live in
+\newcommand{\Hdom}{\mathbb{H}}                    % evaluation domain (subgroup / coset)
+
+% ---- vectors, polynomials, relations
 \newcommand{\vc}[1]{\mathbf{#1}}                  % vectors bold lower-case
 \newcommand{\mat}[1]{\mathbf{#1}}                 % matrices bold upper-case
-\newcommand{\sample}{\xleftarrow{\$}}
-\newcommand{\Dist}{\mathcal{D}}
-\newcommand{\negl}{\mathsf{negl}}
-\newcommand{\secpar}{\lambda}
+\newcommand{\mlext}[1]{\widetilde{#1}}            % multilinear extension of #1
+\newcommand{\cm}[1]{[\![#1]\!]}                   % commitment / oracle to #1
+\newcommand{\Rel}{\mathcal{R}}                    % relation; \Rel_{\mathrm{name}} for a specific one
+\newcommand{\stmt}{\mathsf{x}}                   % instance (statement); llncs owns \inst
+\newcommand{\wit}{\mathsf{w}}                    % witness
 
-% ---- algorithms and schemes (sans-serif names)
+% ---- parties and algorithms (sans-serif names)
 \newcommand{\alg}[1]{\mathsf{#1}}
-\newcommand{\KeyGen}{\alg{KeyGen}}
-\newcommand{\Enc}{\alg{Enc}}
-\newcommand{\Dec}{\alg{Dec}}
-\newcommand{\Eval}{\alg{Eval}}
-\newcommand{\ct}{\mathsf{ct}}
-\newcommand{\pk}{\mathsf{pk}}
-\newcommand{\sk}{\mathsf{sk}}
+\newcommand{\Prover}{\mathcal{P}}
+\newcommand{\Verifier}{\mathcal{V}}
+\newcommand{\Extractor}{\mathcal{E}}
+\newcommand{\Simulator}{\mathcal{S}}
+\newcommand{\Setup}{\alg{Setup}}
+\newcommand{\Index}{\alg{Index}}
+\newcommand{\Prove}{\alg{Prove}}
+\newcommand{\Verify}{\alg{Verify}}
+\newcommand{\Commit}{\alg{Commit}}
+\newcommand{\Open}{\alg{Open}}
+\newcommand{\RO}{\mathcal{O}}                     % random oracle
+\newcommand{\pubpar}{\mathsf{pp}}                % public parameters
 
-% ---- complexity and cost (one paper-wide cost currency)
+% ---- soundness and cost (one paper-wide cost currency)
+\newcommand{\serr}{\epsilon}                      % soundness error; \serr_{\mathrm{rbr}}, \serr_{\mathrm{pcs}}, ...
 \newcommand{\cost}{\operatorname{cost}}
-\newcommand{\bigO}{O}
-\DeclareMathOperator{\poly}{poly}
 
-% ---- scheme / library names (text)
-\newcommand{\TFHE}{\textsf{TFHE}}
-\newcommand{\BGV}{\textsf{BGV}}
-\newcommand{\CKKS}{\textsf{CKKS}}
-\newcommand{\PSI}{\textsf{PSI}}
+% ---- proof-system names (text)
+\newcommand{\KZG}{\textsf{KZG}}
+\newcommand{\FRI}{\textsf{FRI}}
+\newcommand{\PLONK}{\textsf{PLONK}}
+\newcommand{\Groth}{\textsf{Groth16}}
 
 % ---- evidence tag (renders nothing; used by cross-check scripts)
 \newcommand{\ev}[1]{}                            % usage: 3.4$\times$\ev{E12}

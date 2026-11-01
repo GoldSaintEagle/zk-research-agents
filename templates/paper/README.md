@@ -38,20 +38,19 @@ paths (which can contain usernames).
   referenced in `EVIDENCE.md`.
 - The float-glue tuning block applies only to the non-full build; keep it modest.
 
-## IACR journals (TCHES, ToSC) and other formats
+## IACR journals (TCHES) and other formats
 
-- **TCHES / ToSC** use the IACR journal class. At the time of writing the IACR
-  publishes `iacrj` (https://publish.iacr.org/iacrj), which superseded the older
-  `iacrtrans` class; check the current call for papers for which class is accepted.
-  Typical usage: `\documentclass[journal=tches,submission]{iacrj}` (or
-  `journal=tosc`); the `submission` option anonymises and adds line numbers. Use
-  `\[...\]` rather than `$$...$$` (breaks line numbering). Captions: figures below,
-  tables above. Bibliography style and source (e.g. CryptoBib/DBLP) follow the class
-  documentation. Do not vendor the class; fetch it from the IACR site or CTAN in the
-  same way as `fetch_llncs.sh`.
-- ToSC counts material that must be carefully reviewed (e.g. proofs) toward the page
-  limit even in appendices; TCHES/ToSC decisions can be "major revision", so keep the
-  paper easy to patch (single-source tables, EVIDENCE tags).
+- **TCHES** (hardware / GPU / FPGA prover acceleration papers) uses the IACR journal
+  class. At the time of writing the IACR publishes `iacrj` (https://publish.iacr.org/iacrj),
+  which superseded the older `iacrtrans` class; check the current call for papers for
+  which class is accepted. Typical usage: `\documentclass[journal=tches,submission]{iacrj}`;
+  the `submission` option anonymises and adds line numbers. Use `\[...\]` rather than
+  `$$...$$` (breaks line numbering). Captions: figures below, tables above. Bibliography
+  style and source (e.g. CryptoBib/DBLP) follow the class documentation. Do not vendor
+  the class; fetch it from the IACR site or CTAN in the same way as `fetch_llncs.sh`.
+- TCHES decisions can be "major revision", so keep the paper easy to patch
+  (single-source tables, EVIDENCE tags). Other IACR venues with their own class
+  (e.g. IACR Communications in Cryptology): follow that venue's author instructions.
 - **ACM CCS** uses `acmart` (`sigconf`, `anonymous,review` options); **IEEE S&P / NDSS**
   use IEEE two-column templates; **USENIX Security** uses the USENIX template;
   **PoPETs** uses its own template. The playbook's section moves still apply, but

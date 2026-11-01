@@ -1,23 +1,37 @@
 % refs.bib -- sample entries in the house style (splncs04). Maintained by lit-scout.
-% Rules: braces protect acronyms in titles; published version preferred over ePrint;
-% ePrint author list must match the ePrint page; '--' for page ranges; no abstract/
-% isbn/keywords fields from publisher exports.
+% Rules: braces protect acronyms in titles; published version preferred over ePrint
+% (keep the ePrint id in eprint= once bib-verify has confirmed it); ePrint author list
+% must match the ePrint page; '--' for page ranges; no abstract/isbn/keywords fields
+% from publisher exports. Every entry passes skills/bib-verify before submission.
 
-@inproceedings{Gentry09,
-  author    = {Craig Gentry},
-  title     = {Fully Homomorphic Encryption Using Ideal Lattices},
-  booktitle = {STOC 2009},
-  pages     = {169--178},
-  publisher = {{ACM}},
-  year      = {2009},
-  doi       = {10.1145/1536414.1536440}
+@inproceedings{KZG10,
+  author    = {Aniket Kate and Gregory M. Zaverucha and Ian Goldberg},
+  title     = {Constant-Size Commitments to Polynomials and Their Applications},
+  booktitle = {ASIACRYPT 2010},
+  series    = {LNCS},
+  pages     = {177--194},
+  publisher = {Springer},
+  year      = {2010},
+  doi       = {10.1007/978-3-642-17373-8_11}
 }
 
-@misc{ToyEprint,
-  author       = {A. Placeholder and B. Placeholder},
-  title        = {A Toy {PBS} Packing Technique},
-  howpublished = {Cryptology {ePrint} Archive, Paper 0000/000},
-  year         = {2000},
-  note         = {Placeholder entry for the template; replace},
-  url          = {https://eprint.iacr.org/}
+@inproceedings{Gro16,
+  author    = {Jens Groth},
+  title     = {On the Size of Pairing-Based Non-interactive Arguments},
+  booktitle = {EUROCRYPT 2016},
+  series    = {LNCS},
+  pages     = {305--326},
+  publisher = {Springer},
+  year      = {2016},
+  doi       = {10.1007/978-3-662-49896-5_11}
+}
+
+@inproceedings{BBHR18fri,
+  author    = {Eli Ben-Sasson and Iddo Bentov and Yinon Horesh and Michael Riabzev},
+  title     = {Fast {Reed-Solomon} Interactive Oracle Proofs of Proximity},
+  booktitle = {ICALP 2018},
+  series    = {LIPIcs},
+  pages     = {14:1--14:17},
+  year      = {2018},
+  doi       = {10.4230/LIPIcs.ICALP.2018.14}
 }

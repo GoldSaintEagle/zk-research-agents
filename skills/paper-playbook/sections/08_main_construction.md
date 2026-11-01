@@ -47,7 +47,7 @@ proof line by line.
 ### cryptocode skeleton
 
 ```latex
-% \usepackage[n,advantage,operators,sets,adversary,landau,probability,notions,
+% \usepackage[lambda,advantage,operators,sets,adversary,landau,probability,notions,
 %             logic,ff,mm,primitives,events,complexity,asymptotics,keys]{cryptocode}
 \begin{figure}[t]
 \centering\footnotesize
@@ -68,8 +68,8 @@ point.}
 \end{figure}
 ```
 
-Keep the cryptocode options identical to `templates/paper/macros.tex` when it gains
-them; if cryptocode is not available, a two-column `tabular` with `\xrightarrow` arrows
+Keep the cryptocode options identical to `templates/paper/macros.tex` (which loads
+the package; `lambda` makes `\secpar` print λ); if cryptocode is not available, a two-column `tabular` with `\xrightarrow` arrows
 is acceptable. Never put proof-relevant checks only in prose below the box.
 
 ## Rules distilled from review rounds
