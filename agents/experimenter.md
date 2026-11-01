@@ -79,6 +79,9 @@ not modify `impl/` or `circuits/`, and sends defects back to their owners.
 ## Library used
 
 - `lib/bench` (`crbench`): `runner`, `stats`, `envcapture`, `lock`, `parsers`, `tables`, `evidence`, `adapters`.
+  ZK parsers: `snarkjs`, `rapidsnark`, `circom`, `gnark`, `criterion` (halo2, arkworks, plonky3), `nargo-info`,
+  `risc0`, `sp1`; constraint and row counts from `circom` / `snarkjs` / `gnark` / `nargo-info` go into EVIDENCE.md
+  like timings (formats marked "needs verification" in `lib/bench/README.md` are checked on the first real log).
 - `lib/cryptomath/costmodel`: predicted operation counts to cross-check measurements.
 - `skills/prover-cost-model/scripts/prover_cost_model.py --compare`: phase-by-phase comparison.
 - `lib/cryptomath/*`: toy implementations for scaled-down experiments (small-field counting, toy commitments).

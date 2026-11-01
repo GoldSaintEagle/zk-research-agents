@@ -52,6 +52,7 @@ model: inherit
 
 - `lib/bench`（`crbench`）：用 `crbench evidence add` 写入计数行。
 - `lib/cryptomath/algebra`（有限域）：小域模型和 wrap-around 检查所用的参考算术。
+- `lib/cryptomath/zk`（`r1cs`、`plonkish`、`plonk`）：按 CIRCUITS.md 口径计数的玩具约束系统，以及置换（copy constraint）和 logUp lookup 检查，用于在 DSL 实现之前在小域上检验 gadget 的规范。
 - `skills/constraint-cost/scripts/constraint_count.py`、`skills/circuit-audit/scripts/toy_circuit_audit.py`：玩具计数器和审计范式。
 
 ## 交接约定

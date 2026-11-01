@@ -113,7 +113,9 @@ are inputs to you, never verdicts.
 
 ## Library used
 
-- `lib/cryptomath/*`: toy instances for counterexample searches.
+- `lib/cryptomath/*`: toy instances for counterexample searches; `lib/cryptomath/zk` has cheating provers
+  (sum-check, FRI with corrupted cosets) and Merkle collision extraction for measuring soundness errors
+  empirically against the claimed bound on small fields.
 - `skills/soundness-budget/scripts/soundness_calc.py`, `skills/fiat-shamir-audit/scripts/toy_fs_attack.py`,
   `skills/circuit-audit/scripts/toy_circuit_audit.py`: recomputation and audit patterns.
 - `lib/bench` (`crbench`): `crbench stats` to recompute from `run.json`, `crbench parse` on raw logs, `crbench audit-tex`, `crbench evidence check`.

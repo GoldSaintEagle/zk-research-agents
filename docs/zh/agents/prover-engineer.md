@@ -58,7 +58,8 @@ model: inherit
 
 - `lib/bench`（`crbench`）：`crbench run`、`crbench stale`、`crbench env`、解析器（`criterion`、`gobench`）、`crbench evidence add`。
 - `lib/cryptomath/algebra`（有限域、NTT、多项式）和 `lib/cryptomath/protocols`（`commitments.py`、`fiat_shamir.py`）：小型参考实现，用于在玩具规模上测试 `impl/`。
-- `lib/cryptomath/costmodel`：用于预测的符号化运算计数。
+- `lib/cryptomath/zk`（`mle`、`sumcheck`、`merkle`、`fri`、`kzg` 代数演示）：玩具参考 prover/verifier，在小域上与 `impl/` 的 transcript 和中间值对照。
+- `lib/cryptomath/costmodel`：用于预测的符号化运算计数（`zkops` / `formulas`：MSM、NTT、Merkle、sum-check、KZG、FRI）。
 
 ## 交接约定
 

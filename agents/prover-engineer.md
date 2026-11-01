@@ -96,7 +96,10 @@ The prover-engineer builds and self-checks; it never gives a verdict on its own 
 - `lib/cryptomath/algebra` (finite fields, NTT, polynomials) and
   `lib/cryptomath/protocols` (`commitments.py`, `fiat_shamir.py`): small reference
   implementations to test `impl/` against on toy sizes.
-- `lib/cryptomath/costmodel`: symbolic operation counts for the prediction.
+- `lib/cryptomath/zk` (`mle`, `sumcheck`, `merkle`, `fri`, `kzg` algebra): toy reference provers and verifiers
+  to compare `impl/` transcripts and intermediate values against on small fields.
+- `lib/cryptomath/costmodel`: symbolic operation counts for the prediction (`zkops` / `formulas`: MSM, NTT,
+  Merkle, sum-check, KZG, FRI).
 
 ## Hand-off contract
 

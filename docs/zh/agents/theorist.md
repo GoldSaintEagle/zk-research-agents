@@ -72,6 +72,7 @@ model: inherit
 
 - `lib/cryptomath/algebra`：有限域、多项式、NTT、数论工具。
 - `lib/cryptomath/protocols`（`commitments.py`、`fiat_shamir.py`）和 `ec`：用来检验命题的玩具组件。
+- `lib/cryptomath/zk`：玩具 MLE / sum-check / FRI / 置换与 lookup 检查，用来跑完备性，并把 soundness 误差的经验值与所述界对比。
 - `lib/cryptomath/costmodel`：符号化运算计数。
 - `skills/soundness-budget/scripts/soundness_calc.py`：预算计算器。
 - `lib/lean-template`：`lean/` 的起点。

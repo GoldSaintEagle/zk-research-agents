@@ -70,7 +70,7 @@ model: inherit
 
 ## 使用的库
 
-- `lib/cryptomath/*`：用于反例搜索的玩具实例。
+- `lib/cryptomath/*`：用于反例搜索的玩具实例；`lib/cryptomath/zk` 提供作弊 prover（sum-check、篡改陪集的 FRI）和 Merkle 碰撞提取，用于在小域上把 soundness 误差的经验值与声称的界对比。
 - `skills/soundness-budget/scripts/soundness_calc.py`、`skills/fiat-shamir-audit/scripts/toy_fs_attack.py`、
   `skills/circuit-audit/scripts/toy_circuit_audit.py`：重算与审计的范例。
 - `lib/bench`（`crbench`）：用 `crbench stats` 从 `run.json` 重算，用 `crbench parse` 解析原始日志，以及 `crbench audit-tex`、`crbench evidence check`。

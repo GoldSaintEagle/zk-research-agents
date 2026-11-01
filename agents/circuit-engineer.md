@@ -79,6 +79,9 @@ claims.
 - `lib/bench` (`crbench`): `crbench evidence add` for count rows.
 - `lib/cryptomath/algebra` (finite fields): reference arithmetic for small-field models
   and wrap-around checks.
+- `lib/cryptomath/zk` (`r1cs`, `plonkish`, `plonk`): toy constraint systems with counts in the CIRCUITS.md
+  conventions, and the permutation (copy-constraint) and logUp lookup checks, for testing a gadget's
+  specification on small fields before writing it in the DSL.
 - `skills/constraint-cost/scripts/constraint_count.py`,
   `skills/circuit-audit/scripts/toy_circuit_audit.py`: toy counter and audit pattern.
 

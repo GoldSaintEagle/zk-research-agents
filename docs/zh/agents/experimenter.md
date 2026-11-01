@@ -54,7 +54,7 @@ model: inherit
 
 ## 使用的库
 
-- `lib/bench`（`crbench`）：`runner`、`stats`、`envcapture`、`lock`、`parsers`、`tables`、`evidence`、`adapters`。
+- `lib/bench`（`crbench`）：`runner`、`stats`、`envcapture`、`lock`、`parsers`、`tables`、`evidence`、`adapters`。ZK 解析器：`snarkjs`、`rapidsnark`、`circom`、`gnark`、`criterion`（halo2、arkworks、plonky3）、`nargo-info`、`risc0`、`sp1`；`circom` / `snarkjs` / `gnark` / `nargo-info` 给出的约束数和行数与计时一样记入 EVIDENCE.md（`lib/bench/README.md` 中标为 "needs verification" 的格式，在拿到第一份真实日志时核对）。
 - `lib/cryptomath/costmodel`：用于交叉核对测量的预测运算计数。
 - `skills/prover-cost-model/scripts/prover_cost_model.py --compare`：逐阶段比较。
 - `lib/cryptomath/*`：用于缩小规模实验的玩具实现（小域计数、玩具承诺）。

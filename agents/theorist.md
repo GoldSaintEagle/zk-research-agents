@@ -106,6 +106,8 @@ or conjectured. Prefer a smaller true theorem to a larger false one.
 
 - `lib/cryptomath/algebra`: finite fields, polynomials, NTT, number-theory helpers.
 - `lib/cryptomath/protocols` (`commitments.py`, `fiat_shamir.py`) and `ec`: toy components on which statements are tested.
+- `lib/cryptomath/zk`: toy MLE / sum-check / FRI / permutation and lookup checks on which completeness is run
+  and soundness errors are measured against the stated bound.
 - `lib/cryptomath/costmodel`: symbolic operation counting.
 - `skills/soundness-budget/scripts/soundness_calc.py`: the budget calculator.
 - `lib/lean-template`: starting point for `lean/`.

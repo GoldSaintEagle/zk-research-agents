@@ -36,8 +36,9 @@ length, for large ones the comparison flips; in IOP-based provers FFT vs Merkle 
 1. **Write the protocol as phases** (witness generation, commitments, permutation / lookup arguments,
    quotient or sum-check, openings, recursion or wrapping) with, per phase, the primitives above and their sizes
    as functions of N and the parameters (ρ, q, number of columns, degree). Reuse `lib/cryptomath/cryptomath/costmodel`
-   (`Counter`, `count`, nested counters per phase; `CostFormula` for symbolic crossovers) rather than a
-   spreadsheet.
+   (`Counter`, `count`, nested counters per phase; `zkops` for the MSM / NTT / Merkle / sum-check / KZG / FRI
+   counts that `scripts/prover_cost_model.py` also uses; `CostFormula` and the `formulas` twins for symbolic
+   crossovers) rather than a spreadsheet.
 2. **Calibrate unit costs** on the target machine: microbenchmark one field multiplication, one butterfly, one
    group addition, one hash of the leaf size, one pairing, and memory bandwidth (`skills/bench-protocol`;
    each unit cost is an EVIDENCE row). The toy script's unit costs are placeholders.
