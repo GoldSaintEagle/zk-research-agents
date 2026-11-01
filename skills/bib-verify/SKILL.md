@@ -1,6 +1,6 @@
 ---
 name: bib-verify
-description: Verify every BibTeX entry against IACR ePrint, Crossref/DataCite and DBLP (and @misc URL sources, or URL-only @book entries such as open books, against the live URL + Wayback Machine) and flag fabricated, garbled or placeholder references. Use before any draft leaves the machine, after any agent adds citations, and as the P1 and P8 gate item.
+description: Verify every BibTeX entry, rate-limited, against IACR ePrint (or its third-party mirror when ePrint is unreachable), Crossref/DataCite and DBLP (and @misc URL sources, or URL-only @book entries such as open books, against the live URL + Wayback Machine) and flag fabricated, garbled or placeholder references. Use before any draft leaves the machine, after any agent adds citations, and as the P1 and P8 gate item.
 ---
 
 # bib-verify
@@ -13,12 +13,15 @@ own reading lists were drafted from memory, the verifier caught three such error
 
 ## Procedure
 
-1. Run the checker (network needed; polite 1 req/s):
+1. Run the checker (network needed; rate-limited, see "Network" below):
    ```bash
    python3 skills/bib-verify/scripts/verify_bib.py refs.bib --json bib-verify.json > bib-verify-report.md
    ```
-   Resolution order: ePrint id (from `eprint=`, `url=`, `howpublished=`...) → OAI record; `doi=` → Crossref,
-   then DataCite (Zenodo/LIPIcs/arXiv DOIs); `@misc`/`@online` with a URL and no ePrint id/DOI → URL-source
+   Resolution order: ePrint id (from `eprint=`, `url=`, `howpublished=`...) → official OAI record; if the
+   official site is unusable (see "Network"), an entry with a `doi=` is checked through the DOI and only an
+   entry without one through the third-party mirror (→ `VERIFIED (mirror)`); `doi=` → Crossref,
+   then DataCite (Zenodo/LIPIcs/arXiv DOIs; a separate `subtitle` field is joined to the title as
+   "Title: Subtitle" before comparing, and the main title alone is compared too); `@misc`/`@online` with a URL and no ePrint id/DOI → URL-source
    check (below); otherwise a title search (DBLP if it answers, else Crossref). A `@book` with a `url`, no
    ePrint id and no DOI that the title search does **not** find (e.g. a book published from a Git repository,
    such as the CY24 entry in [references/books/README.md](../../references/books/README.md)) then goes through
@@ -31,7 +34,8 @@ own reading lists were drafted from memory, the verifier caught three such error
    | `NOT_FOUND` | nothing plausible exists | treat as fabricated: delete, or find the real source and re-cite; re-check every sentence that relied on it |
    | `WEAK` | similar title only | open the landing page, compare authors/year/venue manually |
    | `NEEDS_VERIFICATION` | URL source (needs verification): unreachable, no Wayback snapshot, or no access date | archive the page, add `archiveurl=` and `urldate=`, re-run; if the page is gone and never archived, find a citable version or drop the citation |
-   | `UNCHECKED` | offline / service error | re-run later; never ship with UNCHECKED rows |
+   | `VERIFIED (mirror)` | matched the record of the third-party ePrint mirror (official site unusable, entry has no DOI) | passes the gate; re-check against eprint.iacr.org or a DOI when you can (`--require-official` makes these rows fail) |
+   | `UNCHECKED` | offline / service error / ePrint unusable with `--no-mirror` / request budget reached | re-run later (the cache keeps finished lookups); never ship with UNCHECKED rows |
 3. URL sources (gray literature: project docs, HackMD notes, ethresear.ch posts, vendor blogs, audit reports —
    see the gray-literature pass in [`eprint-search`](../eprint-search/SKILL.md)). Such a source counts as
    `VERIFIED` only if **all three** hold:
@@ -64,6 +68,24 @@ own reading lists were drafted from memory, the verifier caught three such error
 6. Record the run in `LITERATURE.md` (date, counts) and keep `bib-verify-report.md` next to `refs.bib`; the
    `phase-gate` script checks that the report is newer than the bib and clean.
 
+## Network
+
+All requests go through the shared client of [eprint-search](../eprint-search/SKILL.md#rate-limits-all-literature-scripts)
+(`skills/eprint-search/scripts/polite_http.py`): ≥ 3 s between two requests to one host (`--min-interval`),
+`Retry-After` and exponential backoff on 429/503 (3 retries), a 7-day answer cache in `.cache/eprint/`
+(git-ignored; `--no-cache`), and at most 300 requests per run (`--max-requests`). When the cap is reached the
+run stops, the remaining entries are `UNCHECKED` ("request budget reached"), and a re-run continues from the cache.
+Check one list at a time; do not run several verifiers in parallel.
+
+ePrint unusable (connection failure, a redirect such as the `HTTP 302` to `https://iacr.org/you_have_been_blocked.txt`
+a banned client gets, 403/451/5xx, or a page that is not an ePrint answer): the run notes it once and stops asking
+eprint.iacr.org. Entries with a DOI are then verified through the DOI (`VERIFIED`, detail "checked via DOI");
+ePrint-only entries through the mirror `https://eprint.iacr.asia` — a **third-party** mirror, not the IACR — via its
+JSON search API, then its OAI-PMH (`VERIFIED (mirror)`). `--no-mirror` keeps them `UNCHECKED` instead. Whatever
+the route, the `url` in the .bib is the official `https://eprint.iacr.org/YYYY/NNNN`; a mirror URL in an entry is
+a lint flag. If the IACR has blocked your address, write to **eprint-abuse@iacr.org**; do not work around the block
+(no other IP, no proxy, no browser User-Agent).
+
 ## Rules
 
 - Prefer the published version (DOI) for the final paper; keep the ePrint id in `eprint=` so it can be re-checked.
@@ -77,6 +99,9 @@ own reading lists were drafted from memory, the verifier caught three such error
 ## Files
 
 - `scripts/verify_bib.py` — dependency-free checker (`--selftest`, `--selftest-online`, `--only k1,k2`, `--offline`,
-  `--url-timeout`). `--selftest` is fully offline (URL, Wayback and title-search lookups are injected fakes).
+  `--url-timeout`, `--no-mirror`, `--require-official`, `--min-interval`, `--max-requests`, `--no-cache`).
+  `--selftest` is fully offline: URL, Wayback and title-search lookups are injected fakes, and the ePrint / mirror /
+  Crossref paths run on scripted HTTP answers (official OK, official blocked → mirror, DOI preferred over the
+  mirror, 429 + Retry-After, cache hit, request budget, subtitles).
 - `tests/test_verify_bib.py` — pytest, offline: the @book URL fallback (found / not found / unreachable / no
-  snapshot) and the self-test.
+  snapshot), subtitle joining, the `VERIFIED (mirror)` status, and the self-test.

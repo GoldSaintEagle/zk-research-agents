@@ -23,7 +23,14 @@ Resolution order per entry
 --------------------------
 1. ePrint id (from `eprint=`, `url=`, `howpublished=`, `note=`, `journal=` text
    such as "Cryptology ePrint Archive, Paper 2018/421")  ->  ePrint OAI-PMH record.
+   If eprint.iacr.org is not usable from this client (refused, redirected to the IACR block
+   notice, no answer; see eprint-search/scripts/eprint_source.py) the rest of the run skips
+   it: an entry with a `doi=` is then checked through the DOI (step 2), and only an entry
+   without one is looked up on the third-party mirror (https://eprint.iacr.asia, JSON
+   search API, then its OAI-PMH) -> status `VERIFIED (mirror)` if it matches.
 2. `doi=`  ->  Crossref /works/<doi>, falling back to DataCite (Zenodo, LIPIcs, arXiv DOIs).
+   Crossref's separate `subtitle` field is joined to the title ("Title: Subtitle") before
+   comparing; the main title alone is compared too, and the better score counts.
 3. `@misc`/`@online` with a URL and neither ePrint id nor DOI (gray literature)  ->
    URL check: (a) the URL answers (HEAD, GET fallback, with timeout); (b) a Wayback
    snapshot exists (an explicit web.archive.org link in `archiveurl=`/`note=`/
@@ -37,6 +44,8 @@ Resolution order per entry
 
 Each entry gets a status:
   VERIFIED     title similarity >= 0.90 and >= 1 author surname overlap (and year +-1 if given)
+  VERIFIED (mirror)  the same test, passed against the third-party ePrint mirror's record
+               (official site unusable, no DOI on the entry); passes the gate, reported apart
   MISMATCH     a record was found for the id/DOI but title or authors disagree
   WEAK         best title-search hit is similar but not conclusive (0.75..0.90) -> check by hand
   NOT_FOUND    nothing plausible found -> treat as fabricated until proven otherwise
@@ -46,8 +55,15 @@ Each entry gets a status:
 plus static LINT flags (placeholder authors, "and others" only, missing year/title,
 `% UNVERIFIED` marker in the .bib, duplicate titles, ...).
 
-Exit status: 0 if every entry is VERIFIED (lint warnings allowed), 1 if any entry
-is MISMATCH/NOT_FOUND/WEAK/NEEDS_VERIFICATION/UNCHECKED, 3 on usage errors.  Use it as a gate.
+Exit status: 0 if every entry is VERIFIED or VERIFIED (mirror) (lint warnings allowed;
+--require-official makes mirror rows fail), 1 if any entry is MISMATCH/NOT_FOUND/WEAK/
+NEEDS_VERIFICATION/UNCHECKED, 3 on usage errors.  Use it as a gate.
+
+Network: every request (ePrint, mirror, Crossref, DataCite, DBLP, Wayback, URL probes) goes
+through eprint-search/scripts/polite_http.py: >= 3 s between two requests to one host,
+Retry-After and backoff on 429/503, a 7-day cache in .cache/eprint/, and at most 300
+requests per run (--max-requests); when the cap is reached the run stops, the remaining
+entries are UNCHECKED, and a re-run continues from the cache.
 """
 from __future__ import annotations
 
@@ -55,17 +71,22 @@ import argparse
 import difflib
 import html
 import json
+import os
 import re
 import sys
-import time
 import unicodedata
 import urllib.error
 import urllib.parse
-import urllib.request
 
-UA = "crypto-research-agents/0.1 bib-verify (low rate; mailto not set)"
-EPRINT_OAI = ("https://eprint.iacr.org/oai?verb=GetRecord&identifier=oai:eprint.iacr.org:{id}"
-              "&metadataPrefix=oai_dc")
+# shared rate limiter + ePrint access (official, then mirror); install.sh copies both skills
+_EPRINT_SCRIPTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "eprint-search", "scripts")
+sys.path.insert(0, os.path.normpath(_EPRINT_SCRIPTS))
+import polite_http  # noqa: E402
+from eprint_source import EprintSource, EprintUnavailable  # noqa: E402
+
+UA = polite_http.UA
+VERIFIED_STATUSES = ("VERIFIED", "VERIFIED (mirror)")
+MIRROR_URL_RE = re.compile(r"eprint\.iacr\.asia", re.I)
 CROSSREF = "https://api.crossref.org/works"
 DATACITE = "https://api.datacite.org/dois"
 DBLP = "https://dblp.org/search/publ/api"
@@ -208,27 +229,36 @@ class Blocked(OSError):
     pass
 
 
-def http_get(url: str, timeout: float = 25.0) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read().decode("utf-8", errors="replace")
+def client() -> polite_http.PoliteClient:
+    return polite_http.default_client()
+
+
+def http_get(url: str, timeout: float | None = None) -> str:
+    """Body of a 2xx answer through the shared polite client (redirects followed)."""
+    return client().get_text(url)
 
 
 def url_reachable(url: str, timeout: float = 10.0) -> tuple[bool, str]:
-    """HEAD, then GET for servers that refuse HEAD.  Never raises."""
-    last = ""
-    for method in ("HEAD", "GET"):
-        req = urllib.request.Request(url, method=method, headers={"User-Agent": UA})
-        try:
-            with urllib.request.urlopen(req, timeout=timeout) as r:
+    """HEAD, then GET for servers that refuse HEAD; a redirect counts as an answer.
+    Rate-limited like every other request.  Never raises (except RequestBudgetExceeded)."""
+    c, last = client(), ""
+    saved, c.timeout = c.timeout, timeout
+    try:
+        for method in ("HEAD", "GET"):
+            try:
+                r = c.request(url, method=method, cache=False)
+            except polite_http.HTTPStatusError as e:
+                return False, f"{method} HTTP {e.status}"
+            except (urllib.error.URLError, TimeoutError, OSError, ValueError) as e:
+                return False, f"{method} {e}"
+            if r.status < 400:
                 return True, f"{method} {r.status}"
-        except urllib.error.HTTPError as e:
-            last = f"{method} HTTP {e.code}"
-            if e.code not in (403, 405, 501):
+            last = f"{method} HTTP {r.status}"
+            if r.status not in (403, 405, 501):
                 return False, last
-        except (urllib.error.URLError, TimeoutError, OSError, ValueError) as e:
-            return False, f"{method} {e}"
-    return False, last
+        return False, last
+    finally:
+        c.timeout = saved
 
 
 def wayback_snapshot(url: str, timeout: float = 10.0) -> str | None:
@@ -238,17 +268,11 @@ def wayback_snapshot(url: str, timeout: float = 10.0) -> str | None:
     return snap.get("url") if snap.get("available") else None
 
 
-def fetch_eprint(eid: str) -> dict | None:
-    xml = http_get(EPRINT_OAI.format(id=eid))
-    if "has been blocked" in xml:   # IACR redirects banned clients to a notice page instead of an error
-        raise Blocked("ePrint refused this client (IP blocked)")
-    if "<dc:title>" not in xml:
-        return None
-    title = html.unescape(re.search(r"<dc:title>(.*?)</dc:title>", xml, re.S).group(1)).strip()
-    authors = [html.unescape(x).strip() for x in re.findall(r"<dc:creator>(.*?)</dc:creator>", xml, re.S)]
-    date = re.search(r"<dc:date>(\d{4})", xml)
-    return {"title": title, "authors": authors, "year": int(eid.split("/")[0]),
-            "last_year": int(date.group(1)) if date else None, "source": f"ePrint {eid}"}
+def eprint_source(state: dict) -> EprintSource:
+    """One EprintSource per run (it remembers that the official site is down)."""
+    if "eprint_source" not in state:
+        state["eprint_source"] = EprintSource(client(), allow_mirror=not state.get("no_mirror"))
+    return state["eprint_source"]
 
 
 def fetch_crossref_doi(doi: str) -> dict | None:
@@ -256,15 +280,19 @@ def fetch_crossref_doi(doi: str) -> dict | None:
     try:
         data = json.loads(http_get(f"{CROSSREF}/{urllib.parse.quote(doi)}"))
         return _crossref_item(data.get("message", {}))
-    except urllib.error.HTTPError as e:
-        if e.code != 404:
+    except polite_http.HTTPStatusError as e:
+        if e.status != 404:
             raise
     try:
         data = json.loads(http_get(f"{DATACITE}/{urllib.parse.quote(doi)}"))
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
+    except polite_http.HTTPStatusError as e:
+        if e.status == 404:
             return None
         raise
+    return _datacite_item(data, doi)
+
+
+def _datacite_item(data: dict, doi: str) -> dict:
     at = data.get("data", {}).get("attributes", {})
     names = []
     for c in at.get("creators", []):
@@ -273,9 +301,24 @@ def fetch_crossref_doi(doi: str) -> dict | None:
         else:
             nm = c.get("name", "")
             names.append(" ".join(reversed(nm.split(", "))) if ", " in nm else nm)
-    return {"title": " ".join(t.get("title", "") for t in at.get("titles", [])[:1]),
+    titles = at.get("titles", [])
+    main = " ".join(t.get("title", "") for t in titles if not t.get("titleType"))[:1000] or \
+        " ".join(t.get("title", "") for t in titles[:1])
+    subs = [t.get("title", "") for t in titles if t.get("titleType") == "Subtitle"]
+    return {"title": join_subtitle(main, subs), "alt_titles": [main] if subs else [],
             "authors": names, "year": at.get("publicationYear"),
             "venue": at.get("publisher", ""), "source": f"DataCite doi:{doi}"}
+
+
+def join_subtitle(title: str, subtitles: list[str]) -> str:
+    """'Delegating Computation' + ['Interactive Proofs for Muggles'] -> 'Delegating Computation:
+    Interactive Proofs for Muggles' (Crossref and DataCite keep subtitles in a separate field)."""
+    title = re.sub(r"\s+", " ", title or "").strip()
+    for sub in subtitles or []:
+        sub = re.sub(r"\s+", " ", sub or "").strip()
+        if sub and norm_title(sub) not in norm_title(title):
+            title = f"{title}: {sub}" if title else sub
+    return title
 
 
 def _crossref_item(it: dict) -> dict:
@@ -285,7 +328,9 @@ def _crossref_item(it: dict) -> dict:
         if dp and dp[0] and dp[0][0]:
             year = dp[0][0]
             break
-    return {"title": " ".join(it.get("title") or []),
+    main = " ".join(it.get("title") or [])
+    subs = it.get("subtitle") or []
+    return {"title": join_subtitle(main, subs), "alt_titles": [main] if subs else [],
             "authors": [f"{a.get('given', '')} {a.get('family', '')}".strip() for a in it.get("author", [])],
             "year": year, "venue": " ".join(it.get("container-title") or []),
             "source": f"Crossref doi:{it.get('DOI', '')}"}
@@ -293,7 +338,7 @@ def _crossref_item(it: dict) -> dict:
 
 def search_crossref(title: str, author_hint: str) -> list[dict]:
     q = {"query.bibliographic": title, "rows": 5,
-         "select": "title,author,DOI,issued,published-print,published-online,container-title"}
+         "select": "title,subtitle,author,DOI,issued,published-print,published-online,container-title"}
     if author_hint:
         q["query.author"] = author_hint
     data = json.loads(http_get(f"{CROSSREF}?{urllib.parse.urlencode(q)}"))
@@ -418,6 +463,8 @@ def lint(e: dict) -> list[str]:
         flags.append("marked % UNVERIFIED in source")
     if (is_url_source(e) or is_url_book(e)) and not access_date(f):
         flags.append("URL source without access date (urldate)")
+    if any(MIRROR_URL_RE.search(f.get(k, "")) for k in ("url", "howpublished", "note")):
+        flags.append("ePrint mirror URL in entry: cite the official https://eprint.iacr.org/YYYY/NNNN")
     return flags
 
 
@@ -425,7 +472,7 @@ def judge(entry: dict, rec: dict | None, how: str) -> tuple[str, float, str]:
     f = entry["fields"]
     if rec is None:
         return "NOT_FOUND", 0.0, f"no record via {how}"
-    ts = title_sim(f.get("title", ""), rec["title"])
+    ts = max(title_sim(f.get("title", ""), t) for t in [rec["title"]] + list(rec.get("alt_titles") or []))
     bib_s = set(surnames_from_bib(f.get("author", "")))
     rec_s = {surname_of(a) for a in rec["authors"]}
     overlap = len(bib_s & rec_s)
@@ -462,24 +509,41 @@ def check_entry(e: dict, offline: bool, state: dict) -> dict:
     if is_url_source(e):
         res["status"], res["detail"] = check_url_source(e, state)
         res["score"] = 1.0 if res["status"] == "VERIFIED" else 0.0
-        time.sleep(state.get("delay", 1.0))
         return res
     try:
         eid = find_eprint_id(f)
+        doi = re.sub(r"^https?://(dx\.)?doi\.org/", "", f.get("doi", "").strip())
+        fetch_doi = state.get("fetch_doi", fetch_crossref_doi)
         if eid:
-            try:
-                if state.get("eprint_blocked"):
-                    raise Blocked("ePrint refused this client earlier in the run")
-                res["status"], res["score"], res["detail"] = judge(
-                    e, state.get("fetch_eprint", fetch_eprint)(eid), f"id ePrint {eid}")
-            except Blocked as exc:   # a refusal is no evidence about the entry: UNCHECKED, then try the DOI
-                state["eprint_blocked"] = True
-                res["status"], res["detail"] = "UNCHECKED", f"ePrint {eid} not checked: {exc}"
-            if res["status"] == "VERIFIED" or not f.get("doi"):
+            src = eprint_source(state)
+            got, rec = src.official_record(eid)
+            if got != "down":
+                res["status"], res["score"], res["detail"] = judge(e, rec, f"id ePrint {eid}")
+                if res["status"] == "VERIFIED" or not doi:
+                    return res
+            else:
+                # official site unusable: a DOI (publisher record) is preferred over the mirror
+                note = f"official ePrint unusable ({src.official_down})"
+                if doi:
+                    res["status"], res["score"], res["detail"] = judge(e, fetch_doi(doi), f"id doi {doi}")
+                    res["detail"] = f"{note}; checked via DOI: " + res["detail"]
+                    if res["status"] == "VERIFIED" or not src.allow_mirror:
+                        return res
+                if not src.allow_mirror:
+                    res["status"], res["detail"] = "UNCHECKED", f"ePrint {eid} not checked: {note}; mirror disabled"
+                    return res
+                via_doi = res["detail"] if doi else ""
+                src.used_mirror = True
+                st, sc, det = judge(e, src.mirror_record(eid, delatex(f.get("title", ""))), f"id ePrint {eid}")
+                if st == "VERIFIED":
+                    res["status"], res["score"], res["detail"] = "VERIFIED (mirror)", sc, det
+                elif not doi:
+                    res["status"], res["score"], res["detail"] = st, sc, det
+                else:
+                    res["detail"] = via_doi + f"; mirror: {st} ({det})"
                 return res
-        if f.get("doi"):
-            doi = re.sub(r"^https?://(dx\.)?doi\.org/", "", f["doi"].strip())
-            res["status"], res["score"], res["detail"] = judge(e, fetch_crossref_doi(doi), f"id doi {doi}")
+        if doi:
+            res["status"], res["score"], res["detail"] = judge(e, fetch_doi(doi), f"id doi {doi}")
             return res
         title = delatex(f.get("title", ""))
         if not title:
@@ -502,10 +566,8 @@ def check_entry(e: dict, offline: bool, state: dict) -> dict:
             res["status"], res["detail"] = check_url_source(e, state)
             res["score"] = 1.0 if res["status"] == "VERIFIED" else 0.0
             res["detail"] = f"@book via URL (title search: {searched}); " + res["detail"]
-    except (urllib.error.URLError, TimeoutError, OSError, ValueError) as exc:
+    except (urllib.error.URLError, TimeoutError, OSError, ValueError) as exc:   # incl. EprintUnavailable
         res["status"], res["detail"] = "UNCHECKED", f"service error: {exc}"
-    finally:
-        time.sleep(state.get("delay", 1.0))
     return res
 
 
@@ -519,7 +581,8 @@ def duplicate_titles(entries: list[dict]) -> dict[str, list[str]]:
 
 
 def render(results: list[dict], dups: dict) -> str:
-    order = {"MISMATCH": 0, "NOT_FOUND": 1, "WEAK": 2, "NEEDS_VERIFICATION": 3, "UNCHECKED": 4, "VERIFIED": 5}
+    order = {"MISMATCH": 0, "NOT_FOUND": 1, "WEAK": 2, "NEEDS_VERIFICATION": 3, "UNCHECKED": 4,
+             "VERIFIED (mirror)": 5, "VERIFIED": 6}
     counts: dict[str, int] = {}
     for r in results:
         counts[r["status"]] = counts.get(r["status"], 0) + 1
@@ -537,11 +600,11 @@ def render(results: list[dict], dups: dict) -> str:
 # ---------------------------------------------------------------- selftest ---
 
 SELFTEST_BIB = r"""
-@misc{cggi-tfhe,
-  author = {Ilaria Chillotti and Nicolas Gama and Mariya Georgieva and Malika Izabach{\`e}ne},
-  title = {{TFHE}: Fast Fully Homomorphic Encryption over the Torus},
-  howpublished = {Cryptology ePrint Archive, Paper 2018/421},
-  year = 2018,
+@misc{GWC19,
+  author = {Ariel Gabizon and Zachary J. Williamson and Oana Ciobotaru},
+  title = {{PLONK}: Permutations over Lagrange-bases for Oecumenical Noninteractive arguments of Knowledge},
+  howpublished = {Cryptology ePrint Archive, Paper 2019/953},
+  year = 2019,
 }
 % UNVERIFIED
 @article{fake,
@@ -598,13 +661,136 @@ SELFTEST_BOOK_BIB = r"""
 """
 
 
+def _selftest_network(plonk: dict) -> None:
+    """ePrint/mirror/DOI paths with scripted HTTP answers (polite_http.FakeNet): no real requests."""
+    import tempfile
+    import eprint_source as es
+    from polite_http import FakeNet, PoliteClient, Response
+    title = delatex(plonk["fields"]["title"])
+    authors = [a.strip() for a in plonk["fields"]["author"].split(" and ")]
+    oai = Response("", 200, {}, es._oai(title, authors))
+    blocked = Response("", 302, {"location": "https://iacr.org/you_have_been_blocked.txt"}, b"302 Found")
+    api = Response("", 200, {}, es._api([es._item("2019/953", title, authors, "2019-08-21")]))
+
+    def crossref(t, au, subtitle=None, year=2019):
+        it = {"title": [t], "author": [{"given": a.split()[0], "family": a.split()[-1]} for a in au],
+              "issued": {"date-parts": [[year]]}, "DOI": "10.0000/toy"}
+        if subtitle:
+            it["subtitle"] = [subtitle]
+        return Response("", 200, {}, json.dumps({"message": it}).encode())
+
+    def setup(routes, cache_dir=None, **kw):
+        net = FakeNet(routes)
+        logs = []
+        c = PoliteClient(transport=net, clock=net.clock, sleep=net.sleep, cache_dir=cache_dir,
+                         use_cache=cache_dir is not None, log=logs.append, **kw)
+        polite_http.set_default_client(c)
+        return net, {"url_timeout": 3.0, "eprint_source": EprintSource(c, log=logs.append)}, logs
+
+    with_doi = dict(plonk, fields=dict(plonk["fields"], doi="10.0000/toy"))
+    try:
+        # official ePrint answers: VERIFIED, mirror untouched
+        net, st, logs = setup({es.OFFICIAL + "/oai*": [oai]})
+        r = check_entry(plonk, False, st)
+        assert r["status"] == "VERIFIED" and r["detail"].startswith("ePrint 2019/953:"), r
+        assert not any(es.MIRROR in u for _, u in net.calls) and not logs
+        # official blocked (observed 302 to the block notice), no DOI: mirror -> VERIFIED (mirror), one notice
+        net, st, logs = setup({es.OFFICIAL + "/*": [blocked], es.MIRROR + "/api/search*": [api]})
+        r = check_entry(plonk, False, st)
+        assert r["status"] == "VERIFIED (mirror)" and "(mirror)" in r["detail"], r
+        r2 = check_entry(dict(plonk, key="again"), False, st)
+        assert r2["status"] == "VERIFIED (mirror)"
+        assert sum(u.startswith(es.OFFICIAL) for _, u in net.calls) == 1        # official tried once per run
+        assert sum("third-party mirror" in m for m in logs) == 1
+        # official blocked, entry has a DOI: the DOI is used, not the mirror
+        net, st, logs = setup({es.OFFICIAL + "/*": [blocked], CROSSREF + "/*": [crossref(title, authors)]})
+        r = check_entry(with_doi, False, st)
+        assert r["status"] == "VERIFIED" and "checked via DOI" in r["detail"], r
+        assert not any(u.startswith(es.MIRROR) for _, u in net.calls)
+        # mirror disabled: blocked + no DOI stays UNCHECKED (never NOT_FOUND)
+        net, st, logs = setup({es.OFFICIAL + "/*": [blocked]})
+        st["eprint_source"].allow_mirror = False
+        r = check_entry(plonk, False, st)
+        assert r["status"] == "UNCHECKED" and "mirror disabled" in r["detail"], r
+        # Crossref 429 + Retry-After: waited out, then VERIFIED
+        net, st, logs = setup({CROSSREF + "/*": [Response("", 429, {"retry-after": "9"}),
+                                                  crossref(title, authors)]})
+        doi_only = dict(plonk, fields={k: v for k, v in with_doi["fields"].items() if k != "howpublished"})
+        r = check_entry(doi_only, False, st)
+        t = [x for x, _ in net.calls]
+        assert r["status"] == "VERIFIED" and t[1] - t[0] >= 9.0, (r, t)
+        # cache: the same lookup in a new run makes no request
+        with tempfile.TemporaryDirectory() as tmp:
+            net, st, _ = setup({CROSSREF + "/*": [crossref(title, authors)]}, cache_dir=tmp)
+            check_entry(doi_only, False, st)
+            n = len(net.calls)
+            net2, st2, _ = setup({CROSSREF + "/*": [crossref(title, authors)]}, cache_dir=tmp)
+            assert check_entry(doi_only, False, st2)["status"] == "VERIFIED" and not net2.calls and n == 1
+        # request budget: the run stops, the rest is UNCHECKED with a hint
+        net, st, logs = setup({CROSSREF + "/*": [crossref(title, authors)]}, max_requests=2)
+        many = [dict(doi_only, key=f"k{i}", fields=dict(doi_only["fields"], doi=f"10.0000/toy{i}"))
+                for i in range(4)]
+        out, stopped = run_entries(many, False, st, quiet=True)
+        assert [x["status"] for x in out] == ["VERIFIED", "VERIFIED", "UNCHECKED", "UNCHECKED"], out
+        assert stopped and "budget of 2" in stopped and "request budget" in out[2]["detail"]
+        # subtitles in a separate field (Crossref `subtitle`, DataCite titleType Subtitle)
+        gkr = parse_bib(r"""@article{GKR15, author = {Shafi Goldwasser and Yael Tauman Kalai and Guy N. Rothblum},
+          title = {Delegating Computation: Interactive Proofs for Muggles}, doi = {10.0000/gkr}, year = {2015}}""")[0]
+        gkr_au = ["Shafi Goldwasser", "Yael Tauman Kalai", "Guy N. Rothblum"]
+        net, st, _ = setup({CROSSREF + "/*": [crossref("Delegating Computation", gkr_au,
+                                                       "Interactive Proofs for Muggles", 2015)]})
+        r = check_entry(gkr, False, st)
+        assert r["status"] == "VERIFIED" and r["score"] == 1.0, r
+        net, st, _ = setup({CROSSREF + "/*": [crossref("Delegating Computation", gkr_au, year=2015)]})
+        assert check_entry(gkr, False, st)["status"] == "MISMATCH"               # without the field: as before
+        short = dict(gkr, fields=dict(gkr["fields"], title="Delegating Computation"))
+        net, st, _ = setup({CROSSREF + "/*": [crossref("Delegating Computation", gkr_au,
+                                                       "Interactive Proofs for Muggles", 2015)]})
+        assert check_entry(short, False, st)["status"] == "VERIFIED"             # main title alone still matches
+        dc = _datacite_item({"data": {"attributes": {"titles": [
+            {"title": "Delegating Computation"}, {"title": "Interactive Proofs for Muggles", "titleType": "Subtitle"}],
+            "creators": [{"name": "Goldwasser, Shafi"}], "publicationYear": 2015}}}, "10.0000/gkr")
+        assert dc["title"] == "Delegating Computation: Interactive Proofs for Muggles", dc
+        assert join_subtitle("Sonic: Zero-Knowledge SNARKs", ["Zero-Knowledge SNARKs"]) == "Sonic: Zero-Knowledge SNARKs"
+        # a mirror URL in an entry is flagged
+        assert any("mirror URL" in x for x in lint(dict(plonk, fields=dict(
+            plonk["fields"], url="https://eprint.iacr.asia/2019/953"))))
+    finally:
+        polite_http.set_default_client(None)
+
+
+def run_entries(entries: list[dict], offline: bool, state: dict, quiet: bool = False):
+    """Check entries in order; stop at the request budget.  Returns (results, stop message or None)."""
+    results, stopped = [], None
+    for idx, e in enumerate(entries, 1):
+        if stopped:
+            r = {"key": e["key"], "type": e["type"], "title": delatex(e["fields"].get("title", ""))[:120],
+                 "lint": lint(e), "status": "UNCHECKED", "score": 0.0,
+                 "detail": "not checked: request budget reached (re-run; finished lookups are cached)"}
+        else:
+            try:
+                r = check_entry(e, offline, state)
+            except polite_http.RequestBudgetExceeded as exc:
+                stopped = str(exc)
+                if not quiet:
+                    print(f"STOP: {exc}", file=sys.stderr)
+                r = {"key": e["key"], "type": e["type"], "title": delatex(e["fields"].get("title", ""))[:120],
+                     "lint": lint(e), "status": "UNCHECKED", "score": 0.0,
+                     "detail": "not checked: request budget reached (re-run; finished lookups are cached)"}
+        results.append(r)
+        if not quiet:
+            print(f"[{idx}/{len(entries)}] {r['status']:9s} {r['key']}", file=sys.stderr)
+    return results, stopped
+
+
 def selftest(online: bool) -> int:
     es = parse_bib(SELFTEST_BIB)
-    assert [e["key"] for e in es] == ["cggi-tfhe", "fake"], es
-    assert es[0]["fields"]["year"] == "2018" and not es[0]["unverified_marker"]
+    assert [e["key"] for e in es] == ["GWC19", "fake"], es
+    assert es[0]["fields"]["year"] == "2019" and not es[0]["unverified_marker"]
     assert es[1]["unverified_marker"]
-    assert find_eprint_id(es[0]["fields"]) == "2018/421"
-    assert surnames_from_bib(es[0]["fields"]["author"])[-1] == "izabachene"
+    assert find_eprint_id(es[0]["fields"]) == "2019/953"
+    assert surnames_from_bib(es[0]["fields"]["author"])[-1] == "ciobotaru"
+    assert surnames_from_bib("Malika Izabach{\\`e}ne") == ["izabachene"]
     assert "placeholder author list ('X and others' only)" in lint(es[1])
     assert title_sim("{TFHE}: Fast Fully", "TFHE: fast fully") == 1.0
     assert not is_url_source(es[0])            # ePrint-backed @misc keeps the ePrint path
@@ -665,32 +851,18 @@ def selftest(online: bool) -> int:
     st_hit = dict(st, search_dblp=fake_hit, search_crossref=fake_hit)
     rh = check_entry(bs["book-url"], False, st_hit)
     assert rh["status"] == "VERIFIED" and "@book via URL" not in rh["detail"], rh   # a record wins
-    # ePrint refuses the client: UNCHECKED (never NOT_FOUND), and a DOI on the entry is still checked
-    def fake_blocked(eid):
-        raise Blocked("ePrint refused this client (IP blocked)")
-
-    eb = parse_bib(SELFTEST_BIB)[0]
-    st_b = {"delay": 0.0, "fetch_eprint": fake_blocked}
-    r_b = check_entry(eb, False, st_b)
-    assert r_b["status"] == "UNCHECKED" and "not checked" in r_b["detail"] and st_b["eprint_blocked"], r_b
-    eb_doi = dict(eb, fields=dict(eb["fields"], doi="10.0000/toy.0002"))
-    st_b2 = dict(st_b, eprint_blocked=False)
-    import unittest.mock as _m
-    with _m.patch(__name__ + ".fetch_crossref_doi", lambda doi: {
-            "title": delatex(eb["fields"]["title"]), "authors": [a.strip() for a in eb["fields"]["author"].split(" and ")],
-            "year": int(eb["fields"]["year"]), "source": "fake doi"}):
-        r_d = check_entry(eb_doi, False, st_b2)
-    assert r_d["status"] == "VERIFIED", r_d
+    _selftest_network(parse_bib(SELFTEST_BIB)[0])
     print("selftest (offline part): OK")
     if online:
-        st = {"delay": 0.5}
+        polite_http.set_default_client(None)
+        st = {"url_timeout": 10.0}
         r0, r1 = check_entry(es[0], False, st), check_entry(es[1], False, st)
         print(f"  online: {r0['key']} -> {r0['status']} ({r0['detail'][:90]})")
         print(f"  online: {r1['key']} -> {r1['status']} ({r1['detail'][:90]})")
         if r0["status"] == "UNCHECKED":
             print("  network unavailable: online part skipped")
         else:
-            assert r0["status"] == "VERIFIED", r0
+            assert r0["status"] in VERIFIED_STATUSES, r0
             assert r1["status"] in ("NOT_FOUND", "WEAK"), r1
             print("selftest (online part): OK")
     return 0
@@ -702,10 +874,14 @@ def main(argv=None) -> int:
     ap.add_argument("--offline", action="store_true", help="static lint only, no network")
     ap.add_argument("--only", help="comma-separated keys to check")
     ap.add_argument("--json", help="write JSON report to this file")
-    ap.add_argument("--delay", type=float, default=1.0, help="seconds between network lookups")
     ap.add_argument("--url-timeout", type=float, default=10.0, help="per-request timeout for URL sources")
+    ap.add_argument("--no-mirror", action="store_true",
+                    help="never use the third-party ePrint mirror (ePrint-only entries stay UNCHECKED)")
+    ap.add_argument("--require-official", action="store_true",
+                    help="exit 1 on VERIFIED (mirror) rows too")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--selftest-online", action="store_true", help="selftest incl. two live lookups")
+    polite_http.add_cli_args(ap)
     a = ap.parse_args(argv)
     if a.selftest or a.selftest_online:
         return selftest(a.selftest_online)
@@ -717,14 +893,18 @@ def main(argv=None) -> int:
     if a.only:
         keep = set(a.only.split(","))
         entries = [e for e in entries if e["key"] in keep]
-    state = {"delay": 0.0 if a.offline else a.delay, "url_timeout": a.url_timeout}
-    results = []
-    for idx, e in enumerate(entries, 1):
-        r = check_entry(e, a.offline, state)
-        results.append(r)
-        print(f"[{idx}/{len(entries)}] {r['status']:9s} {r['key']}", file=sys.stderr)
-    if state.get("eprint_blocked"):
-        print("note: ePrint refused this client; ePrint ids were not checked (DOIs still were)", file=sys.stderr)
+    c = polite_http.client_from_args(a)
+    state = {"url_timeout": a.url_timeout, "no_mirror": a.no_mirror}
+    results, stopped = run_entries(entries, a.offline, state)
+    src = state.get("eprint_source")
+    if src is not None and src.official_down:
+        print(f"note: official ePrint unusable ({src.official_down}); entries with a DOI were checked "
+              f"through it" + ("" if a.no_mirror else ", the others on the third-party mirror (VERIFIED (mirror))"),
+              file=sys.stderr)
+    if stopped:
+        print(f"note: stopped after {c.requests} requests: {stopped}", file=sys.stderr)
+    if not a.offline:
+        print(f"note: {c.requests} network requests, {c.cache_hits} cache hits", file=sys.stderr)
     if state.get("dblp_blocked"):
         print("note: DBLP served a bot challenge; title searches used Crossref only", file=sys.stderr)
     dups = duplicate_titles(entries)
@@ -732,7 +912,8 @@ def main(argv=None) -> int:
     if a.json:
         with open(a.json, "w", encoding="utf-8") as fh:
             json.dump({"results": results, "duplicates": dups}, fh, indent=2, ensure_ascii=False)
-    bad = [r for r in results if r["status"] != "VERIFIED"]
+    ok = ("VERIFIED",) if a.require_official else VERIFIED_STATUSES
+    bad = [r for r in results if r["status"] not in ok]
     return 1 if bad else 0
 
 
