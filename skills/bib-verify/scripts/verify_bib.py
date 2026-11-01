@@ -240,6 +240,8 @@ def wayback_snapshot(url: str, timeout: float = 10.0) -> str | None:
 
 def fetch_eprint(eid: str) -> dict | None:
     xml = http_get(EPRINT_OAI.format(id=eid))
+    if "has been blocked" in xml:   # IACR redirects banned clients to a notice page instead of an error
+        raise Blocked("ePrint refused this client (IP blocked)")
     if "<dc:title>" not in xml:
         return None
     title = html.unescape(re.search(r"<dc:title>(.*?)</dc:title>", xml, re.S).group(1)).strip()
@@ -465,7 +467,14 @@ def check_entry(e: dict, offline: bool, state: dict) -> dict:
     try:
         eid = find_eprint_id(f)
         if eid:
-            res["status"], res["score"], res["detail"] = judge(e, fetch_eprint(eid), f"id ePrint {eid}")
+            try:
+                if state.get("eprint_blocked"):
+                    raise Blocked("ePrint refused this client earlier in the run")
+                res["status"], res["score"], res["detail"] = judge(
+                    e, state.get("fetch_eprint", fetch_eprint)(eid), f"id ePrint {eid}")
+            except Blocked as exc:   # a refusal is no evidence about the entry: UNCHECKED, then try the DOI
+                state["eprint_blocked"] = True
+                res["status"], res["detail"] = "UNCHECKED", f"ePrint {eid} not checked: {exc}"
             if res["status"] == "VERIFIED" or not f.get("doi"):
                 return res
         if f.get("doi"):
@@ -656,6 +665,22 @@ def selftest(online: bool) -> int:
     st_hit = dict(st, search_dblp=fake_hit, search_crossref=fake_hit)
     rh = check_entry(bs["book-url"], False, st_hit)
     assert rh["status"] == "VERIFIED" and "@book via URL" not in rh["detail"], rh   # a record wins
+    # ePrint refuses the client: UNCHECKED (never NOT_FOUND), and a DOI on the entry is still checked
+    def fake_blocked(eid):
+        raise Blocked("ePrint refused this client (IP blocked)")
+
+    eb = parse_bib(SELFTEST_BIB)[0]
+    st_b = {"delay": 0.0, "fetch_eprint": fake_blocked}
+    r_b = check_entry(eb, False, st_b)
+    assert r_b["status"] == "UNCHECKED" and "not checked" in r_b["detail"] and st_b["eprint_blocked"], r_b
+    eb_doi = dict(eb, fields=dict(eb["fields"], doi="10.0000/toy.0002"))
+    st_b2 = dict(st_b, eprint_blocked=False)
+    import unittest.mock as _m
+    with _m.patch(__name__ + ".fetch_crossref_doi", lambda doi: {
+            "title": delatex(eb["fields"]["title"]), "authors": [a.strip() for a in eb["fields"]["author"].split(" and ")],
+            "year": int(eb["fields"]["year"]), "source": "fake doi"}):
+        r_d = check_entry(eb_doi, False, st_b2)
+    assert r_d["status"] == "VERIFIED", r_d
     print("selftest (offline part): OK")
     if online:
         st = {"delay": 0.5}
@@ -698,6 +723,8 @@ def main(argv=None) -> int:
         r = check_entry(e, a.offline, state)
         results.append(r)
         print(f"[{idx}/{len(entries)}] {r['status']:9s} {r['key']}", file=sys.stderr)
+    if state.get("eprint_blocked"):
+        print("note: ePrint refused this client; ePrint ids were not checked (DOIs still were)", file=sys.stderr)
     if state.get("dblp_blocked"):
         print("note: DBLP served a bot challenge; title searches used Crossref only", file=sys.stderr)
     dups = duplicate_titles(entries)
