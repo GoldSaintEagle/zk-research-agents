@@ -4,28 +4,35 @@ Curated, public-only starting points for ZK research, one list per direction. Ea
 (scope, suggested reading order, a table with a one-line "why read") and a `.bib` with the same name
 (drop-in BibTeX). They are a seed for `lit-scout`, not a survey.
 
-Every entry was resolved on 2026-11-01 by `skills/bib-verify/scripts/verify_bib.py` and is `VERIFIED`
-(title, authors, year) against its **DOI** record (Crossref or DataCite). On that date eprint.iacr.org
-refused this machine and DBLP served a bot challenge, so:
+Every entry was checked on 2026-11-01 by `skills/bib-verify/scripts/verify_bib.py`. On that date
+eprint.iacr.org refused this machine (HTTP 302 to the IACR block notice) and DBLP served a bot
+challenge, so:
 
-- every entry carries a `doi`; the DOI is the published (or full journal) version, which is the version
-  a paper should cite anyway;
-- no `eprint=` ids are recorded yet — add them after a verifier run that can reach ePrint;
-- important papers that exist only on ePrint (e.g. PLONK, Plookup, cq, logUp, CCS, SuperNova, CycleFold,
-  Halo, ProtoGalaxy, Cairo) are **not** in the lists: they could not be verified, and the rule below
-  keeps unverified entries out. The candidates are listed in the hand-over notes of the batch that
-  built the lists; add them once they verify.
+- an entry with a DOI is `VERIFIED` (title, authors, year) against its **DOI** record (Crossref or
+  DataCite); the DOI is the published (or full journal) version, which a paper should cite anyway, and
+  no `eprint=` is recorded for these entries yet;
+- an entry that exists only on ePrint (PLONK, Plookup, cq, logUp, CCS, SuperNova, CycleFold, Halo,
+  Cairo, ...) carries `eprint=` and the official `url = https://eprint.iacr.org/YYYY/NNNN`, and is
+  `VERIFIED (mirror)`: it matched the record of the **third-party** mirror https://eprint.iacr.asia
+  (not run by the IACR), which the verifier uses only when the official site is unusable and the entry
+  has no DOI. Re-check these rows against eprint.iacr.org once it answers this machine again;
+- 116 entries are `VERIFIED`, 23 `VERIFIED (mirror)`, none in any other state.
+
+Papers still left out: the Chaliasos et al. SoK on SNARK vulnerabilities (USENIX Security 2024; not on
+ePrint according to the mirror, no DOI), the RISC Zero / SP1 write-ups and the TinyRAM specification
+(not on ePrint), Chiesa–Tromer PCD (ICS 2010), and the tools Ecne and Circomspect (no paper record);
+they need a URL-source entry or a DOI before they can be added.
 
 | list | scope | entries |
 |---|---|---|
-| [pcs](pcs.md) | polynomial commitments: KZG and multilinear-from-univariate, inner-product / DARK, RS proximity (FRI, STIR, WHIR), linear-code PCS (Ligero, Brakedown, BaseFold, Blaze) | 18 |
-| [piop-arithmetization](piop-arithmetization.md) | IOPs and PIOP compilers, sum-check / GKR provers, linear PCPs and Groth16, AHPs, STARK/AIR, multilinear PIOPs | 14 |
-| [lookup](lookup.md) | lookup and memory-checking arguments: KZG / table-independent line, Lasso, Twist and Shout, folding lookups | 8 |
-| [folding-recursion](folding-recursion.md) | IVC and PCD, cycles of curves, accumulation, Nova-family folding | 14 |
-| [zkvm](zkvm.md) | RAM-to-circuit reductions, TinyRAM, memory checking, RAM-model ZK, Jolt, Ceno, folding-based zkVMs | 12 |
-| [fiat-shamir-soundness](fiat-shamir-soundness.md) | Fiat–Shamir, forking, random-oracle caveats, attacks on FS, correlation intractability, round-by-round and state-restoration soundness, proximity gaps and FRI concrete soundness | 19 |
-| [circuit-security](circuit-security.md) | circuit languages and compilers, under-constraint detection, formal verification, testing and fuzzing of circuits | 14 |
-| [pq-and-hash-based-zk](pq-and-hash-based-zk.md) | MPC-in-the-head and VOLE-in-the-head, ZK-based signatures (Picnic, Banquet, Limbo, SDitH), quantum-ROM security of succinct arguments, lattice-based arguments | 14 |
+| [pcs](pcs.md) | polynomial commitments: KZG and multilinear-from-univariate, inner-product / DARK, RS proximity (FRI, STIR, WHIR), linear-code PCS (Ligero, Brakedown, BaseFold, Blaze) | 20 |
+| [piop-arithmetization](piop-arithmetization.md) | IOPs and PIOP compilers, sum-check / GKR provers, linear PCPs and Groth16, Sonic and PLONK, CCS, AHPs, STARK/AIR, multilinear PIOPs | 18 |
+| [lookup](lookup.md) | lookup and memory-checking arguments: Plookup, Caulk / cq / KZG table-independent line, logUp and logUp-GKR, Lasso, Twist and Shout, folding lookups | 15 |
+| [folding-recursion](folding-recursion.md) | IVC and PCD, cycles of curves, Halo and accumulation, Nova-family folding (SuperNova, CycleFold, ProtoGalaxy) | 21 |
+| [zkvm](zkvm.md) | RAM-to-circuit reductions, TinyRAM and vnTinyRAM, Cairo, memory checking, RAM-model ZK, Jolt, Ceno, folding-based zkVMs | 15 |
+| [fiat-shamir-soundness](fiat-shamir-soundness.md) | Fiat–Shamir, forking, random-oracle caveats, attacks on FS, correlation intractability, round-by-round and state-restoration soundness, proximity gaps and FRI concrete soundness | 20 |
+| [circuit-security](circuit-security.md) | circuit languages and compilers, under-constraint detection, formal verification, testing and fuzzing of circuits | 15 |
+| [pq-and-hash-based-zk](pq-and-hash-based-zk.md) | MPC-in-the-head and VOLE-in-the-head, ZK-based signatures (Picnic, Banquet, Limbo, SDitH), quantum-ROM security of succinct arguments, lattice-based arguments | 15 |
 
 **Why these eight directions.** They follow the plan's split of the old `zk-proofs` list (PCS, PIOP,
 lookup, folding, zkVM, FS soundness, circuit security, PQ-ZK) and map onto the skills that consume them:
@@ -47,9 +54,12 @@ books' commentary.
 Rules for extending a list:
 
 1. Public references only; give the DOI (published version) and, once verified, the ePrint id in `eprint=`.
+   An ePrint-only paper gets `eprint=`, `howpublished = {Cryptology ePrint Archive, Paper YYYY/NNNN}` and
+   `url = {https://eprint.iacr.org/YYYY/NNNN}` — the official canonical URL, never a mirror URL.
 2. Anything you are not sure exists goes in with a `% UNVERIFIED` comment line directly above it, and
    leaves the list before it is committed unless the verifier confirms it.
-3. Run `python3 skills/bib-verify/scripts/verify_bib.py <list>.bib` and fix every non-`VERIFIED` row.
+3. Run `python3 skills/bib-verify/scripts/verify_bib.py <list>.bib` (rate-limited; one list at a time) and fix
+   every row that is neither `VERIFIED` nor `VERIFIED (mirror)`.
    `UNCHECKED` (service error, blocked) is not a pass: re-run until the row resolves. Never copy authors,
    DOIs or ePrint numbers from memory — copy them from the record the verifier matched.
 4. Keep a list under ~25 entries; spin off a new list rather than growing one. Keep one home per paper.

@@ -1,8 +1,8 @@
 % Reading list: pcs. Public references only.
-% Verified with skills/bib-verify/scripts/verify_bib.py; entries still marked
-% '% UNVERIFIED' could not be confirmed automatically -- check by hand before citing.
-% Every entry is resolved through its DOI (Crossref / DataCite); ePrint ids are omitted
-% because eprint.iacr.org was unreachable from this machine on 2026-11-01.
+% Verified with skills/bib-verify/scripts/verify_bib.py on 2026-11-01: entries with a DOI through
+% Crossref / DataCite; ePrint-only entries (eprint = ...) through the third-party ePrint mirror
+% (eprint.iacr.org refused this machine), so they report VERIFIED (mirror). The url of every
+% ePrint entry is the official https://eprint.iacr.org/YYYY/NNNN.
 
 @inproceedings{KZG10,
   author    = {Aniket Kate and Gregory M. Zaverucha and Ian Goldberg},
@@ -146,4 +146,22 @@
   booktitle = {EUROCRYPT 2025},
   year      = {2025},
   doi       = {10.1007/978-3-031-91134-7_5},
+}
+
+@misc{BDFG20,
+  author       = {Dan Boneh and Justin Drake and Ben Fisch and Ariel Gabizon},
+  title        = {Efficient polynomial commitment schemes for multiple points and polynomials},
+  howpublished = {Cryptology ePrint Archive, Paper 2020/081},
+  year         = {2020},
+  eprint       = {2020/081},
+  url          = {https://eprint.iacr.org/2020/081},
+}
+
+@misc{EG25,
+  author       = {Liam Eagen and Ariel Gabizon},
+  title        = {{MERCURY}: A multilinear Polynomial Commitment Scheme with constant proof size and no prover {FFTs}},
+  howpublished = {Cryptology ePrint Archive, Paper 2025/385},
+  year         = {2025},
+  eprint       = {2025/385},
+  url          = {https://eprint.iacr.org/2025/385},
 }

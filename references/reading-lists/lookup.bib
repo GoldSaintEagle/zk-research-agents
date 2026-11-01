@@ -1,8 +1,8 @@
 % Reading list: lookup. Public references only.
-% Verified with skills/bib-verify/scripts/verify_bib.py; entries still marked
-% '% UNVERIFIED' could not be confirmed automatically -- check by hand before citing.
-% Every entry is resolved through its DOI (Crossref / DataCite); ePrint ids are omitted
-% because eprint.iacr.org was unreachable from this machine on 2026-11-01.
+% Verified with skills/bib-verify/scripts/verify_bib.py on 2026-11-01: entries with a DOI through
+% Crossref / DataCite; ePrint-only entries (eprint = ...) through the third-party ePrint mirror
+% (eprint.iacr.org refused this machine), so they report VERIFIED (mirror). The url of every
+% ePrint entry is the official https://eprint.iacr.org/YYYY/NNNN.
 
 @inproceedings{BCGJM18,
   author    = {Jonathan Bootle and Andrea Cerulli and Jens Groth and Sune Jakobsen and Mary Maller},
@@ -66,4 +66,66 @@
   booktitle = {CRYPTO 2026},
   year      = {2026},
   doi       = {10.1007/978-3-032-35424-2_10},
+}
+
+@misc{GW20,
+  author       = {Ariel Gabizon and Zachary J. Williamson},
+  title        = {plookup: A simplified polynomial protocol for lookup tables},
+  howpublished = {Cryptology ePrint Archive, Paper 2020/315},
+  year         = {2020},
+  eprint       = {2020/315},
+  url          = {https://eprint.iacr.org/2020/315},
+}
+
+@inproceedings{ZBKMNS22,
+  author    = {Arantxa Zapico and Vitalik Buterin and Dmitry Khovratovich and Mary Maller and Anca Nitulescu and Mark Simkin},
+  title     = {Caulk: Lookup Arguments in Sublinear Time},
+  booktitle = {CCS 2022},
+  year      = {2022},
+  doi       = {10.1145/3548606.3560646},
+}
+
+@misc{PK22,
+  author       = {Jim Posen and Assimakis A. Kattis},
+  title        = {{Caulk+}: Table-independent lookup arguments},
+  howpublished = {Cryptology ePrint Archive, Paper 2022/957},
+  year         = {2022},
+  eprint       = {2022/957},
+  url          = {https://eprint.iacr.org/2022/957},
+}
+
+@misc{GK22,
+  author       = {Ariel Gabizon and Dmitry Khovratovich},
+  title        = {flookup: Fractional decomposition-based lookups in quasi-linear time independent of table size},
+  howpublished = {Cryptology ePrint Archive, Paper 2022/1447},
+  year         = {2022},
+  eprint       = {2022/1447},
+  url          = {https://eprint.iacr.org/2022/1447},
+}
+
+@misc{Hab22,
+  author       = {Ulrich Hab{\"o}ck},
+  title        = {Multivariate lookups based on logarithmic derivatives},
+  howpublished = {Cryptology ePrint Archive, Paper 2022/1530},
+  year         = {2022},
+  eprint       = {2022/1530},
+  url          = {https://eprint.iacr.org/2022/1530},
+}
+
+@misc{EFG22,
+  author       = {Liam Eagen and Dario Fiore and Ariel Gabizon},
+  title        = {cq: Cached quotients for fast lookups},
+  howpublished = {Cryptology ePrint Archive, Paper 2022/1763},
+  year         = {2022},
+  eprint       = {2022/1763},
+  url          = {https://eprint.iacr.org/2022/1763},
+}
+
+@misc{PH23,
+  author       = {Shahar Papini and Ulrich Hab{\"o}ck},
+  title        = {Improving logarithmic derivative lookups using {GKR}},
+  howpublished = {Cryptology ePrint Archive, Paper 2023/1284},
+  year         = {2023},
+  eprint       = {2023/1284},
+  url          = {https://eprint.iacr.org/2023/1284},
 }

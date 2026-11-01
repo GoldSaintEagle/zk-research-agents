@@ -1,8 +1,8 @@
 % Reading list: piop-arithmetization. Public references only.
-% Verified with skills/bib-verify/scripts/verify_bib.py; entries still marked
-% '% UNVERIFIED' could not be confirmed automatically -- check by hand before citing.
-% Every entry is resolved through its DOI (Crossref / DataCite); ePrint ids are omitted
-% because eprint.iacr.org was unreachable from this machine on 2026-11-01.
+% Verified with skills/bib-verify/scripts/verify_bib.py on 2026-11-01: entries with a DOI through
+% Crossref / DataCite; ePrint-only entries (eprint = ...) through the third-party ePrint mirror
+% (eprint.iacr.org refused this machine), so they report VERIFIED (mirror). The url of every
+% ePrint entry is the official https://eprint.iacr.org/YYYY/NNNN.
 
 @article{LFKN92,
   author    = {Carsten Lund and Lance Fortnow and Howard Karloff and Noam Nisan},
@@ -114,4 +114,38 @@
   booktitle = {EUROCRYPT 2023},
   year      = {2023},
   doi       = {10.1007/978-3-031-30617-4_17},
+}
+
+@misc{GWC19,
+  author       = {Ariel Gabizon and Zachary J. Williamson and Oana Ciobotaru},
+  title        = {{PLONK}: Permutations over {Lagrange}-bases for Oecumenical Noninteractive arguments of Knowledge},
+  howpublished = {Cryptology ePrint Archive, Paper 2019/953},
+  year         = {2019},
+  eprint       = {2019/953},
+  url          = {https://eprint.iacr.org/2019/953},
+}
+
+@misc{STW23,
+  author       = {Srinath Setty and Justin Thaler and Riad Wahby},
+  title        = {Customizable constraint systems for succinct arguments},
+  howpublished = {Cryptology ePrint Archive, Paper 2023/552},
+  year         = {2023},
+  eprint       = {2023/552},
+  url          = {https://eprint.iacr.org/2023/552},
+}
+
+@article{GKR15,
+  author    = {Shafi Goldwasser and Yael Tauman Kalai and Guy N. Rothblum},
+  title     = {Delegating Computation: Interactive Proofs for Muggles},
+  journal   = {J. ACM 2015},
+  year      = {2015},
+  doi       = {10.1145/2699436},
+}
+
+@inproceedings{MBKM19,
+  author    = {Mary Maller and Sean Bowe and Markulf Kohlweiss and Sarah Meiklejohn},
+  title     = {Sonic: Zero-Knowledge {SNARKs} from Linear-Size Universal and Updatable Structured Reference Strings},
+  booktitle = {CCS 2019},
+  year      = {2019},
+  doi       = {10.1145/3319535.3339817},
 }
