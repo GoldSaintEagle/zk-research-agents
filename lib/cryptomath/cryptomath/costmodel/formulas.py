@@ -4,15 +4,15 @@
   evaluate, add, scale, weight, compare asymptotically, find crossover points.
 * :func:`compare` -- run two Python implementations under counters and
   produce a Markdown table (counts, weighted totals, ratio).
-* A few classic formulas (Paterson--Stockmeyer, BSGS linear transform,
-  Karatsuba vs schoolbook) as ready-made examples.
+* ZK primitive formulas: MSM, NTT, Merkle commit / opening, sum-check, KZG
+  commit / open / verify, FRI commit / folding / queries.  Each one is the
+  symbolic twin of an integer function in :mod:`cryptomath.costmodel.zkops`
+  (sources are cited there); tests check that the two agree.
+* Schoolbook vs Karatsuba multiplication as a generic crossover example.
 
-References
-----------
-* M. S. Paterson, L. J. Stockmeyer, "On the number of nonscalar
-  multiplications necessary to evaluate polynomials", SIAM J. Comput. 2(1), 1973.
-* S. Halevi, V. Shoup, "Algorithms in HElib", CRYPTO 2014, ePrint 2014/106
-  (BSGS for linear maps).
+Symbols: ``N`` (size, a power of two), ``b`` (scalar bits), ``c`` (Pippenger
+window), ``L`` (Merkle leaves), ``q`` (queries), ``v`` (sum-check variables),
+``d`` (degree per variable), ``rho`` (inverse rate).
 """
 from __future__ import annotations
 
@@ -21,10 +21,13 @@ from typing import Callable, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import sympy as sp
 
-from .counter import CMULT, DEFAULT_WEIGHTS, PMULT, ROT, Counter
+from .counter import (BFLY, DEFAULT_WEIGHTS, GADD, HASH, MSM, MSM_PTS, NTT, PAIR, SC_ROUND, SC_TERM,
+                      Counter)
 
-__all__ = ["CostFormula", "compare", "markdown_table", "ps_formula",
-           "bsgs_lintrans_formula", "karatsuba_formula", "schoolbook_formula", "symbols"]
+__all__ = ["CostFormula", "compare", "markdown_table", "symbols", "karatsuba_formula", "schoolbook_formula",
+           "msm_formula", "ntt_formula", "merkle_formula", "merkle_opening_formula", "sumcheck_formula",
+           "kzg_commit_formula", "kzg_open_formula", "kzg_verify_formula", "fri_commit_formula",
+           "fri_fold_formula", "fri_query_formula"]
 
 
 def symbols(names: str):
@@ -126,16 +129,8 @@ def compare(fa: Callable, fb: Callable, *args, names: Tuple[str, str] = ("A", "B
 
 # ---- ready-made formulas -------------------------------------------------
 
-def ps_formula() -> CostFormula:
-    """Paterson--Stockmeyer nonscalar mults for degree d: about sqrt(2d) + log2(d)."""
-    d = sp.Symbol("d", positive=True)
-    return CostFormula({CMULT: sp.sqrt(2 * d) + sp.log(d, 2)}, "PS")
-
-
-def bsgs_lintrans_formula() -> CostFormula:
-    """BSGS diagonal method on n diagonals with n1 baby steps: rotations n1 + n/n1 - 2, ptxt mults n."""
-    n, n1 = sp.symbols("n n1", positive=True)
-    return CostFormula({ROT: n1 + n / n1 - 2, PMULT: n}, "BSGS-LT")
+def _sym(names: str):
+    return sp.symbols(names, positive=True)
 
 
 def schoolbook_formula() -> CostFormula:
@@ -146,3 +141,70 @@ def schoolbook_formula() -> CostFormula:
 def karatsuba_formula() -> CostFormula:
     n = sp.Symbol("n", positive=True)
     return CostFormula({"field_mult": n ** sp.log(3, 2)}, "karatsuba")
+
+
+def msm_formula() -> CostFormula:
+    """Pippenger MSM: ceil(b/c) (N + 2^(c+1)) group additions (c = window)."""
+    N, b, c = _sym("N b c")
+    return CostFormula({MSM: sp.Integer(1), MSM_PTS: N, GADD: sp.ceiling(b / c) * (N + 2 ** (c + 1))}, "MSM")
+
+
+def ntt_formula() -> CostFormula:
+    """Radix-2 NTT of size N: (N/2) log2 N butterflies."""
+    N = sp.Symbol("N", positive=True)
+    return CostFormula({NTT: sp.Integer(1), BFLY: N / 2 * sp.log(N, 2)}, "NTT")
+
+
+def merkle_formula() -> CostFormula:
+    """Binary Merkle commitment to L leaves: 2L - 1 hashes."""
+    L = sp.Symbol("L", positive=True)
+    return CostFormula({HASH: 2 * L - 1}, "Merkle")
+
+
+def merkle_opening_formula() -> CostFormula:
+    """q unpruned openings in a tree of L leaves: q log2 L path nodes (verifier hashes, proof hashes)."""
+    L, q = _sym("L q")
+    return CostFormula({HASH: q * sp.log(L, 2)}, "Merkle-open")
+
+
+def sumcheck_formula() -> CostFormula:
+    """Sum-check prover over v variables, degree d: v rounds, (d+1)(2^v - 1) summand evaluations."""
+    v, d = _sym("v d")
+    return CostFormula({SC_ROUND: v, SC_TERM: (d + 1) * (2 ** v - 1)}, "sum-check")
+
+
+def kzg_commit_formula() -> CostFormula:
+    return msm_formula()
+
+
+def kzg_open_formula() -> CostFormula:
+    """Opening = MSM over the N - 1 coefficients of the quotient."""
+    N, b, c = _sym("N b c")
+    M = N - 1
+    return CostFormula({MSM: sp.Integer(1), MSM_PTS: M, GADD: sp.ceiling(b / c) * (M + 2 ** (c + 1))}, "KZG-open")
+
+
+def kzg_verify_formula() -> CostFormula:
+    return CostFormula({PAIR: sp.Integer(2)}, "KZG-verify")
+
+
+def fri_commit_formula() -> CostFormula:
+    """Interpolate (NTT N), extend (NTT rho N), Merkle tree over rho N leaves."""
+    N, rho = _sym("N rho")
+    return CostFormula({NTT: sp.Integer(2),
+                        BFLY: N / 2 * sp.log(N, 2) + rho * N / 2 * sp.log(rho * N, 2),
+                        HASH: 2 * rho * N - 1}, "FRI-commit")
+
+
+def fri_fold_formula() -> CostFormula:
+    """Folding layers (factor 2): trees over rho N / 2, ..., 2 leaves, sum_i (2 rho N / 2^i - 1)."""
+    N, rho = _sym("N rho")
+    D = sp.log(rho * N, 2)
+    return CostFormula({HASH: 2 * rho * N - 4 - (D - 1)}, "FRI-fold")
+
+
+def fri_query_formula() -> CostFormula:
+    """Verifier: q unpruned paths in layers of depth D, ..., 1 with D = log2(rho N)."""
+    N, rho, q = _sym("N rho q")
+    D = sp.log(rho * N, 2)
+    return CostFormula({HASH: q * D * (D + 1) / 2}, "FRI-query")

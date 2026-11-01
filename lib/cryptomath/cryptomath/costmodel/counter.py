@@ -4,22 +4,27 @@ Use it to *screen ideas before implementing them*: write the algorithm once
 in plain Python against abstract operations, run it under a ``Counter`` and
 compare the counts (or a weighted cost) with a baseline.
 
-    from cryptomath.costmodel import Counter, count, counted, CMULT, ROT
+    from cryptomath.costmodel import Counter, count, counted, MSM, HASH
 
-    @counted(ROT)
-    def rotate(v, k): return v[k:] + v[:k]
+    @counted(HASH)
+    def compress(l, r): return hash((l, r))
 
     with Counter() as c:
-        rotate([1, 2, 3], 1)
-        count(CMULT, 3)
-    c.counts  # {'rotation': 1, 'ctxt_mult': 3}
+        compress(1, 2)
+        count(MSM, 3)
+    c.counts  # {'hash': 1, 'msm': 3}
 
 Counters nest: every active counter on the stack sees every event, so an
-outer counter can total a whole pipeline while inner ones measure phases.
+outer counter can total a whole prover while inner ones measure phases.
 When no counter is active, :func:`count` is a cheap no-op, so library code
-(the toy FHE schemes) can call it unconditionally.
+(the toy proof-system components in ``cryptomath.zk``) can call it
+unconditionally.
 
-Standard op names are module constants (strings) so reports line up.
+Standard op names are module constants (strings) so reports line up; the
+ZK names are the ones skills/prover-cost-model prints.
+
+This module is stdlib-only (no sympy, no numpy), so skill scripts can use it
+with a bare Python.
 """
 from __future__ import annotations
 
@@ -29,40 +34,39 @@ from collections import Counter as _PyCounter
 from typing import Callable, Dict, Iterable, List, Optional
 
 __all__ = [
-    "CMULT", "PMULT", "SMULT", "CADD", "ROT", "KS", "RELIN", "RESCALE", "MODSWITCH",
-    "NTT", "INTT", "AND", "XOR", "NOT", "FMUL", "FADD", "FINV", "PBS", "EXTPROD", "CMUX",
+    "MUL", "SMULT", "ADD", "FMUL", "FADD", "FINV", "NTT", "BFLY", "MSM", "MSM_PTS", "GADD",
+    "PAIR", "HASH", "SC_ROUND", "SC_TERM", "MEM", "CONSTRAINT", "LOOKUP",
     "Counter", "count", "counted", "note_depth", "active_counters", "DEFAULT_WEIGHTS",
 ]
 
-CMULT = "ctxt_mult"        # ciphertext x ciphertext (nonscalar) multiplication
-PMULT = "ptxt_mult"        # ciphertext x plaintext polynomial
-SMULT = "scalar_mult"      # ciphertext x constant
-CADD = "ctxt_add"
-ROT = "rotation"           # slot rotation / Galois automorphism (incl. its key switch)
-KS = "keyswitch"
-RELIN = "relin"
-RESCALE = "rescale"
-MODSWITCH = "modswitch"
-NTT = "ntt"
-INTT = "intt"
-AND = "and"
-XOR = "xor"
-NOT = "not"
+# generic arithmetic (used by Traced): a nonlinear multiplication is one R1CS constraint
+MUL = "mult"               # multiplication of two non-constant values
+SMULT = "scalar_mult"      # multiplication by a constant (free in R1CS / linear in Plonkish)
+ADD = "add"
+# field and group operations of a prover / verifier
 FMUL = "field_mult"
 FADD = "field_add"
 FINV = "field_inv"
-PBS = "pbs"
-EXTPROD = "external_product"
-CMUX = "cmux"
+NTT = "ntt"                # one NTT / FFT call (its size is in the butterfly count)
+BFLY = "ntt_butterfly"     # radix-2 butterfly (one mult + two adds)
+MSM = "msm"                # one multi-scalar multiplication call
+MSM_PTS = "msm_points"     # total points over all MSMs
+GADD = "group_add"         # elliptic-curve group additions (Pippenger buckets + reductions)
+PAIR = "pairing"
+HASH = "hash"              # one compression (Merkle node, leaf, transcript squeeze)
+SC_ROUND = "sumcheck_round"
+SC_TERM = "sumcheck_term"  # one evaluation of the summand g at a partially bound point
+MEM = "mem_bytes"          # estimated memory traffic
+CONSTRAINT = "constraint"  # R1CS constraint / Plonkish gate row
+LOOKUP = "lookup"
 
-# Rough relative weights for a leveled RLWE scheme at a fixed level
-# (ctxt-mult incl. relinearisation ~ key switch; additions ~ free).  Replace
-# with measured numbers from lib/bench before drawing conclusions.
+# Rough relative weights, unit = one ~256-bit field multiplication.  Replace
+# with measured numbers from lib/bench (one EVIDENCE row each) before drawing
+# conclusions; skills/prover-cost-model keeps per-field nanosecond units.
 DEFAULT_WEIGHTS: Dict[str, float] = {
-    CMULT: 1.0, RELIN: 0.0, KS: 1.0, ROT: 1.0, PMULT: 0.05, SMULT: 0.01,
-    CADD: 0.01, RESCALE: 0.05, MODSWITCH: 0.05, NTT: 0.02, INTT: 0.02,
-    AND: 1.0, XOR: 0.0, NOT: 0.0, FMUL: 1.0, FADD: 0.0, FINV: 10.0,
-    PBS: 1.0, EXTPROD: 1.0, CMUX: 1.0,
+    MUL: 1.0, SMULT: 1.0, ADD: 0.1, FMUL: 1.0, FADD: 0.1, FINV: 50.0,
+    NTT: 0.0, BFLY: 1.3, MSM: 0.0, MSM_PTS: 0.0, GADD: 12.0, PAIR: 3e4,
+    HASH: 8.0, SC_ROUND: 0.0, SC_TERM: 2.0, MEM: 0.0, CONSTRAINT: 0.0, LOOKUP: 0.0,
 }
 
 _local = threading.local()

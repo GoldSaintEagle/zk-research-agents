@@ -31,13 +31,14 @@ Comparison. A measured log has one "phase: value ms" line per phase (the convent
 Phases whose measured/predicted ratio is outside [1/t, t] (default t = 1.5) are flagged: by bench-protocol rule 10
 they must be explained before any number is published.
 
-Op counting reuses lib/cryptomath/cryptomath/costmodel (Counter / count; nested counters per phase).
-Pure Python 3.10+; no third-party dependencies.
+Op counting reuses lib/cryptomath/cryptomath/costmodel: Counter / count (nested counters per phase) and the
+primitive counts of costmodel/zkops.py (MSM, NTT, Merkle, sum-check, FRI queries), whose sympy twins are in
+costmodel/formulas.py. Prediction needs only Python 3.10+; --selftest also runs lib/cryptomath's NTT and
+toy sum-check (cryptomath.algebra needs numpy).
 """
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import math
 import os
 import random
@@ -48,30 +49,24 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 
 
 def _load_costmodel():
-    """cryptomath.costmodel's Counter/count. The package __init__ also imports the sympy-based formulas; the
-    counter module itself is stdlib-only, so without sympy it is loaded directly from its file."""
+    """Op names, Counter/count and the primitive op counts from lib/cryptomath/cryptomath/costmodel.
+    counter.py and zkops.py are stdlib-only; costmodel/__init__ skips the sympy formulas when sympy is missing."""
     lib = os.path.join(ROOT, "lib", "cryptomath")
     if lib not in sys.path:
         sys.path.insert(0, lib)
-    try:
-        from cryptomath.costmodel import Counter, count  # type: ignore
-        return Counter, count
-    except ImportError:
-        path = os.path.join(lib, "cryptomath", "costmodel", "counter.py")
-        spec = importlib.util.spec_from_file_location("_costmodel_counter", path)
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        return mod.Counter, mod.count
+    from cryptomath.costmodel import counter, zkops  # type: ignore
+    return counter, zkops
 
 
-Counter, count = _load_costmodel()
+_counter, zkops = _load_costmodel()
+Counter, count = _counter.Counter, _counter.count
 
-# op names (strings, as costmodel expects)
-MSM, MSM_PTS, GADD = "msm", "msm_points", "group_add"
-NTT, BFLY = "ntt", "ntt_butterfly"
-FMUL, HASH, PAIR = "field_mult", "hash", "pairing"
-SC_ROUND, SC_TERM = "sumcheck_round", "sumcheck_term"
-MEM = "mem_bytes"
+# op names (strings, shared with cryptomath.costmodel.counter)
+MSM, MSM_PTS, GADD = _counter.MSM, _counter.MSM_PTS, _counter.GADD
+NTT, BFLY = _counter.NTT, _counter.BFLY
+FMUL, HASH, PAIR = _counter.FMUL, _counter.HASH, _counter.PAIR
+SC_ROUND, SC_TERM = _counter.SC_ROUND, _counter.SC_TERM
+MEM = _counter.MEM
 
 # field: bits of an element, extension degree used for challenges/FRI folding, 2-adicity, pairing group or None
 FIELDS = {
@@ -98,11 +93,7 @@ def elem_bytes(field: str, ext: bool = False) -> int:
 
 
 def msm(N: int, field: str) -> None:
-    b = FIELDS[field]["bits"]
-    c = max(1, int(math.log2(N)) - 2)
-    count(MSM)
-    count(MSM_PTS, N)
-    count(GADD, math.ceil(b / c) * (N + 2 ** (c + 1)))
+    zkops.count_msm(N, FIELDS[field]["bits"])
     count(MEM, N * (elem_bytes(field) + 2 * math.ceil(FIELDS[field]["base_bits"] / 8)))
 
 
@@ -110,20 +101,18 @@ def ntt(N: int, field: str) -> None:
     if N.bit_length() - 1 > FIELDS[field]["two_adicity"]:
         raise ValueError(f"NTT of size {N} exceeds the 2-adicity of {field}")
     lg = N.bit_length() - 1
-    count(NTT)
-    count(BFLY, (N // 2) * lg)
+    zkops.count_ntt(N)
     count(MEM, 2 * N * lg * elem_bytes(field))      # one read + write per pass, no cache blocking
 
 
 def merkle_commit(leaves: int, leaf_elems: int, field: str) -> None:
-    count(HASH, leaves + (leaves - 1))              # leaf hashes + inner nodes
+    zkops.count_merkle_commit(leaves)               # leaf hashes + inner nodes
     count(MEM, leaves * leaf_elems * elem_bytes(field))
 
 
 def sumcheck_prover(v: int, d: int, field: str, factor: int = 1) -> None:
     """Term evaluations of the sum-check prover with oracle access to g ([Thaler §4.1, The Sum-Check Protocol])."""
-    count(SC_ROUND, v)
-    count(SC_TERM, factor * sum((d + 1) * 2 ** (v - j) for j in range(1, v + 1)))
+    zkops.count_sumcheck_prover(v, d, factor)
     count(MEM, factor * 2 ** v * elem_bytes(field, ext=True) * 2)
 
 
@@ -218,7 +207,7 @@ def predict(n: int, field: str, piop: str, pcs: str, rho: int = 4, queries: int 
             count(GADD, 18 * 256 * 2)               # ~18 scalar multiplications (double-and-add)
         else:
             depth = (N * rho).bit_length() - 1
-            count(HASH, queries * sum(range(1, depth + 1)))
+            count(HASH, zkops.fri_query_hashes(N, rho, queries))
             count(FMUL, queries * depth * 4)
 
     proof = proof_size(N, piop, pcs, rho, queries, field, hash_bytes, seed)
@@ -231,12 +220,7 @@ def predict(n: int, field: str, piop: str, pcs: str, rho: int = 4, queries: int 
 def pruned_nodes(depth: int, indices: set[int]) -> int:
     """|copath(I) \\ path(I)| over all layers: the hash values a pruned multi-opening must contain
     ([CY24 §Path pruning, lemma:path-pruning-is-copaths-minus-paths]). Leaves are 0-based in [0, 2^depth)."""
-    level, total = set(indices), 0
-    for _ in range(depth):
-        siblings = {i ^ 1 for i in level}
-        total += len(siblings - level)
-        level = {i >> 1 for i in level}
-    return total
+    return zkops.merkle_pruned_nodes(depth, indices)
 
 
 def proof_size(N, piop, pcs, rho, queries, field, hash_bytes, seed) -> dict:

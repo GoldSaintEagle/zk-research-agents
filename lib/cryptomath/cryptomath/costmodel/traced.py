@@ -1,43 +1,41 @@
 """``Traced`` values: run ordinary arithmetic code and get op counts + depth.
 
 A :class:`Traced` wraps an (optional) concrete value.  Arithmetic between two
-Traced values is a *nonscalar* multiplication (``ctxt_mult``) and increases
+Traced values is a *nonlinear* multiplication (``mult``) and increases
 multiplicative depth; arithmetic with plain numbers is a scalar operation.
 Every operation is reported to the active :class:`~cryptomath.costmodel.Counter`.
 
-This lets you count nonscalar multiplications and depth of e.g. a polynomial
-evaluation algorithm *without* any FHE library:
+For a straight-line computation over a prime field this is the R1CS view: one
+nonlinear multiplication = one rank-1 constraint, additions and constant
+multiplications are free ([Thaler §8.4, Extension from Circuit-SAT to R1CS-SAT]);
+the depth bounds the degree of the arithmetic circuit (degree <= 2^depth).
+Count a gadget before writing it in a circuit DSL:
 
     from cryptomath.costmodel import Counter, Traced
-    from cryptomath.fhe.polyeval import paterson_stockmeyer
     with Counter() as c:
-        y = paterson_stockmeyer(coeffs, Traced(0.3))
-    c['ctxt_mult'], y.depth, y.value
-
-If ``scalar_uses_level=True`` (CKKS-style, where multiplying by a
-non-integer constant consumes a rescale), scalar multiplications by
-non-integers also add one level.
+        x = Traced(3)
+        y = x ** 5 + 7 * x          # Poseidon-style S-box plus a linear term
+    c['mult'], y.depth, y.value     # (3, 3, 264)
 """
 from __future__ import annotations
 
 from typing import Any, Optional
 
-from .counter import CADD, CMULT, SMULT, count, note_depth
+from .counter import ADD, MUL, SMULT, count, note_depth
 
 __all__ = ["Traced"]
 
 
 class Traced:
-    __slots__ = ("value", "depth", "scalar_uses_level")
+    __slots__ = ("value", "depth")
 
-    def __init__(self, value: Any = None, depth: int = 0, scalar_uses_level: bool = False):
+    def __init__(self, value: Any = None, depth: int = 0):
         self.value = value
         self.depth = depth
-        self.scalar_uses_level = scalar_uses_level
 
     def _new(self, value, depth):
         note_depth(depth)
-        return Traced(value, depth, self.scalar_uses_level)
+        return Traced(value, depth)
 
     @staticmethod
     def _v(x):
@@ -49,21 +47,21 @@ class Traced:
             return None
         return fn(a, b)
 
-    # additive ops: free in depth
+    # additive ops: free in depth (and free in R1CS)
     def __add__(self, o):
-        count(CADD)
+        count(ADD)
         d = max(self.depth, o.depth) if isinstance(o, Traced) else self.depth
         return self._new(self._combine(o, lambda a, b: a + b), d)
 
     __radd__ = __add__
 
     def __sub__(self, o):
-        count(CADD)
+        count(ADD)
         d = max(self.depth, o.depth) if isinstance(o, Traced) else self.depth
         return self._new(self._combine(o, lambda a, b: a - b), d)
 
     def __rsub__(self, o):
-        count(CADD)
+        count(ADD)
         return self._new(self._combine(o, lambda a, b: b - a), self.depth)
 
     def __neg__(self):
@@ -71,13 +69,12 @@ class Traced:
 
     def __mul__(self, o):
         if isinstance(o, Traced):
-            count(CMULT)
+            count(MUL)
             return self._new(self._combine(o, lambda a, b: a * b), max(self.depth, o.depth) + 1)
         if o == 0:
             return self._new(0 * self.value if self.value is not None else None, 0)
         count(SMULT)
-        extra = 1 if (self.scalar_uses_level and not float(o).is_integer()) else 0
-        return self._new(self._combine(o, lambda a, b: a * b), self.depth + extra)
+        return self._new(self._combine(o, lambda a, b: a * b), self.depth)
 
     __rmul__ = __mul__
 
