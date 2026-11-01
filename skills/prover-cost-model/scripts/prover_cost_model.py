@@ -18,9 +18,9 @@ Each phase reports: MSM count and points, NTT count and butterflies, field multi
 rounds and term evaluations, pairings, and an estimate of memory traffic. Formulas used:
   * MSM of size N with b-bit scalars, Pippenger window c ~ log2 N - 2: about (b/c)(N + 2^(c+1)) group additions,
     i.e. O(N b / log N) ([Thaler §19.3.2, Relative Efficiency of Different Operations]);
-  * radix-2 NTT of size N: (N/2) log2 N butterflies (checked against a real NTT in --selftest);
+  * radix-2 NTT of size N: (N/2) log2 N butterflies (checked against lib/cryptomath's NTT in --selftest);
   * sum-check over v variables, degree d: sum_j (d+1) 2^(v-j) term evaluations ([Thaler §4.1, The Sum-Check Protocol],
-    checked against a real sum-check prover in --selftest);
+    checked against the toy prover lib/cryptomath/cryptomath/zk/sumcheck.py in --selftest);
   * FRI: an LDE of size N/rho dominates the prover ([Thaler §10.4.3, Costs of FRI]); Merkle opening proofs counted
     without and with path pruning, the pruned size being |copath(I) minus path(I)| hash values
     ([CY24 §Path pruning, lemma:path-pruning-is-copaths-minus-paths, lemma:path-pruning-lower-and-upper]).
@@ -306,83 +306,25 @@ def render(pred: dict, field: str, rows: list[dict] | None = None) -> str:
 P97 = 97   # 97 - 1 = 2^5 * 3: NTTs up to size 32
 
 
-def _ntt97(a: list[int], root: int) -> list[int]:
-    """Iterative radix-2 NTT over F_97 that records one butterfly per inner step via costmodel.count."""
-    n = len(a)
-    a = a[:]
-    j = 0
-    for i in range(1, n):                           # bit reversal
-        bit = n >> 1
-        while j & bit:
-            j ^= bit
-            bit >>= 1
-        j |= bit
-        if i < j:
-            a[i], a[j] = a[j], a[i]
-    length = 2
-    while length <= n:
-        w = pow(root, n // length, P97)
-        for s in range(0, n, length):
-            wk = 1
-            for k in range(length // 2):
-                u, t = a[s + k], a[s + k + length // 2] * wk % P97
-                a[s + k], a[s + k + length // 2] = (u + t) % P97, (u - t) % P97
-                count(BFLY)
-                wk = wk * w % P97
-        length *= 2
-    return a
-
-
-def _sumcheck97(tables: list[list[int]], rng) -> bool:
-    """Honest sum-check prover/verifier for g = prod of d multilinear tables over F_97 ([Thaler §4.1, The Sum-Check Protocol]);
-    each evaluation of g at a partially bound point is one counted term."""
-    d, v = len(tables), len(tables[0]).bit_length() - 1
-    claim = sum(math.prod(t[i] for t in tables) for i in range(2 ** v)) % P97
-    cur = [t[:] for t in tables]
-    for j in range(1, v + 1):
-        half = len(cur[0]) // 2
-        evals = []
-        for x in range(d + 1):                      # s_j(x) for x = 0..d
-            s = 0
-            for i in range(half):
-                term = 1
-                for t in cur:
-                    term = term * ((t[i] * (1 - x) + t[i + half] * x) % P97) % P97
-                count(SC_TERM)
-                s += term
-            evals.append(s % P97)
-        if (evals[0] + evals[1]) % P97 != claim:
-            return False
-        r = rng.randrange(P97)
-        # interpolate s_j at r from evals at 0..d (Lagrange)
-        claim = 0
-        for a_, ya in enumerate(evals):
-            num = den = 1
-            for b_ in range(d + 1):
-                if b_ != a_:
-                    num, den = num * (r - b_) % P97, den * (a_ - b_) % P97
-            claim = (claim + ya * num * pow(den, P97 - 2, P97)) % P97
-        cur = [[(t[i] * (1 - r) + t[i + half] * r) % P97 for i in range(half)] for t in cur]
-    final = math.prod(t[0] for t in cur) % P97
-    return final == claim
-
-
 def selftest() -> int:
     rng = random.Random(7)
-    # 1. NTT butterflies: real NTT over F_97 vs (N/2) log2 N, and correctness vs the naive DFT
+    # 1. NTT butterflies: lib/cryptomath's radix-2 NTT over F_97 (it counts its butterflies) vs (N/2) log2 N,
+    #    and correctness vs the naive DFT
+    from cryptomath.algebra.ntt import dft_naive, ntt_cyclic   # needs numpy (cryptomath.algebra)
+    from cryptomath.zk import sumcheck as zk_sumcheck
     g = 5                                           # generator of F_97^*
     for N in (2, 4, 8, 16, 32):
         root = pow(g, (P97 - 1) // N, P97)
         a = [rng.randrange(P97) for _ in range(N)]
         with Counter("ntt") as c:
-            out = _ntt97(a, root)
-        naive = [sum(a[j] * pow(root, i * j, P97) for j in range(N)) % P97 for i in range(N)]
-        assert out == naive and c[BFLY] == (N // 2) * (N.bit_length() - 1), (N, c[BFLY])
-    # 2. sum-check terms: real prover vs sum_j (d+1) 2^(v-j)
+            out = ntt_cyclic(a, P97, root)
+        assert out == dft_naive(a, P97, root) and c[BFLY] == (N // 2) * (N.bit_length() - 1), (N, c[BFLY])
+    # 2. sum-check terms: lib/cryptomath's toy sum-check prover ([Thaler §4.1, The Sum-Check Protocol]) vs
+    #    sum_j (d+1) 2^(v-j) as used by the model
     for v, d in ((3, 2), (4, 3), (5, 1)):
         tables = [[rng.randrange(P97) for _ in range(2 ** v)] for _ in range(d)]
         with Counter("sc") as c:
-            ok = _sumcheck97(tables, rng)
+            ok = zk_sumcheck.run(tables, P97, rng)["accepted"]
         with Counter("model") as m:
             sumcheck_prover(v, d, "bn254")
         assert ok and c[SC_TERM] == m[SC_TERM], (v, d, c[SC_TERM], m[SC_TERM])

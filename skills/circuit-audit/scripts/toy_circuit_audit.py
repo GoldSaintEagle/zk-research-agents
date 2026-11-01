@@ -20,42 +20,22 @@ output satisfies the constraints), soundness (no out-of-spec input has a witness
 A small is-zero gadget with a non-deterministic inverse hint is audited the same way.
 
 The audit line printed for each variant is meant for the "falsifier evidence" column of CLAIMS.md.
-Pure Python 3.10+, no dependencies.
+Pure Python 3.10+, no third-party dependencies; the R1CS class is lib/cryptomath/cryptomath/zk/r1cs.py.
 """
 from __future__ import annotations
 
 import argparse
 import itertools
+import os
 import random
 import sys
 from dataclasses import dataclass, field
 
 # ------------------------------------------------------------------ R1CS ---
 
-LC = dict  # linear combination: variable name -> coefficient ("one" is the constant-1 variable)
-
-
-@dataclass
-class R1CS:
-    """Constraints <a,z> * <b,z> = <c,z> over F_p; z maps names to field elements, z["one"] = 1."""
-    p: int
-    public: list[str]
-    witness: list[str]
-    constraints: list[tuple[LC, LC, LC, str]] = field(default_factory=list)
-
-    def add(self, a: LC, b: LC, c: LC, tag: str) -> None:
-        self.constraints.append((a, b, c, tag))
-
-    def _lc(self, lc: LC, z: dict) -> int:
-        return sum(coef * z[v] for v, coef in lc.items()) % self.p
-
-    def failing(self, z: dict) -> list[str]:
-        """Tags of the constraints that z violates (empty list = satisfied)."""
-        return [tag for a, b, c, tag in self.constraints
-                if (self._lc(a, z) * self._lc(b, z) - self._lc(c, z)) % self.p]
-
-    def satisfied(self, z: dict) -> bool:
-        return not self.failing(z)
+# R1CS(p, public, witness): constraints <a,z> * <b,z> = <c,z> with tags; .failing(z) names the violated ones
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "lib", "cryptomath"))
+from cryptomath.zk.r1cs import R1CS  # noqa: E402
 
 
 def range_check(p: int, k: int, drop_bool: int | None = None, extra_b0_zero: bool = False) -> R1CS:

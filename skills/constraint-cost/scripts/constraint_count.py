@@ -21,7 +21,8 @@ The computation: range-check n public values to k bits (x_j < 2^k). Four encodin
 Counts are read off the constraint lists the builders actually produce (and the builders are checked on
 honest and dishonest witnesses in --selftest), then compared with closed forms. These are planning numbers
 (P2): numbers for the paper come from the real compiler's output (see SKILL.md).
-Pure Python 3.10+, no dependencies; --poseidon reuses lib/cryptomath/cryptomath/symmetric/afcost.py.
+Pure Python 3.10+, no third-party dependencies. The R1CS and Plonkish classes (satisfiability, counts) are
+lib/cryptomath/cryptomath/zk/{r1cs,plonkish}.py; --poseidon reuses lib/cryptomath/cryptomath/symmetric/afcost.py.
 """
 from __future__ import annotations
 
@@ -29,31 +30,13 @@ import argparse
 import math
 import os
 import sys
-from dataclasses import dataclass, field
 
-P_TOY = 2 ** 31 - 1   # evaluator field for the self-test (any prime > 2^k works for k <= 30)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "lib", "cryptomath"))
+from cryptomath.zk.plonkish import Plonkish, next_pow2  # noqa: E402
+from cryptomath.zk.r1cs import P_TOY, R1CS  # noqa: E402   (P_TOY = 2^31 - 1: evaluator field, k <= 30)
 
 
 # ----------------------------------------------------------------- R1CS ---
-
-@dataclass
-class R1CS:
-    constraints: list = field(default_factory=list)   # (A, B, C) dicts var -> coeff
-    variables: set = field(default_factory=lambda: {"one"})
-    public: list = field(default_factory=list)
-
-    def add(self, a: dict, b: dict, c: dict) -> None:
-        self.constraints.append((a, b, c))
-        for lc in (a, b, c):
-            self.variables.update(lc)
-
-    def nonzeros(self) -> int:
-        return sum(len(a) + len(b) + len(c) for a, b, c in self.constraints)
-
-    def satisfied(self, z: dict, p: int = P_TOY) -> bool:
-        ev = lambda lc: sum(co * z[v] for v, co in lc.items()) % p
-        return all((ev(a) * ev(b) - ev(c)) % p == 0 for a, b, c in self.constraints)
-
 
 def r1cs_bits(n: int, k: int) -> R1CS:
     cs = R1CS()
@@ -75,32 +58,6 @@ def r1cs_bits_witness(xs: list[int], k: int) -> dict:
 
 
 # ------------------------------------------------------------- Plonkish ---
-
-@dataclass
-class Plonkish:
-    """A toy Plonkish table: rows of advice cells, one named gate per row, copy constraints, lookups."""
-    advice_cols: int
-    gates: dict                                          # name -> (degree, fn(row, next_row) -> field value)
-    rows: list = field(default_factory=list)             # (tuple of gate names enabled on the row, {col: value})
-    copies: list = field(default_factory=list)           # ((row, col), (row, col)) or ((row, col), ("pub", j))
-    lookups: list = field(default_factory=list)          # (row, col, shift) -> value * shift in table
-    table: range = range(0)
-
-    @property
-    def max_degree(self) -> int:
-        return max(d for d, _ in self.gates.values())
-
-    def satisfied(self, public: list[int], p: int = P_TOY) -> bool:
-        get = lambda rc: public[rc[1]] if rc[0] == "pub" else self.rows[rc[0]][1][rc[1]]
-        tab = set(self.table)
-        for r, (gs, cells) in enumerate(self.rows):
-            nxt = self.rows[r + 1][1] if r + 1 < len(self.rows) else {}
-            if any(self.gates[g][1](cells, nxt) % p for g in gs):
-                return False
-        if any((get(a) - get(b)) % p for a, b in self.copies):
-            return False
-        return all((self.rows[r][1][col] * shift) % p in tab for r, col, shift in self.lookups)
-
 
 def plonk_bits(xs: list[int], k: int) -> Plonkish:
     """Vanilla gate qL a + qR b + qO c + qM ab + qC = 0, written out per row as two named gate shapes:
@@ -166,21 +123,12 @@ def plonk_lookup(xs: list[int], k: int, c: int) -> Plonkish:
 
 # --------------------------------------------------------------- counts ---
 
-def next_pow2(m: int) -> int:
-    return 1 << max(0, (m - 1).bit_length())
-
-
 def count_r1cs(cs: R1CS) -> dict:
-    return {"constraints": len(cs.constraints), "variables": len(cs.variables), "nonzeros": cs.nonzeros(),
-            "max_degree": 2, "lookups": 0, "table_rows": 0}
+    return cs.counts()
 
 
 def count_plonkish(t: Plonkish) -> dict:
-    used = len(t.rows)
-    height = max(used, len(t.table))     # a fixed table column shares the row space of the circuit
-    return {"rows": used, "height": height, "height_pow2": next_pow2(height), "advice_cols": t.advice_cols,
-            "fixed_cols": (1 if len(t.table) else 0), "max_degree": t.max_degree, "lookups": len(t.lookups),
-            "copies": len(t.copies), "table_rows": len(t.table)}
+    return t.counts()
 
 
 def closed_forms(n: int, k: int, c: int) -> dict:
@@ -224,8 +172,7 @@ def poseidon_r1cs(t: int, R_F: int, R_P: int, alpha: int = 5) -> dict:
     """R1CS estimate for a HADES-type permutation: one constraint per multiplication of the S-boxes
     (afcost.power_mult_cost), linear layers free. Real gadgets differ (e.g. merged constraints, partial-round
     tricks): use the compiler's count in the paper."""
-    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "lib", "cryptomath"))
-    from cryptomath.symmetric.afcost import hades_cost  # noqa: E402
+    from cryptomath.symmetric.afcost import hades_cost
     hc = hades_cost(t, R_F, R_P, alpha)
     return {"name": hc.name, "sboxes": hc.nonlinear_ops, "r1cs_constraints": hc.mults,
             "plonkish_rows_deg_alpha_gate": hc.nonlinear_ops}
