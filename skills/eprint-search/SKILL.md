@@ -1,6 +1,6 @@
 ---
 name: eprint-search
-description: Search IACR ePrint (with a submission-date window) plus Crossref/DBLP from the command line, and run the grey-literature pass (project docs, HackMD, ethresear.ch, vendor blogs, audit reports). Use for novelty checks ("is this idea already taken?"), for building the related-work matrix, and for finding the public ePrint id of a paper before citing it.
+description: Search IACR ePrint (with a submission-date window; rate-limited, with a fallback to a third-party mirror when eprint.iacr.org is unreachable) plus Crossref/DBLP from the command line, and run the grey-literature pass (project docs, HackMD, ethresear.ch, vendor blogs, audit reports). Use for novelty checks ("is this idea already taken?"), for building the related-work matrix, and for finding the public ePrint id of a paper before citing it.
 ---
 
 # eprint-search
@@ -13,11 +13,55 @@ python3 $S "lookup argument" "logarithmic derivative" --months 12       # union 
 python3 $S "folding scheme" --crossref --min-year 2021                    # + published versions with DOI
 python3 $S "sumcheck" --title-only                                        # title search only
 python3 $S "..." --json > hits.json                                        # for scripting
-python3 $S --selftest
+python3 $S "..." --no-mirror                                              # official ePrint only
+python3 $S --selftest                                                     # offline (scripted HTTP answers)
+python3 skills/eprint-search/scripts/polite_http.py --selftest            # rate limiter, offline
+python3 skills/eprint-search/scripts/eprint_source.py --selftest          # official/mirror switch, offline
 ```
 
 Exit status 2 means *no source answered* (offline or blocked) — that is "novelty check not performed", never
 "no hits". DBLP sometimes serves a bot challenge to scripts; the script detects it and you should add `--crossref`.
+
+## Rate limits (all literature scripts)
+
+eprint.iacr.org bans addresses that fetch too fast, DBLP serves bot challenges, Crossref drops connections under
+load. Every request of `eprint_search.py` and of [bib-verify](../bib-verify/SKILL.md)'s `verify_bib.py` (ePrint,
+the mirror below, DBLP, Crossref, DataCite, Wayback, URL probes) goes through one client,
+[`scripts/polite_http.py`](scripts/polite_http.py):
+
+| rule | default | change with |
+|---|---|---|
+| gap between two requests to the same host (kept across runs in the cache folder) | 3 s | `--min-interval`, `ZKRA_HTTP_MIN_INTERVAL` |
+| 429 / 503 | wait `Retry-After` (seconds or date; > 300 s is not waited out), else 3 s · 2^k; at most 3 retries | `ZKRA_HTTP_MAX_RETRIES` |
+| dropped connection / timeout | one retry after 6 s | — |
+| requests per run | 300, then the run stops and says so | `--max-requests`, `ZKRA_HTTP_MAX_REQUESTS` |
+| answer cache (200 only, keyed by URL) | 7 days in `.cache/eprint/` (git-ignored) | `--cache-dir`, `--no-cache`, `ZKRA_HTTP_CACHE_TTL` |
+| User-Agent | `zk-research-agents/<version> (...; +<repository URL>)`, never a browser string | — |
+
+Do not lower the gap for ePrint, run several copies in parallel, or loop over hundreds of queries: a ban is
+long ("permanent unless you can convince us") and hits everyone behind the same address.
+
+## When eprint.iacr.org is unreachable: the mirror
+
+The official site counts as unusable for the rest of a run when a request fails to connect or times out, keeps
+answering 429/503, answers with a redirect (a banned client gets `HTTP 302` to
+`https://iacr.org/you_have_been_blocked.txt`, observed 2026-11-01), answers 403/451/5xx or a block notice, or
+answers a page that is not an ePrint page. The script then says so **once** on stderr and uses the mirror
+`https://eprint.iacr.asia` (override: `ZKRA_EPRINT_MIRROR`; disable: `--no-mirror`):
+
+- it is a **third-party** public mirror, not run by the IACR; its data can lag or differ from the archive;
+- queries use its JSON API `GET /api/search?q=&year=&page_size=` (contract: `/openapi.json`), never HTML scraping;
+  it filters by exact year only, so a `--months` window becomes one query per year plus a date filter, and
+  `--title-only` is applied client-side; hits whose title or abstract contain the query words come first;
+- rows found there are marked `eprint (mirror)` (`"via": "mirror"` in JSON), and their link is the **official
+  canonical URL** `https://eprint.iacr.org/YYYY/NNNN` — cite that one, never a mirror URL (bib-verify lints it);
+- the mirror is rate-limited exactly like the official site.
+
+If the official site has blocked your address, the fix is a request to **eprint-abuse@iacr.org** (explain the
+tool, its rate limits and the address). Do not work around a block: no new IP, no proxy, no browser User-Agent.
+
+On python.org builds of Python for macOS, HTTPS fails with `CERTIFICATE_VERIFY_FAILED` until the certificates
+are installed (`Install Certificates.command`) or `SSL_CERT_FILE=/etc/ssl/cert.pem` is set.
 
 ## Novelty-check procedure ("is it already taken?")
 

@@ -21,3 +21,5 @@ references/**/*.pdf
 .privacy-denylist
 # pinned reference books are fetched locally, never committed (references/books/README.md)
 references/books/.cache/
+# HTTP answer cache of the literature scripts (polite_http.py); never committed
+.cache/
