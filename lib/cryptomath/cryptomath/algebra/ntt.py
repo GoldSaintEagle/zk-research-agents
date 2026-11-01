@@ -11,7 +11,9 @@
   m with q = 1 mod m: evaluation at zeta^i, i in (Z/m)^*, and its inverse.
 * :func:`negacyclic_mul_ntt` -- fast product in Z_q[X]/(X^n+1).
 
-All functions work on Python-int lists (exact for any q size).
+All functions work on Python-int lists (exact for any q size). :func:`ntt_cyclic`
+reports one ``ntt_butterfly`` per butterfly to the active costmodel Counter, so
+measured counts can be checked against (n/2) log2 n.
 
 References
 ----------
@@ -26,6 +28,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import List, Sequence
 
+from ..costmodel.counter import BFLY, count
 from .ntheory import euler_phi, root_of_unity, units
 from .poly import is_power_of_two
 
@@ -59,6 +62,7 @@ def ntt_cyclic(a: Sequence[int], q: int, omega: int | None = None) -> List[int]:
                 v = A[start + j + half] * w % q
                 A[start + j] = (u + v) % q
                 A[start + j + half] = (u - v) % q
+                count(BFLY)
                 w = w * w_len % q
         length <<= 1
     return A

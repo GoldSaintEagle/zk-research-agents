@@ -10,6 +10,9 @@ broken optional subpackage never breaks ``import cryptomath``::
 Subpackages
 -----------
 algebra    prime and extension fields, polynomials, roots of unity, NTT
+zk         TOY proof-system components: multilinear extensions, sum-check, Merkle
+           commitments, FRI, KZG (algebra only), permutation / lookup arguments,
+           R1CS and Plonkish constraint systems with counters
 costmodel  abstract operation counting; ZK primitive counts (MSM, NTT, Merkle,
            sum-check, PCS commit/open) as code and as sympy formulas
 symmetric  arithmetization-oriented primitive costs (Poseidon, MiMC, ...), GF(2^n)
@@ -26,7 +29,7 @@ import importlib
 
 __version__ = "0.1.0"
 
-SUBPACKAGES = ("algebra", "costmodel", "symmetric", "protocols", "ec")
+SUBPACKAGES = ("algebra", "zk", "costmodel", "symmetric", "protocols", "ec")
 
 __all__ = list(SUBPACKAGES) + ["available", "__version__"]
 
