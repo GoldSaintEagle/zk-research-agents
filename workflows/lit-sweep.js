@@ -28,7 +28,10 @@ const uniq = [...new Map(found.map(w => [w.id.toLowerCase(), w])).values()]
 log(`${found.length} hits, ${uniq.length} unique`)
 phase('Verify')
 const verified = await pipeline(uniq, w => agent(
-  `Verify that ${w.id} "${w.title}" exists and return {exists, bibtex, one_line_summary}: ePrint/DOI page for papers; ` +
+  `Verify that ${w.id} "${w.title}" exists and return {exists, bibtex, one_line_summary}: for papers run ` +
+  `skills/bib-verify/scripts/verify_bib.py on a one-entry .bib (rate-limited, shared cache, third-party mirror if ` +
+  `eprint.iacr.org is unreachable) rather than fetching eprint.iacr.org pages yourself; the bibtex url is the official ` +
+  `https://eprint.iacr.org/YYYY/NNNN or the DOI, never a mirror URL; ` +
   `for a grey source the URL must answer, have a Wayback snapshot and an access date, and the bibtex is a @misc with ` +
   `url, urldate and archiveurl (skills/bib-verify, URL sources). ${JSON.stringify(w)}`,
   { agentType: 'lit-scout', phase: 'Verify', label: `verify:${w.id}`, effort: 'low', schema: { type: 'object', properties: {
