@@ -6,15 +6,26 @@ normalised units (time -> seconds, memory/traffic -> bytes, security -> bits).
 Shipped parsers (names used by ``crbench parse --parser NAME``):
 
 ``generic``           "time: 1.23 s", "Elapsed = 12 ms", "took 3.4sec", "RESULT name=... time=..."
-``criterion``         Rust criterion (TFHE-rs, arkworks, ...):  ``time:   [1.1 ms 1.2 ms 1.3 ms]``
-``gobench``           Go ``testing`` benchmarks (Lattigo, gnark): ``BenchmarkX-8  100  12345 ns/op``
-``gbench``            Google Benchmark console (OpenFHE/SEAL/HEXL benches): ``BM_X  123 ns  120 ns  1000``
-``helib``             HElib ``printAllTimers``: ``  name: 12.3 / 4 = 3.07   [file]``
-``openfhe``           OpenFHE example style ``<Label> time: 12.3 ms`` / ``... took 12 ms``
-``lattice-estimator`` ``usvp :: rop: ≈2^129.4, red: ..., β: 377, ...`` -> bits of security per attack
+``criterion``         Rust criterion (arkworks, halo2, plonky3, Binius, ...): ``time:   [1.1 ms 1.2 ms 1.3 ms]``
+``gobench``           Go ``testing`` benchmarks (gnark): ``BenchmarkX-8  100  12345 ns/op``
+``gbench``            Google Benchmark console (C++ provers, ICICLE benches): ``BM_X  123 ns  120 ns  1000``
+``shell-time``        bash ``time`` (real/user/sys) and zsh ``time`` (``... 1.33 total``)
+``snarkjs``           ``snarkjs r1cs info`` counts, ``snarkjs ... verify`` status, + shell ``time``
+``rapidsnark``        rapidsnark prover / verifier timed with shell ``time`` (+ "time: X ms" lines)
+``circom``            ``circom --r1cs`` summary: (non-)linear constraints, wires, inputs, labels
+``gnark``             gnark zerolog lines: ``nbConstraints=N``, ``prover done ... took=X`` (ms)
+``nargo-info``        ``nargo info`` table (ACIR / Brillig opcodes, circuit size) or ``--json``
+``risc0``             RISC Zero session stats: execution time, segments, rows / cycles
+``sp1``               SP1 scripts: ``executed program with N cycles``, ``Number of cycles: N``
 ``sat``               CaDiCaL / CryptoMiniSat / kissat: solve time + SAT/UNSAT status
-``mpspdz``            MP-SPDZ: ``Time = 0.12 seconds``, ``Data sent = 1.2 MB in ~10 rounds``
 ``gnu-time``          ``/usr/bin/time -v``: wall clock and max RSS
+
+Kept from the upstream toolkit (no ZK adapter uses them; their tests still run):
+``helib``, ``openfhe``, ``lattice-estimator``, ``mpspdz``.
+
+Format sources for the ZK parsers are listed next to each one; formats marked
+"needs verification" were reconstructed from public logs, not from the tool's
+documentation or source, and should be re-checked against a real run.
 
 Register your own with :func:`register_parser` (see ``tests/test_parsers.py``).
 """
@@ -175,7 +186,7 @@ def parse_criterion(text: str) -> list[Record]:
     return out
 
 
-# ---------------------------------------------------------------- go test -bench (Lattigo, gnark)
+# ---------------------------------------------------------------- go test -bench (gnark)
 _GOB = re.compile(rf"^(?P<label>Benchmark\S+?)(?:-\d+)?\s+(?P<iters>\d+)\s+(?P<value>{NUM})\s+ns/op(?P<rest>.*)$", re.M)
 
 
@@ -255,6 +266,192 @@ def parse_lattice_estimator(text: str) -> list[Record]:
     return out
 
 
+# ---------------------------------------------------------------- shell time (bash / zsh)
+# bash: "real\t0m1.234s" / "user ..." / "sys ..."; zsh: "cmd  1.10s user 0.10s system 99% cpu 1.334 total"
+_BASH_T = re.compile(r"^(?P<label>real|user|sys)\s+(?:(?P<m>\d+)m)?(?P<s>[\d.]+)s\s*$", re.M)
+_ZSH_T = re.compile(rf"(?P<user>{NUM})s user\s+(?P<sys>{NUM})s system\s+\S+ cpu\s+(?:(?P<m>\d+):)?(?P<total>{NUM}) total", re.M)
+
+
+@register_parser("shell-time", "bash 'real 0m1.234s' / zsh '... 1.334 total' (label real/user/sys)",
+                 sniff=r"^real\s+\d+m[\d.]+s\s*$|\d s user .* total$")
+def parse_shell_time(text: str) -> list[Record]:
+    out = []
+    for m in _BASH_T.finditer(text):
+        out.append(Record("time", 60 * float(m["m"] or 0) + float(m["s"]), "s", m["label"],
+                          _lineno(text, m.start()), m.group(0).strip()))
+    for m in _ZSH_T.finditer(text):
+        ln = _lineno(text, m.start())
+        out.append(Record("time", 60 * float(m["m"] or 0) + float(m["total"]), "s", "real", ln, m.group(0).strip()))
+        out.append(Record("time", float(m["user"]), "s", "user", ln))
+        out.append(Record("time", float(m["sys"]), "s", "sys", ln))
+    return out
+
+
+# ---------------------------------------------------------------- snarkjs
+# Source: snarkjs README (r1cs info example: "[INFO]  snarkJS: # of Constraints: 1000"). The verify line
+# "snarkJS: OK!" / "snarkJS: Invalid proof" -- needs verification (the README only says "OK" is printed).
+# snarkjs prints no timings itself: time it with the shell and keep the time output in the same log.
+_SNARK_INFO = re.compile(r"snarkJS:\s*# of (?P<what>Wires|Constraints|Private Inputs|Public Inputs|Outputs|Labels):\s*(?P<value>\d+)", re.M)
+_SNARK_OK = re.compile(r"snarkJS:\s*(?P<st>OK!?|Invalid proof)", re.M)
+
+
+@register_parser("snarkjs", "snarkjs r1cs info counts (constraints, wires, ...), verify OK / Invalid proof, shell time",
+                 sniff=r"snarkJS:")
+def parse_snarkjs(text: str) -> list[Record]:
+    out = []
+    for m in _SNARK_INFO.finditer(text):
+        metric = m["what"].lower().replace(" ", "_")
+        out.append(Record(metric, float(m["value"]), "", "r1cs", _lineno(text, m.start()), m.group(0).strip()))
+    for m in _SNARK_OK.finditer(text):
+        out.append(Record("verify_status", "OK" if m["st"].startswith("OK") else "INVALID", "", "verify",
+                          _lineno(text, m.start()), m.group(0).strip()))
+    return out + parse_shell_time(text)
+
+
+# ---------------------------------------------------------------- rapidsnark
+# rapidsnark's prover / verifier binaries print no timing by default (needs verification for builds with
+# their optional logging): time them with the shell; "time: X ms"-style lines are picked up as well.
+@register_parser("rapidsnark", "rapidsnark prover/verifier: shell time (+ generic 'time: X ms' lines)")
+def parse_rapidsnark(text: str) -> list[Record]:
+    out = parse_shell_time(text)
+    out += [r for r in parse_generic(text) if r.metric == "time"]
+    return out
+
+
+# ---------------------------------------------------------------- circom
+# Format: circom 2.x compile summary ("template instances: N", "non-linear constraints: N", "linear constraints: N",
+# "public inputs: N", "private inputs: N", "public outputs: N", "wires: N", "labels: N", "Everything went okay").
+# needs verification: reconstructed from public build logs and tutorials; the official docs show no sample output.
+_CIRCOM = re.compile(r"^\s*(?P<what>template instances|non-linear constraints|linear constraints|public inputs|"
+                     r"private inputs|public outputs|private outputs|wires|labels):\s*(?P<value>\d+)\s*$", re.M | re.I)
+
+
+@register_parser("circom", "circom --r1cs summary: non-linear / linear constraints (+ total), wires, inputs, labels",
+                 sniff=r"^\s*non-linear constraints:\s*\d+")
+def parse_circom(text: str) -> list[Record]:
+    out, total = [], {}
+    for m in _CIRCOM.finditer(text):
+        metric = m["what"].lower().replace("-", "_").replace(" ", "_")
+        out.append(Record(metric, float(m["value"]), "", "circom", _lineno(text, m.start()), m.group(0).strip()))
+        if metric in ("non_linear_constraints", "linear_constraints"):
+            total[metric] = float(m["value"])
+    if total:
+        out.append(Record("constraints", sum(total.values()), "", "circom"))
+    return out
+
+
+# ---------------------------------------------------------------- gnark
+# Source: gnark logger/logger.go (zerolog ConsoleWriter, time format 15:04:05) and backend/groth16/*/prove.go
+# (log.Debug().Dur("took", ...).Msg("prover done"), logger carrying nbConstraints). zerolog's default duration
+# unit is milliseconds (float). Example: "10:21:09 DBG prover done backend=groth16 curve=bn254 nbConstraints=3 took=1.23".
+_GNARK = re.compile(r"^(?:\S+\s+)?(?:DBG|INF|WRN)\s+(?P<msg>[^=\n]*?)\s+(?P<kv>\w+=\S+(?:\s+\w+=\S+)*)\s*$", re.M)
+
+
+@register_parser("gnark", "gnark zerolog lines: nbConstraints=N; '<phase> done ... took=X' (ms)",
+                 sniff=r"nbConstraints=\d+")
+def parse_gnark(text: str) -> list[Record]:
+    out = []
+    for m in _GNARK.finditer(text):
+        kv = dict(re.findall(r"(\w+)=(\S+)", m["kv"]))
+        ln, msg = _lineno(text, m.start()), m["msg"].strip()
+        label = msg.replace(" done", "") if msg.endswith(" done") else msg
+        if "nbConstraints" in kv:
+            out.append(Record("constraints", float(kv["nbConstraints"]), "", label, ln, m.group(0).strip()))
+        if "took" in kv and re.fullmatch(NUM, kv["took"]):
+            out.append(Record("time", float(kv["took"]) * 1e-3, "s", label, ln, m.group(0).strip()))
+    return out
+
+
+# ---------------------------------------------------------------- nargo info
+# Source: noir tooling/noirc_artifacts_info (table header "Package | Function | ACIR Opcodes | Brillig Opcodes";
+# --json: {"programs": [{"package_name", "functions": [{"name", "opcodes"}], "unconstrained_functions": [...]}]}).
+# Older nargo versions add "Expression Width" / "Backend Circuit Size" columns: the table is read by header.
+_NARGO_COLS = {"acir opcodes": "acir_opcodes", "brillig opcodes": "brillig_opcodes",
+               "backend circuit size": "circuit_size", "circuit size": "circuit_size"}
+
+
+@register_parser("nargo-info", "nargo info table (ACIR / Brillig opcodes, backend circuit size) or --json report",
+                 sniff=r"ACIR Opcodes|\"programs\"\s*:")
+def parse_nargo_info(text: str) -> list[Record]:
+    out: list[Record] = []
+    stripped = text.strip()
+    if stripped.startswith("{"):
+        import json
+        try:
+            rep = json.loads(stripped)
+        except ValueError:
+            rep = None
+        if isinstance(rep, dict):
+            for prog in rep.get("programs", []):
+                pkg = prog.get("package_name", "")
+                for kind, metric in (("functions", "acir_opcodes"), ("unconstrained_functions", "brillig_opcodes")):
+                    for fn in prog.get(kind, []):
+                        out.append(Record(metric, float(fn.get("opcodes", 0)), "", f"{pkg}/{fn.get('name', '')}"))
+            return out
+    header = None
+    for i, line in enumerate(text.splitlines(), 1):
+        if not line.strip().startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if any(c.lower() in _NARGO_COLS for c in cells):
+            header = [c.lower() for c in cells]
+            continue
+        if header is None or len(cells) != len(header):
+            continue
+        label = "/".join(cells[k] for k, h in enumerate(header) if h in ("package", "function"))
+        for k, h in enumerate(header):
+            if h in _NARGO_COLS and re.fullmatch(r"\d+", cells[k].replace(",", "")):
+                out.append(Record(_NARGO_COLS[h], float(cells[k].replace(",", "")), "", label, i, line.strip()))
+    return out
+
+
+# ---------------------------------------------------------------- RISC Zero
+# Source: risc0 risc0/zkvm/src/host/prove_info.rs, Display for SessionStats ("execution time: {:?}",
+# "number of segments: {}", "{} total rows ({} padding)"), logged line by line through tracing::info! when
+# RISC0_INFO is set. Older releases printed "total cycles: N" / "user cycles: N" (needs verification).
+_R0_EXEC = re.compile(rf"execution time:\s*(?P<value>{NUM})\s*(?P<unit>{TU})", re.M)
+_R0_SEG = re.compile(r"number of segments:\s*(?P<value>\d+)", re.M)
+_R0_ROWS = re.compile(r"(?P<rows>\d+) total rows \((?P<pad>\d+) padding\)", re.M)
+_R0_CYC = re.compile(r"(?P<kind>total|user) cycles:\s*(?P<value>\d+)", re.M)
+
+
+@register_parser("risc0", "RISC Zero session stats: execution time, segments, total rows (padding), total/user cycles",
+                 sniff=r"number of segments:\s*\d+")
+def parse_risc0(text: str) -> list[Record]:
+    out = []
+    for m in _R0_EXEC.finditer(text):
+        out.append(Record("time", to_seconds(float(m["value"]), m["unit"]), "s", "execute", _lineno(text, m.start()), m.group(0)))
+    for m in _R0_SEG.finditer(text):
+        out.append(Record("segments", float(m["value"]), "", "session", _lineno(text, m.start()), m.group(0)))
+    for m in _R0_ROWS.finditer(text):
+        ln = _lineno(text, m.start())
+        out.append(Record("rows", float(m["rows"]), "", "session", ln, m.group(0)))
+        out.append(Record("padding_rows", float(m["pad"]), "", "session", ln))
+    for m in _R0_CYC.finditer(text):
+        out.append(Record("cycles", float(m["value"]), "", m["kind"], _lineno(text, m.start()), m.group(0)))
+    return out
+
+
+# ---------------------------------------------------------------- SP1
+# Source: sp1 examples/fibonacci/script/src/main.rs ("executed program with {} cycles", "generated proof",
+# "successfully generated and verified proof for the program!"). "Number of cycles: N" appears in other
+# example scripts (needs verification). Proving time is whatever the script prints: generic time lines are kept.
+_SP1_CYC = re.compile(r"executed program with (?P<a>\d+) cycles|Number of cycles:\s*(?P<b>\d+)", re.M | re.I)
+_SP1_OK = re.compile(r"successfully generated and verified proof", re.I)
+
+
+@register_parser("sp1", "SP1 scripts: 'executed program with N cycles' / 'Number of cycles: N', verify status, time lines",
+                 sniff=r"executed program with \d+ cycles|Number of cycles:")
+def parse_sp1(text: str) -> list[Record]:
+    out = []
+    for m in _SP1_CYC.finditer(text):
+        out.append(Record("cycles", float(m["a"] or m["b"]), "", "execute", _lineno(text, m.start()), m.group(0)))
+    for m in _SP1_OK.finditer(text):
+        out.append(Record("verify_status", "OK", "", "verify", _lineno(text, m.start()), m.group(0)))
+    out += [r for r in parse_generic(text) if r.metric == "time"]
+    return out
+
+
 # ---------------------------------------------------------------- SAT solvers
 _SAT_T = re.compile(
     rf"^c\s+(?:total process time since initialization|Total time(?: \(this thread\))?|process-time|total real time since initialization)\s*:?\s*(?P<value>{NUM})\s*(?P<unit>seconds|s)?",
@@ -312,9 +509,15 @@ def parse_gnu_time(text: str) -> list[Record]:
 
 
 # ---------------------------------------------------------------- dispatch
+# a parser that already returns another parser's records (avoid duplicates in auto mode)
+SUBSUMES = {"snarkjs": {"shell-time"}}
+
+
 def detect(text: str) -> list[str]:
     """Return names of parsers whose sniff pattern matches ``text`` (most specific first)."""
     hits = [p.name for p in REGISTRY.values() if p.sniff is not None and p.sniff.search(text)]
+    covered = set().union(*(SUBSUMES.get(h, set()) for h in hits)) if hits else set()
+    hits = [h for h in hits if h not in covered]
     return hits or ["generic"]
 
 
@@ -338,6 +541,6 @@ def values(records: Iterable[Record], metric: str = "time", label: str | None = 
 
 
 if __name__ == "__main__":
-    demo = "keygen time: 12.5 ms\nusvp :: rop: ≈2^131.2, red: ≈2^131.2, δ: 1.0040, β: 385, d: 1900, tag: usvp\n"
-    for r in parse_text(demo, ["generic", "lattice-estimator"]):
+    demo = "[INFO]  snarkJS: # of Constraints: 1000\nreal\t0m1.234s\n"   # synthetic
+    for r in parse_text(demo, ["snarkjs"]):
         print(r)
