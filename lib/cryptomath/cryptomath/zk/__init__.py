@@ -20,7 +20,8 @@ r1cs       R1CS representation, satisfiability, counts
 plonkish   Plonkish tables (gates, copies, lookups), satisfiability, counts
 
 Each module's docstring cites where the construction is treated in the
-reference books (``[Thaler §...]``, ``[CY24 §...]``).
+reference books (Thaler; Chiesa--Yogev), in the citation format of
+references/books/README.md.
 """
 from __future__ import annotations
 

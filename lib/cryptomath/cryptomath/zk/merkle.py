@@ -3,7 +3,7 @@
 
 Binary tree over 2^depth leaves. Leaf hash H(0x00 || data), inner node
 H(0x01 || left || right), where H is SHA-256 truncated to ``hash_bytes``
-bytes ([CY24 §Merkle commitment scheme, lemma:toy]).
+bytes ([CY24 §Definition, section:merkle-commitment-definition]).
 
 * Single opening of leaf i: the sibling of every node on the path from i to the
   root (its *copath*), ``depth`` hashes.
@@ -16,7 +16,8 @@ bytes ([CY24 §Merkle commitment scheme, lemma:toy]).
   hash collision ([CY24 §Merkle commitment scheme, lemma:mt-binding]).
   :func:`extract_collision` is that reduction; with ``hash_bytes`` = 1 or 2 a
   birthday search finds collisions, so binding visibly fails (tests/test_zk.py).
-* Hiding is *not* provided by the plain tree. ``hiding=True`` salts each leaf
+* Hiding is *not* provided by the plain tree (CY24 salts the leaves and drops the salts
+  when no privacy is needed, [CY24 §Definition, remark:mt-no-privacy]). ``hiding=True`` salts each leaf
   with :func:`cryptomath.protocols.commitments.hash_commit` (random 32-byte
   opening per leaf); the salt travels with the opened leaf.
 """

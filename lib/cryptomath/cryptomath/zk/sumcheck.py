@@ -198,6 +198,8 @@ if __name__ == "__main__":
     p = 97
     tabs = [[rng.randrange(p) for _ in range(16)] for _ in range(3)]
     assert run(tabs, p, rng)["accepted"]
-    wins = sum(run(tabs, p, rng, CheatingProver(tabs, p, rng=rng))["accepted"] for _ in range(500))
-    assert wins / 500 <= soundness_bound(4, 3, p) + 0.05, wins
-    print(f"sumcheck: OK (cheater accepted {wins}/500, bound {soundness_bound(4, 3, p):.3f})")
+    T = 4000
+    wins = sum(run(tabs, p, rng, CheatingProver(tabs, p, rng=rng))["accepted"] for _ in range(T))
+    exact, bound = 1 - (1 - 3 / p) ** 4, soundness_bound(4, 3, p)
+    assert wins / T <= bound + 4 * (bound * (1 - bound) / T) ** 0.5, wins
+    print(f"sumcheck: OK (cheater accepted {wins / T:.3f}; exact {exact:.3f}, bound v*d/p = {bound:.3f})")
