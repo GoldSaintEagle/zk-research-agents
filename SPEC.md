@@ -108,36 +108,38 @@ Loops: P6 can send back to P2/P3/P5. P8 review can send back to P7/P5.
 ## 5. Library scope (`lib/cryptomath`)
 
 Subpackages (each with `__init__.py`, docstrings, tests in `lib/cryptomath/tests/`):
-- `algebra/` finite fields, poly rings mod (q, Φ_m), cyclotomics, Galois group of Q(ζ_m),
-  CRT/slots, NTT (radix-2 & generic), p-adic / Z_{p^e} helpers, null polynomials,
-  lifting/digit-extraction polynomials, characters of (Z/m)^*.
-- `lattice/` LWE/RLWE/NTRU samplers, error distributions, security estimation
-  (wrapper around lattice-estimator if installed + built-in core-SVP / BKZ root-Hermite
-  model), BKZ/GSA simulator, LLL (toy).
-- `fhe/` toy BGV, BFV, CKKS (encode/decode canonical embedding, rescale, approx),
-  TFHE (LWE/GLWE/GGSW, gadget decomposition, blind rotation, PBS, programmable LUT),
-  noise estimators for each, bootstrapping building blocks (Paterson–Stockmeyer,
-  BSGS polynomial evaluation, Chebyshev approx, homomorphic linear transforms counts).
-- `symmetric/` SPN/Feistel toys, S-box analysis (DDT, LAT, BCT, differential
-  uniformity, nonlinearity, algebraic degree, APN check), Boolean functions (Walsh,
-  ANF), toy AES, Grain/LFSR, trail search via SAT/MILP model export (CNF/LP writer),
-  FHE-friendly cipher cost models (multiplicative depth / AND-count).
-- `protocols/` secret sharing (Shamir, additive, replicated), OT (toy), OPRF, PSI
-  cost models, garbled-circuit cost counter, commitment, Fiat–Shamir helpers.
-- `ec/` (small) prime-field EC arithmetic, pairing-free toy group ops, discrete-log
-  baby-step giant-step (for toy attack experiments).
-- `costmodel/` operation counting framework (count ops symbolically through a
-  program; used to compare algorithms before implementing).
+- `algebra/` number theory (orders, primitive roots, NTT-friendly primes, roots of unity),
+  polynomial rings, GF(p^k) extension fields, radix-2 / Bluestein NTT (butterflies counted).
+- `zk/` (TOY, every file `# TOY: not secure`) small-field proof-system components:
+  `field` (F_17, F_97, Goldilocks), `mle` (multilinear extensions, eq), `sumcheck`
+  (prover/verifier, Fiat–Shamir version, cheating prover for empirical soundness),
+  `merkle` (commit, pruned multi-open, collision extraction), `fri` (folding factor, rate,
+  queries; proof-size count), `kzg` (algebra only, simulated group with known discrete logs),
+  `plonk` (grand-product permutation, logUp lookup), `r1cs` and `plonkish` (representation,
+  satisfiability, counts in the CIRCUITS.md conventions).
+- `costmodel/` operation counting (`Counter`, `Traced`: nonlinear multiplications = R1CS
+  constraints), integer counts of ZK primitives (`zkops`: MSM, NTT, Merkle, sum-check,
+  KZG, FRI) and their sympy twins (`formulas`); used to compare provers before implementing.
+- `symmetric/` arithmetization-oriented primitive costs (`afcost`: Poseidon/HADES, MiMC, ...)
+  and GF(2^n) arithmetic (`gf2n`).
+- `protocols/` hash and Pedersen commitments, Fiat–Shamir `Transcript`, Schnorr.
+- `ec/` (small) prime-field EC arithmetic, toy groups, generic DLP (BSGS, rho, Pohlig–Hellman).
+
+`zk.{r1cs,plonkish,mle,sumcheck,merkle}` and `costmodel.{counter,zkops}` stay stdlib-only:
+`skills/constraint-cost`, `skills/circuit-audit` and `skills/prover-cost-model` import them.
 
 ## 6. Bench scope (`lib/bench` → package `crbench`)
 
 Generic harness: interleaved A/B runs, median + IQR + bootstrap CI, warm-up,
 CPU pinning / thread control, environment capture (CPU, compiler, commit, flags),
 lock file to avoid concurrent benches, log parser registry, LaTeX/Markdown table
-generator, EVIDENCE ledger writer. Adapters (recipes, not vendored code) for:
-OpenFHE, HElib, SEAL, Lattigo, TFHE-rs, tfhe (C++), Concrete, lattice-estimator,
-MP-SPDZ, emp-toolkit, APSI/VOLE-PSI, CryptoSMT / SAT solvers (cadical, cryptominisat),
-Gurobi/HiGHS MILP, SageMath scripts.
+generator, EVIDENCE ledger writer, `audit-tex` (ZK units: constraints, rows, gas,
+cycles, kB, bits — same as `gate_check.py`). Parsers: generic, criterion (arkworks,
+halo2, plonky3), gobench (gnark), gbench, shell-time, snarkjs, rapidsnark, circom,
+gnark, nargo-info, risc0, sp1, sat, gnu-time; each ZK parser names its format source
+and is tested on synthetic logs. Adapters (recipes, not vendored code; fetch/pin/build in
+`references/baselines/MANIFEST.md`) for: arkworks, gnark, circom, snarkjs, rapidsnark,
+halo2, plonky3, nargo, RISC Zero, SP1, SAT/SMT solvers (solver-based circuit audits).
 
 ## 7. Figures
 

@@ -12,7 +12,7 @@ When working *in a research project* that uses this system:
    - A bib entry stays only if `skills/bib-verify` confirmed it exists.
    - Nothing leaves the machine (submission, e-mail, eprint, public repo) without explicit human approval.
 4. Prefer `lib/cryptomath` + `lib/bench` over ad-hoc scripts; put throw-away scripts under `falsify/<claim-id>/` or `results/<exp>/`.
-5. Toy implementations in `lib/cryptomath/fhe|lattice|protocols` are **insecure** and only for reasoning / small experiments.
+5. Toy implementations in `lib/cryptomath/zk|protocols|ec` (sum-check, Merkle, FRI, KZG algebra, permutation/lookup checks, R1CS/Plonkish) are **insecure** and only for reasoning / small experiments.
 
 When working *on this repo*: follow `SPEC.md` (names, formats, the no-private-content rule).
 
