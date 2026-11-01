@@ -139,5 +139,14 @@ class TestEvidence(unittest.TestCase):
         self.assertIn('"median"', o.getvalue())
 
 
+
+class TestZKUnits(unittest.TestCase):
+    def test_zk_units_are_measurement_like(self):
+        # same units as gate_check.py NUM_PAT: constraints, rows, gas, cycles, kB, bits
+        line = "The circuit has 4096 constraints and 512 rows, costs 210 gas, runs 9172 cycles, 12 kB, 128 bits; k = 12."
+        nums = [n for _, n in evidence._measurement_numbers(line, strict=False)]
+        self.assertEqual(nums, ["4096", "512", "210", "9172", "12", "128"])
+
+
 if __name__ == "__main__":
     unittest.main()

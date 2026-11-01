@@ -199,10 +199,12 @@ def numbers_in(text: str) -> list[str]:
     return out
 
 
-# units that make a bare integer "measurement-like"
+# units that make a bare integer "measurement-like" (ZK units constraints / rows / gas / cycles / kB / bits as in
+# skills/phase-gate/scripts/gate_check.py NUM_PAT)
 _UNIT_RX = re.compile(
     r"^\s*(?:~|\\,|\\;|\\ |\$)?\s*(?:\\times|×|x\b|\\%|%|ms\b|s\b|sec|µs|\\mu\s*s|us\b|ns\b|min\b|h\b|hours?\b|seconds?\b|"
-    r"[KMGT]i?B\b|bytes?\b|bits?\b|cycles?\b|ops\b|MHz|GHz|kbit|Mbit|Gbit|rounds?\b|\\mathrm\{\s*(?:ms|s|MB|GB|KB|KiB|MiB|GiB)\s*\})",
+    r"[KMGT]i?B\b|bytes?\b|bits?\b|cycles?\b|ops\b|MHz|GHz|kbit|Mbit|Gbit|rounds?\b|"
+    r"constraints?\b|rows?\b|gas\b|\\mathrm\{\s*(?:ms|s|MB|GB|KB|KiB|MiB|GiB)\s*\})",
     re.I,
 )
 
