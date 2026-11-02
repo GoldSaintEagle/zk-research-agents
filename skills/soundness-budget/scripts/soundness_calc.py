@@ -2,7 +2,7 @@
 """soundness_calc.py -- itemised concrete-soundness budget for a ZK argument.
 
     python3 soundness_calc.py --example toy-bcs                 # worked toy budget, worst-case level
-    python3 soundness_calc.py --example toy-bcs --level average-case --evidence
+    python3 soundness_calc.py --example toy-bcs --level average-case --evidence --log results/soundness/toy.txt
     python3 soundness_calc.py --config budget.json [--evidence]
     python3 soundness_calc.py --selftest
 
@@ -375,12 +375,12 @@ class Budget:
         rows += ["", f"**Security level: {s:g} bits ({self.level}, {self.regime()})**; limited by: {limiter}."]
         return "\n".join(rows)
 
-    def evidence_rows(self, command: str) -> str:
+    def evidence_rows(self, command: str, log: str | None = None) -> str:
         s, _ = self.level_bits()
         commit = _git_head()
         today = datetime.date.today().isoformat()
-        row = (f"| E? | {s:g} bits ({self.level}, {self.regime()}) | {command} | results/soundness/<name>.txt | "
-               f"{commit} | - | {today} | 1 / exact |")
+        row = (f"| E? | {s:g} bits ({self.level}, {self.regime()}) | {command} | {log or 'results/soundness/<name>.txt'} | "
+               f"{commit} | n/a (exact computation) | {today} | 1 / exact |")
         return "\n".join([
             "EVIDENCE rows (fill the ID, save this output under the log path, see skills/log-to-evidence):",
             "| ID | number/fact as printed in paper | command | log path | commit | machine | date | runs/median |",
@@ -576,6 +576,11 @@ def selftest() -> int:
     jb = from_config(cfg)
     expect(jb.total(1024) == sr_from_rbr(1024, 32, F(3, 2 ** 64)) + hash_chain_term(256, 1024), "JSON budget = sum of its terms")
     expect("worst-case" in jb.table() and "E?" in jb.evidence_rows("cmd"), "table names the definition; EVIDENCE row emitted")
+    # the EVIDENCE row has the 8 SPEC §3 columns (what crbench evidence and gate_check.py read) and the log path
+    rows = toy_kzg().evidence_rows("cmd", "results/soundness/toy.txt").splitlines()
+    cells = [c.strip() for c in rows[-1].strip().strip("|").split("|")]
+    expect(len(cells) == 8 and cells[3] == "results/soundness/toy.txt" and rows[1].startswith("| ID | number/fact"),
+           "EVIDENCE row: SPEC columns, log path filled by --log")
     print("selftest:", "all checks passed" if ok else "FAILED")
     return 0 if ok else 1
 
@@ -588,6 +593,7 @@ def main(argv=None) -> int:
     g.add_argument("--selftest", action="store_true")
     ap.add_argument("--level", choices=["worst-case", "average-case"])
     ap.add_argument("--evidence", action="store_true", help="also print an EVIDENCE.md row")
+    ap.add_argument("--log", help="with --evidence: the log path for the row (save this output there, e.g. with tee)")
     a = ap.parse_args(argv)
     if a.selftest:
         return selftest()
@@ -603,7 +609,7 @@ def main(argv=None) -> int:
     if a.evidence:
         cmd = "python3 " + " ".join([os.path.relpath(__file__)] + (argv if argv is not None else sys.argv[1:]))
         print()
-        print(bud.evidence_rows(cmd))
+        print(bud.evidence_rows(cmd, a.log))
     return 0
 
 

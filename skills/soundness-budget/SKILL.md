@@ -85,13 +85,16 @@ CY24 bound into a KZG/IPA/AGM setting. Navigation: [map of CY24](../../reference
    a sum of terms of 2^−128 each is not 2^−128.
 5. **Compute the level** with the script (exact rational arithmetic), not by hand:
    ```bash
-   python3 skills/soundness-budget/scripts/soundness_calc.py --config soundness/budget.json --evidence
+   python3 skills/soundness-budget/scripts/soundness_calc.py --config soundness/budget.json --evidence \
+       --log results/soundness/budget.txt | tee results/soundness/budget.txt
    python3 skills/soundness-budget/scripts/soundness_calc.py --example toy-bcs --level average-case
    python3 skills/soundness-budget/scripts/soundness_calc.py --selftest
    ```
    The config lists terms by kind (`const`, `rbr`, `sr_standard`, `fs_sigma`, `merkle_multi`, `hash_chain`,
    `micali`, `bcs`, `special_soundness`) with their regime and source; caps carry assumption bits. Each
-   function's docstring names the label it implements.
+   function's docstring names the label it implements. `--evidence` prints a ledger row in the SPEC §3 columns
+   (`crbench evidence check` and `gate_check.py` read it); fill its ID and keep the printed value (`N bits`)
+   identical to the paper's wording.
 6. **Write the table into THEORY.md** (format below) and add the EVIDENCE row the script prints
    (`skills/log-to-evidence`). The paper prints the level with its definition and regime, e.g. "128 bits
    (average-case, proven)".
