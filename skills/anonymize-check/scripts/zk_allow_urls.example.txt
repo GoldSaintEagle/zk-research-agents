@@ -23,5 +23,8 @@ github.com/microsoft/Nova
 github.com/noir-lang
 github.com/lambdaclass
 
+# Reference books cited by this toolkit (references/books/README.md BibTeX)
+github.com/hash-based-snargs-book
+
 # Documentation hosts for third-party crates
 docs.rs
