@@ -84,7 +84,10 @@ Mark each item PASS / FAIL / N.A. with evidence (paper line, code line, test out
    Check items 1–10 against it and against the theorem the paper cites for FS.
 2. **Code.** Locate the transcript object and every absorb/squeeze call; produce the same table from the code.
    Diff the two tables. Then test:
-   - *sensitivity*: for each public input and parameter, flip it and check that the first challenge changes;
+   - *sensitivity*: for each public input and parameter, flip it and check that the first challenge **and every
+     later challenge, sub-protocol challenges included,** changes — with the **prover's messages held fixed**
+     (recompute the verifier's challenges for one proof under two statements). Re-proving honestly is not a
+     sensitivity test: honest messages change with the statement and hide a sub-transcript that ignores it;
    - *order*: absorb a commitment after its challenge in a test build and check that the verifier rejects old proofs;
    - *recomputation*: the verifier ignores any challenge value in the proof (tamper and check rejection);
    - *domain tags*: list all tags and check they are distinct and prefix-free.
@@ -122,8 +125,10 @@ Verdict: PASS / FAIL (items …). Handed to: theorist (paper fixes), prover-engi
 
 - Hashing the commitment to the witness but not the statement it is a witness for.
 - Hashing a *pointer*, a length or a hash of only part of the public input.
-- A transcript re-initialised for a sub-protocol (e.g. the PCS opening) so its challenges do not depend on the
-  outer statement.
+- A transcript re-initialised for a sub-protocol (e.g. the PCS opening, or a library sum-check called with its
+  default fresh transcript) so its challenges do not depend on the outer statement; pass the outer transcript
+  (`lib/cryptomath` `sumcheck.prove_fs(..., transcript=)`). The case study shows the forgery this allows
+  (`case-study/toy-rangecheck/falsify/C5_fs/`).
 - Challenges squeezed as 64-bit integers reduced into a 31-bit field, or into the base field when the budget uses
   the extension.
 - Same tag for Merkle leaves and inner nodes.

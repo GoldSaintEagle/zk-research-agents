@@ -114,13 +114,19 @@ def strong_fs_grinding(t: int, trials: int, seed: int = 1, p: int = P) -> float:
 
 def transcript_lint(absorbed: list[str], required: list[str]) -> list[str]:
     """Findings for a transcript that absorbed `absorbed` (in order) where the paper requires `required` (in order,
-    each item before the challenge that depends on it). Empty list = no finding."""
-    out = [f"missing: {item}" for item in required if item not in absorbed]
-    present = [item for item in required if item in absorbed]
-    pos = [absorbed.index(item) for item in present]
-    for (a, pa), (b, pb) in zip(zip(present, pos), zip(present[1:], pos[1:])):
-        if pa > pb:
-            out.append(f"order: {a} must be absorbed before {b}")
+    each item before the challenge that depends on it). Empty list = no finding.
+
+    Items may repeat (a multi-round protocol absorbs "root" before and after a challenge): `required` is matched
+    as a subsequence of `absorbed`, each item at its first occurrence after the previous match."""
+    out, pos = [], -1
+    for i, item in enumerate(required):
+        nxt = next((j for j in range(pos + 1, len(absorbed)) if absorbed[j] == item), None)
+        if nxt is not None:
+            pos = nxt
+        elif item in absorbed:
+            out.append(f"order: {required[i - 1]} must be absorbed before {item}" if i else f"order: {item}")
+        else:
+            out.append(f"missing: {item}")
     return out
 
 
@@ -166,6 +172,10 @@ def run(verbose: bool = True) -> bool:
     expect("missing: statement" in f and "missing: params" in f, "transcript lint: missing statement and params reported")
     f = transcript_lint(["domain-tag", "params", "statement", "public-input", "challenge-1", "commit-1", "commit-2", "challenge-2"], req)
     expect(any(x.startswith("order: commit-1") for x in f), "transcript lint: commitment absorbed after its challenge reported")
+    multi = ["statement", "root", "beta", "root", "tau"]
+    expect(transcript_lint(multi, multi) == [], "transcript lint: an item repeated in two rounds is matched in order")
+    expect(transcript_lint(["statement", "root", "beta", "tau"], multi) != [],
+           "transcript lint: the second-round commitment missing before tau is reported")
     expect(domain_separated({"leaf": b"\x00", "node": b"\x01", "fs": b"\x02"}), "domain separation: distinct one-byte tags")
     expect(not domain_separated({"fs": b"fs", "fs-round-1": b"fs-round-1"}), "domain separation: a tag that prefixes another is flagged")
     return ok
