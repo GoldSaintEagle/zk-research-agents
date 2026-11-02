@@ -18,7 +18,8 @@ python3 skills/phase-gate/scripts/gate_check.py --selftest
 It fails on: unticked gate items (waivers need `WAIVED: <reason> (DECISIONS D-<n>)`), `open` claims from P6 on,
 `survived`/`weakened` claims without EVIDENCE refs or falsifier evidence, paper numbers (×, %, ms, kB/KiB, bits,
 bits of security, constraints, rows, gas, cycles, 2^k …)
-without a matching EVIDENCE row from P7 on (escape hatch: `% no-evidence: <reason>` on the line, e.g. a number quoted
+without a matching EVIDENCE row from P7 on (escape hatch: `% no-evidence: <reason>` on the line — crbench's
+`% crbench:ignore` and its begin/end blocks count too, and crbench accepts `% no-evidence:` — e.g. a number quoted
 from a cited paper), and a missing/stale/unclean bib-verify report at P8.
 
 ## Gate checklists (copy into STATE.md under `## Gate P<k>`)

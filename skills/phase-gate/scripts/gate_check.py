@@ -14,8 +14,10 @@ Checks (each prints PASS/FAIL/WARN; exit 1 if any FAIL):
               least one EVIDENCE ref and a non-empty falsifier-evidence cell.
   >= P7       with --paper DIR: every number-with-unit in the .tex sources (e.g. "3.2x", "41%",
               "2^{128}", "12.5 ms", "1,048,576 constraints", "2^{20} rows", "210000 gas", "3.1 kB",
-              "5000 cycles", "100 bits of security") must appear verbatim in the EVIDENCE.md column
-              "number/fact as printed in paper", unless the line carries "% no-evidence: <reason>".
+              "5000 cycles", "100 bits of security") must appear in the EVIDENCE.md column
+              "number/fact as printed in paper" (LaTeX and Unicode spellings of ×, %, thousands separators
+              are equivalent), unless the line carries "% no-evidence: <reason>" or crbench's "% crbench:ignore"
+              (or sits in a crbench:ignore-begin/-end block).
   >= P8       refs.bib exists and a bib-verify report (bib-verify-report.md) is newer than refs.bib.
 
 Blackboard formats follow SPEC section 3 (tables with a header row; column order as in SPEC).
@@ -63,6 +65,26 @@ def col(row: dict, *prefixes: str) -> str:
     return ""
 
 
+def col_containing(row: dict, *words: str, exclude: str = "\0") -> str:
+    """First cell whose header contains one of `words` and not `exclude` (headers vary between templates:
+    "EVIDENCE refs" / "EVIDENCE / THEORY refs", "number/fact as printed in paper" / "value as printed")."""
+    for k, v in row.items():
+        if any(w in k for w in words) and exclude not in k:
+            return v
+    return ""
+
+
+PRINTED = ("number", "printed", "value")      # the same header hints as crbench.evidence
+
+
+def norm(s: str) -> str:
+    """Spelling-insensitive form of a printed number: LaTeX and Unicode times/percent/thousands separators agree
+    ("3.88\\times" = "3.88×" = "3.88x", "41\\%" = "41%", "1{,}536" = "1,536")."""
+    s = s.replace("\\times", "×").replace("\\%", "%").replace("{,}", ",").replace("\\,", "").replace("$", "")
+    s = re.sub(r"(?<=\d)x\b", "×", s)
+    return s.replace(" ", "").replace("{", "").replace("}", "")
+
+
 def gate_section(state: str, phase: str) -> list[str] | None:
     lines = state.splitlines()
     start = None
@@ -84,7 +106,7 @@ def gate_section(state: str, phase: str) -> list[str] | None:
 NUM_PAT = re.compile(r"(?<![\w.,])((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?\s*(?:\\times|×|x\b|\\%|%"
                      r"|\s?(?:ms|s|us|µs|kB|KB|KiB|MB|MiB|GB|GiB|bits?(?:\s+of\s+security)?"
                      r"|constraints|rows|gas|cycles)\b)"
-                     r"|2\^\{?\d+\}?)")
+                     r"|2\^(?:\{\d+(?:\.\d+)?\}|\d+(?![\w.])))")      # 2^{128}, 2^64; not 2^{2c}
 
 
 def check(project: str, phase: str, paper: str | None) -> list[tuple[str, str]]:
@@ -122,7 +144,7 @@ def check(project: str, phase: str, paper: str | None) -> list[tuple[str, str]]:
                 if st == "open":
                     res.append(("FAIL", f"claim {cid} still open (falsifier has not ruled)"))
                 elif st in ("survived", "weakened"):
-                    if not col(r, "evidence ref"):
+                    if not col_containing(r, "evidence", exclude="falsifier"):
                         res.append(("FAIL", f"claim {cid} {st} but has no EVIDENCE refs"))
                     if not col(r, "falsifier"):
                         res.append(("FAIL", f"claim {cid} {st} but falsifier-evidence cell is empty"))
@@ -132,17 +154,23 @@ def check(project: str, phase: str, paper: str | None) -> list[tuple[str, str]]:
                 res.append(("PASS", f"CLAIMS.md: {len(rows)} claims ruled on"))
     if k >= 7 and paper:
         ev = read(os.path.join(project, "EVIDENCE.md")) or ""
-        printed = {col(r, "number") for r in md_table(ev, "number")}
-        printed = {p.replace(" ", "") for p in printed if p}
+        table = next((t for t in (md_table(ev, h) for h in PRINTED) if t), [])
+        printed = {col_containing(r, *PRINTED) for r in table}
+        printed = {norm(p) for p in printed if p}
         missing = []
         for root, _, files in os.walk(os.path.join(project, paper)):
             for f in files:
                 if not f.endswith(".tex"):
                     continue
+                block = False
                 for ln, line in enumerate(read(os.path.join(root, f)).splitlines(), 1):
-                    code = re.split(r"(?<!\\)%", line)[0] if "% no-evidence:" not in line else ""
+                    if "crbench:ignore-begin" in line or "crbench:ignore-end" in line:
+                        block = "crbench:ignore-begin" in line
+                        continue
+                    skip = block or "% no-evidence:" in line or "crbench:ignore" in line   # crbench's marker too
+                    code = "" if skip else re.split(r"(?<!\\)%", line)[0]
                     for m in NUM_PAT.finditer(code):
-                        tok = m.group(1).replace(" ", "")
+                        tok = norm(m.group(1))
                         if not any(tok in p or p in tok for p in printed):
                             missing.append(f"{f}:{ln}: {m.group(1)}")
         for mm in missing:
@@ -199,6 +227,11 @@ def selftest() -> int:
                          "| E6 | 100 bits | soundness --toy | logs/e | abc | m1 | 2099-01-01 | 1 |\n")
         r = check(d, "P7", "paper")
         assert all(s != "FAIL" for s, _ in r), r
+        # crbench's escape hatches are honoured too (one marker for both checkers)
+        w("paper/main.tex", "if 2^{2c} < p and 2^k < p\n")                      # symbolic exponents are not numbers
+        assert all(s != "FAIL" for s, _ in check(d, "P7", "paper")), check(d, "P7", "paper")
+        w("paper/main.tex", "p = 2^{64} - 2^{32} + 1 % crbench:ignore\n% crbench:ignore-begin\n7.5x\n% crbench:ignore-end\n")
+        assert all(s != "FAIL" for s, _ in check(d, "P7", "paper")), check(d, "P7", "paper")
         w("CLAIMS.md", "| ID | claim | proposer | status | falsifier evidence | EVIDENCE refs |\n|---|---|---|---|---|---|\n"
                        "| C1 | x | y | open | | |\n")
         assert any("still open" in m for s, m in check(d, "P6", None))
@@ -207,6 +240,16 @@ def selftest() -> int:
         w("refs.bib", "@misc{toy, url={https://example.org/x}}\n")
         w("bib-verify-report.md", "| key | status | detail |\n|---|---|---|\n| toy | NEEDS_VERIFICATION | no urldate |\n")
         assert any("non-VERIFIED" in m for s, m in check(d, "P8", None) if s == "FAIL")
+        # the shipped blackboard templates must be readable by this checker (their headers differ from SPEC wording)
+        tpl = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "templates", "blackboard")
+        if os.path.isdir(tpl):
+            cl = read(os.path.join(tpl, "CLAIMS.md")).replace("| open | | |", "| survived | reran, holds | E1 |")
+            w("CLAIMS.md", cl)
+            w("EVIDENCE.md", read(os.path.join(tpl, "EVIDENCE.md")))
+            w("STATE.md", "# STATE\n## Gate P7\n- [x] done\n")
+            w("paper/main.tex", "We are 1.9\\times faster.\n")
+            r = check(d, "P7", "paper")
+            assert all(s != "FAIL" for s, _ in r), ("templates", r)
     print("selftest: OK")
     return 0
 
