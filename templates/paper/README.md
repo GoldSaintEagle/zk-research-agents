@@ -11,7 +11,7 @@ Skeleton whose sections match `skills/paper-playbook/sections/`. Placeholders us
 | `main_camera.tex` | proceedings/camera-ready driver (`\buildcamera`: de-anonymised) |
 | `main_full.tex` | full-version driver (`\buildfull`: de-anonymised + `\iffull` material) |
 | `authors.tex` | author block, only read in non-anonymous builds (do not upload with anonymous sources) |
-| `macros.tex` | notation conventions; one concept, one macro; `\ev{E12}` evidence tags |
+| `macros.tex` | notation conventions; one concept, one macro; `\evid{E12}` evidence tags (checked by `crbench audit-tex`) |
 | `sections/*.tex` | abstract, intro (+ related work, contributions, overview), prelim, construction, security, experiments, conclusion, appendix, related_table |
 | `refs.bib` | sample entries in house style (maintained by `lit-scout`) |
 | `Makefile` | `make` (submission), `make camera`, `make full`, `make check`, `make anon`, `make clean` |
