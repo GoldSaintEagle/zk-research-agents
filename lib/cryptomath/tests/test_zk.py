@@ -123,6 +123,34 @@ class TestSumcheck(unittest.TestCase):
                                        label=b"cheat%d" % s)
         self.assertLessEqual(wins / 300, binom_upper(sumcheck.soundness_bound(4, 2, p), 300))
 
+    def test_fiat_shamir_subprotocol_binding(self):
+        """A fresh transcript does not bind the tables: all-zero messages fix the challenges r* in advance, and a
+        table chosen afterwards with T~(r*) = 0 'proves' a false sum 0. Continuing an outer transcript that
+        absorbed a commitment to the table moves r* with the table, and the same forgery fails."""
+        from cryptomath.protocols.fiat_shamir import Transcript
+        from cryptomath.zk.mle import eq_table
+        p, v = P97, 3
+        zero = {"claim": 0, "messages": [[0, 0] for _ in range(v)], "v": v, "d": 1}
+        t = sumcheck._transcript(v, 1, p, 0, b"toy-sumcheck")
+        rstar = []
+        for j in range(v):
+            for i in range(2):
+                t.append(b"s%d_%d" % (j, i), (0).to_bytes(1, "big"))
+            rstar.append(t.challenge_scalar(b"r%d" % j, p))
+        eq = eq_table(rstar, p)
+        table = [0] * 8
+        table[0], table[1] = 1, (-eq[0] * pow(eq[1], p - 2, p)) % p      # T~(r*) = 0, but sum T != 0
+        self.assertNotEqual(sum(table) % p, 0)
+        self.assertTrue(sumcheck.verify_fs(zero, [table], p))             # forged: the false sum 0 is accepted
+
+        def outer():
+            tr = Transcript(b"outer")
+            tr.append(b"table", bytes(table))                             # stands in for a commitment
+            return tr
+        self.assertFalse(sumcheck.verify_fs(zero, [table], p, transcript=outer()))
+        honest = sumcheck.prove_fs([table], p, transcript=outer())
+        self.assertTrue(sumcheck.verify_fs(honest, [table], p, transcript=outer()))
+
 
 class TestMerkle(unittest.TestCase):
     def test_open_and_pruned_open(self):

@@ -24,7 +24,12 @@ Schwartz--Zippel lemma ([Thaler §3.4, Schwartz-Zippel Lemma]).
 * :func:`prove_fs` / :func:`verify_fs` -- non-interactive version: challenges
   r_j are squeezed from a :class:`cryptomath.protocols.fiat_shamir.Transcript`
   that absorbs the statement (v, d, claimed sum) and every round message
-  ([Thaler §5.2, The Fiat-Shamir Transformation]).
+  ([Thaler §5.2, The Fiat-Shamir Transformation]). By default the transcript is
+  fresh and does **not** contain the tables (the oracle): a prover can then fix
+  the challenges first and choose the tables afterwards. When the sum-check is
+  a sub-protocol, pass ``transcript=`` -- the outer transcript that already
+  absorbed the statement and the commitments to the tables -- so that every
+  r_j depends on them ([CY24 §Lack of adaptive security, section:fs-lack-of-adaptive-soundness]).
 """
 from __future__ import annotations
 
@@ -154,9 +159,13 @@ def run(tables: Sequence[Sequence[int]], p: int, rng: random.Random, prover: Opt
     return {"claim": claim, "messages": msgs, "challenges": chals, "accepted": ok}
 
 
-def _transcript(v: int, d: int, p: int, claim: int, label: bytes):
-    from ..protocols.fiat_shamir import Transcript   # lazy: protocols imports sympy via ec
-    t = Transcript(label)
+def _transcript(v: int, d: int, p: int, claim: int, label: bytes, outer=None):
+    if outer is None:
+        from ..protocols.fiat_shamir import Transcript   # lazy: protocols imports sympy via ec
+        t = Transcript(label)
+    else:
+        t = outer
+        t.append(b"sumcheck", label)
     t.append_int(b"p", p)
     t.append_int(b"v", v)
     t.append_int(b"d", d)
@@ -165,10 +174,13 @@ def _transcript(v: int, d: int, p: int, claim: int, label: bytes):
 
 
 def prove_fs(tables: Sequence[Sequence[int]], p: int, label: bytes = b"toy-sumcheck",
-             combine: Combine = _prod, degree: Optional[int] = None, prover: Optional[Prover] = None) -> dict:
-    """Non-interactive proof {claim, messages}; challenges are recomputed by the verifier."""
+             combine: Combine = _prod, degree: Optional[int] = None, prover: Optional[Prover] = None,
+             transcript=None) -> dict:
+    """Non-interactive proof {claim, messages}; challenges are recomputed by the verifier.
+    ``transcript``: continue this (outer) transcript instead of starting a fresh one; it is advanced in place,
+    so the verifier must pass its own copy, advanced to the same point."""
     P = prover or Prover(tables, p, combine, degree)
-    t = _transcript(P.v, P.d, p, P.claim, label)
+    t = _transcript(P.v, P.d, p, P.claim, label, transcript)
     msgs = []
     for j in range(P.v):
         m = P.message()
@@ -180,11 +192,11 @@ def prove_fs(tables: Sequence[Sequence[int]], p: int, label: bytes = b"toy-sumch
 
 
 def verify_fs(proof: dict, tables: Sequence[Sequence[int]], p: int, label: bytes = b"toy-sumcheck",
-              combine: Combine = _prod) -> bool:
+              combine: Combine = _prod, transcript=None) -> bool:
     v, d = proof["v"], proof["d"]
     if len(proof["messages"]) != v or v != num_vars(tables[0]):
         return False
-    t = _transcript(v, d, p, proof["claim"], label)
+    t = _transcript(v, d, p, proof["claim"], label, transcript)
     chals = []
     for j, m in enumerate(proof["messages"]):
         for i, y in enumerate(m):
