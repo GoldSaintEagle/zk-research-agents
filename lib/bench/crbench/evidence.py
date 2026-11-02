@@ -14,7 +14,8 @@ Rules enforced here:
 * with ``root`` given, log paths must exist;
 * ``audit_tex``: every *measurement-like* number in the paper body is either listed in
   some row's printed column, or explicitly tagged ``\\evid{ID}`` (and then it must
-  match that row), or sits on a line carrying ``% crbench:ignore``.
+  match that row), or sits on a line carrying ``% crbench:ignore`` (or gate_check.py's
+  ``% no-evidence: <reason>``, so one marker satisfies both checkers).
 """
 from __future__ import annotations
 
@@ -176,7 +177,8 @@ def validate_ledger(rows: list[dict], root: str | None = None) -> list[Issue]:
 
 
 # ------------------------------------------------------------------ number handling
-_NUM_RX = re.compile(r"(?<![\w.])[-+]?(?:\d{1,3}(?:(?:,|\{,\}|\\,)\d{3})+|\d+)(?:\.\d+)?(?![\w])|(?<![\w.])\.\d+")
+# "--3.98" in "3.69--3.98" is an en-dash range, not a negative number: a sign never follows another "-"
+_NUM_RX = re.compile(r"(?<![\w.])(?:(?<![-\w.])[-+])?(?:\d{1,3}(?:(?:,|\{,\}|\\,)\d{3})+|\d+)(?:\.\d+)?(?![\w])|(?<![\w.])\.\d+")
 
 
 def normalize_number(tok: str) -> str | None:
@@ -276,8 +278,8 @@ def audit_tex(tex_path: str, ledger_rows: list[dict], strict: bool = False, body
         if "crbench:ignore-end" in raw_line:
             ignore_block = False
             continue
-        if not in_body or ignore_block or "crbench:ignore" in raw_line:
-            continue
+        if not in_body or ignore_block or "crbench:ignore" in raw_line or "% no-evidence:" in raw_line:
+            continue                     # "% no-evidence: <reason>" is gate_check.py's spelling of the same escape
         # explicit evidence tags: number immediately before \evid{ID}
         for m in re.finditer(r"\\evid\{([^}]*)\}", raw_line):
             eid = m.group(1).strip()

@@ -21,6 +21,8 @@ Memory drops from 1{,}536 MB to 768 MB.
 The estimator reports $2^{128.4}$ operations.
 An untraced claim: 17.5 ms per gate.
 Here 99.9 ms is ignored % crbench:ignore
+And 88.8 ms too % no-evidence: quoted from a cited paper
+A range 1.23~s--0.61~s of traced values.
 We use 3 parties and the year 2024.
 \end{document}
 """
@@ -146,6 +148,13 @@ class TestZKUnits(unittest.TestCase):
         line = "The circuit has 4096 constraints and 512 rows, costs 210 gas, runs 9172 cycles, 12 kB, 128 bits; k = 12."
         nums = [n for _, n in evidence._measurement_numbers(line, strict=False)]
         self.assertEqual(nums, ["4096", "512", "210", "9172", "12", "128"])
+
+
+class TestNumberSpelling(unittest.TestCase):
+    def test_en_dash_range_is_not_a_sign(self):
+        nums = [n for n, _ in evidence._measurement_numbers(r"3.69$\times$--3.98$\times$ faster", False)]
+        self.assertEqual(nums, ["3.69", "3.98"])
+        self.assertEqual([n for n, _ in evidence._measurement_numbers("a -2.5 ms drift", False)], ["-2.5"])
 
 
 if __name__ == "__main__":
