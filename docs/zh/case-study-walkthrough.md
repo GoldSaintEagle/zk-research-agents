@@ -207,6 +207,7 @@ python3 ../../skills/eprint-search/scripts/eprint_search.py "lookup range check"
 | fiat-shamir-audit 流程中的敏感性测试（第一个挑战、诚实重证）看不出未绑定的子 transcript | P6 | 更新流程与陷阱列表 |
 | `soundness_calc.py --evidence` 的日志路径只是占位符 | P3 | 新增 `--log PATH` |
 | 匿名检查的 URL 白名单模板不含参考书自身的 URL | P8 | 已加入 |
+| `scripts/privacy_scan.sh` 在 macOS 上生成空模式（BSD `paste` 需要 `-` 参数），把每个文件都报为命中 | 提交前检查 | 改为 `paste -sd'|' -`，拒绝空模式 |
 
 ## 可以照搬到真实项目的经验
 1. 先写强 thesis，让 falsifier 去削弱它；被驳倒的行要保留（C1、C5、C7）。

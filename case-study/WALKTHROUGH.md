@@ -227,6 +227,7 @@ python3 ../../skills/eprint-search/scripts/eprint_search.py "lookup range check"
 | the fiat-shamir-audit procedure's sensitivity test (first challenge, honest re-proving) cannot see unbound sub-transcripts | P6 | procedure and pitfalls updated |
 | `soundness_calc.py --evidence` left the log path as a placeholder | P3 | `--log PATH` |
 | the anonymity allow-list template did not contain the reference book's own URL | P8 | added |
+| `scripts/privacy_scan.sh` built an empty pattern on macOS (BSD `paste` needs `-`) and flagged every file | pre-commit check | `paste -sd'|' -`, refuse an empty pattern |
 
 ## What to copy from this example into a real project
 1. Write the strong thesis first and let the falsifier cut it down; keep the refuted rows (C1, C5, C7).
