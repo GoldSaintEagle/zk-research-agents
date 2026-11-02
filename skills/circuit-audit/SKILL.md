@@ -151,6 +151,9 @@ the method named; "PASS (differential tests only)" supports `weakened` wording a
 
 - Auditing the gadget against the witness generator instead of against the specification: both can share a bug.
 - Treating random testing as an under-constraint check (the honest witness always satisfies a weaker system).
+- A negative test that feeds an out-of-range input to the *witness generator* and counts its refusal as a
+  rejection: the constraints were never consulted (the case study's missed top-limb bug,
+  `case-study/toy-rangecheck/falsify/C1_lookup_circuit/`).
 - A small-field check whose p is so small that the gadget behaves differently (2^k vs p, overflow of sums).
 - Hand-copying constraints into the small-field model instead of re-running the real constraint builder.
 - Range-checking a value where it is used but not where a hint created it; a lookup table that is an advice

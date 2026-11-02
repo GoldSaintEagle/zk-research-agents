@@ -100,23 +100,25 @@ def plonk_runsum(xs: list[int], k: int) -> Plonkish:
 
 
 def plonk_lookup(xs: list[int], k: int, c: int) -> Plonkish:
-    """MSB-first running sum over limbs: acc_{i+1} = 2^c acc_i + limb_i, limb_i in [0, 2^c) by lookup.
+    """MSB-first running sum over limbs: acc_0 = 0, acc_{i+1} = 2^c acc_i + limb_i, limb_i in [0, 2^c) by lookup.
     If r = k mod c != 0 the top limb has only r bits: it is looked up a second time multiplied by 2^(c-r),
-    which forces limb < 2^r."""
+    which forces limb < 2^r. Without the `zero` gate acc_0 would be free and every x would pass
+    (x = 2^(cL) acc_0 + limbs); the last row holds only acc, so no witness cell is left unconstrained."""
     L, r = math.ceil(k / c), k % c
-    gates = {"limb": (1, lambda cur, nxt: nxt["acc"] - (2 ** c) * cur["acc"] - cur["limb"])}
+    gates = {"limb": (1, lambda cur, nxt: nxt["acc"] - (2 ** c) * cur["acc"] - cur["limb"]),
+             "zero": (1, lambda cur, _: cur["acc"])}
     t = Plonkish(2, gates, table=range(2 ** c))
     for j, x in enumerate(xs):
         limbs = [(x >> (c * i)) & (2 ** c - 1) for i in reversed(range(L))]   # MSB first
         acc = 0
         for i, limb in enumerate(limbs):
             row = len(t.rows)
-            t.rows.append((("limb",), {"acc": acc, "limb": limb}))
+            t.rows.append((("limb", "zero") if i == 0 else ("limb",), {"acc": acc, "limb": limb}))
             t.lookups.append((row, "limb", 1))
             if i == 0 and r:
                 t.lookups.append((row, "limb", 2 ** (c - r)))
             acc = (2 ** c) * acc + limb
-        t.rows.append(((), {"acc": acc, "limb": 0}))
+        t.rows.append(((), {"acc": acc}))
         t.copies.append(((len(t.rows) - 1, "acc"), ("pub", j)))
     return t
 
@@ -214,6 +216,14 @@ def selftest() -> int:
     t = plonk_lookup([2 ** k2], k2, c2)
     t.lookups = [lk for lk in t.lookups if lk[2] == 1]
     assert t.satisfied([2 ** k2])
+    # acc_0 is constrained: a free first accumulator would let x = 2^(cL) acc_0 + limbs pass for any x
+    t = plonk_lookup([5], 8, 4)
+    t.rows[0] = (t.rows[0][0], {**t.rows[0][1], "acc": 1})
+    acc = 1
+    for i in range(2):
+        acc = 16 * acc + t.rows[i][1]["limb"]
+        t.rows[i + 1] = (t.rows[i + 1][0], {**t.rows[i + 1][1], "acc": acc})
+    assert not t.satisfied([acc]), "plonk_lookup accepts a free acc_0"
     # padding and table height: the lookup encoding's height is at least the table size
     e = estimate(4, 8, 16)
     assert e["plonk-lookup c=16"]["height_pow2"] == 2 ** 16 and e["plonk-runsum"]["height_pow2"] == 64
