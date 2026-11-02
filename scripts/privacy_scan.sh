@@ -4,7 +4,8 @@
 set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"; LIST="${1:-$ROOT/.privacy-denylist}"
 [ -f "$LIST" ] || { echo "no deny-list at $LIST (create one; it is git-ignored)"; exit 2; }
-PAT=$(grep -vE '^\s*(#|$)' "$LIST" | paste -sd'|')
+PAT=$(grep -vE '^[[:space:]]*(#|$)' "$LIST" | paste -sd'|' -)   # '-' operand: BSD paste requires it
+[ -n "$PAT" ] || { echo "deny-list $LIST has no patterns (an empty pattern would match every file)"; exit 2; }
 HITS=$(grep -rniIE "$PAT" "$ROOT" --exclude-dir=.git --exclude=.privacy-denylist || true)
 # also scan text inside PDFs we ship
 while IFS= read -r f; do
