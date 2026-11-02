@@ -1,22 +1,32 @@
 # case-study/ — end-to-end example (TEACHING EXAMPLE)
 
-A toy research project run through all phases P0–P8 with the 12 agents, using only public,
-textbook-level material and insecure toy parameters. **Do not cite any number from here.**
+A toy ZK research project run through all phases P0–P8 with the 13 agents, using only public, textbook-level
+material, insecure toy parameters and a pure-Python toy prover. **Do not cite any number from here.**
 
 | path | what |
 |---|---|
-| [`WALKTHROUGH.md`](WALKTHROUGH.md) | phase-by-phase narration: command → agent → files read/written → gate → loops; exact reproduction commands |
+| [`WALKTHROUGH.md`](WALKTHROUGH.md) | phase-by-phase narration: command → agent → files read/written → gate → loops; reproduction commands; lessons |
 | [`../docs/zh/case-study-walkthrough.md`](../docs/zh/case-study-walkthrough.md) | Chinese version |
-| [`toy-mvpbs/`](toy-mvpbs/) | the project: blackboard files (`STATE.md`, `CLAIMS.md`, `EVIDENCE.md`, …) at its top level |
-| `toy-mvpbs/code/` | MV-PBS, per-bit PBS and CMux-tree S-box on `cryptomath.fhe.tfhe`; tests; crbench-driven experiments; figure script |
-| `toy-mvpbs/falsify/` | one script per claim + its `.log` (the attacks that refuted C3/C5 and weakened C2) |
-| `toy-mvpbs/theory/` | sage-check-style numeric checks of the lemmas (+ log) |
-| `toy-mvpbs/results/` | crbench logs (`run.json`, per-execution `r*.log`, `summary.log`), sanitised |
-| `toy-mvpbs/paper/` | 5-page LNCS write-up (`main.pdf`), audit-tex / anon-check / pdf-check logs |
+| [`toy-rangecheck/`](toy-rangecheck/) | the project: blackboard files (`STATE.md`, `CLAIMS.md`, `EVIDENCE.md`, …) at its top level ([its README](toy-rangecheck/README.md) maps every directory to its agent) |
+| `toy-rangecheck/circuits/` | R1CS and Plonkish bit decomposition, Plonkish + logUp limbs, with SPECs, counts and the builder self-audit |
+| `toy-rangecheck/impl/` | toy multilinear Plonkish prover/verifier (zero-check + logUp over Goldilocks, Fiat–Shamir, Merkle) on `cryptomath.zk` |
+| `toy-rangecheck/falsify/` | one script + log per attack (exhaustive circuit audit, FS forgery, budget recomputation, edge runs) and the tally |
+| `toy-rangecheck/results/` | crbench logs (`run.json`, per-execution `r*.log`, `summary.log`), soundness budgets, sanitised |
+| `toy-rangecheck/paper/` | 7-page LNCS write-up (`main.pdf`), audit-tex / anon-check / pdf-check logs |
 
-Topic: 4-bit S-box (PRESENT) on toy-TFHE ciphertexts — one PBS per output bit vs multi-value PBS
-(Carpov–Izabachène–Mollimard, CT-RSA 2019) vs CMux tree (CGGI, ASIACRYPT 2017).
-Outcome: MV-PBS 3.86× faster at k = 4 (toy, CPU time); speed-up saturates for many LUTs;
-noise grows by ‖d_i‖², visible at a deliberately noisy parameter set.
+Topic: k-bit range checks for n = 64 values over Goldilocks, written (a) as R1CS / Plonkish bit decomposition and
+(b) as Plonkish + logUp lookups with 8-bit limbs, compared in rows and in toy prover time on one backend.
 
-Quick start: `cd toy-mvpbs && /usr/bin/python3 code/test_sbox_fhe.py && /usr/bin/python3 code/run_experiments.py --quick` (smoke run into `results-quick/`; the full run that produced the evidence is `code/run_experiments.py` without flags, ≈ 2.5 min, plus the falsify scripts ≈ 1 min).
+Outcome: the P0 thesis "lookups are ≥ 5× cheaper for every k ≤ 64" did not survive. Padded rows: 8× fewer for
+16 ≤ k ≤ 63, but only 2× at k = 4 (the 2^8-row table sets the height). Prover time: 3.7×–3.8× faster for
+16 ≤ k ≤ 48, no faster at k = 4 (0.96×; 1.00× in a re-run), 25× slower with 16-bit limbs. k = 64 is not a range check in Goldilocks.
+The falsifier also caught the planted under-constrained top limb (exhaustive audit over F_11) and a Fiat–Shamir
+transcript that let the toy prover prove a false statement.
+
+Quick start (≈ 2 min, one core; details in the walkthrough):
+
+```bash
+cd case-study/toy-rangecheck
+python3 circuits/selfcheck.py && python3 falsify/C1_lookup_circuit/audit.py && python3 falsify/C5_fs/attack.py
+python3 code/run_experiments.py --only bench_kscan --out results-rerun   # re-measure into an ignored directory
+```
