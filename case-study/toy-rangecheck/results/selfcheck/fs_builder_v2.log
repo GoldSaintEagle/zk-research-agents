@@ -1,0 +1,10 @@
+[bits] transcript (outer): domain:toy-rangecheck/prover/v2 | absorb:arm | absorb:n | absorb:k | absorb:c | absorb:p ... (61 items)
+[bits] lint vs paper order: PASS
+[bits] sensitivity of the first challenge to x_0, c, n: PASS
+[bits] tampered sum-check message rejected: PASS
+[lookup] transcript (outer): domain:toy-rangecheck/prover/v2 | absorb:arm | absorb:n | absorb:k | absorb:c | absorb:p ... (102 items)
+[lookup] lint vs paper order: PASS
+[lookup] sensitivity of the first challenge to x_0, c, n: PASS
+[lookup] tampered sum-check message rejected: PASS
+domain tags distinct and prefix-free: PASS
+FS self-audit (builder): PASS

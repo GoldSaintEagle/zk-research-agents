@@ -1,0 +1,6 @@
+# REPRODUCTION RUN (WALKTHROUGH block B, results-rerun/, not the evidence of the paper numbers); kept for DECISIONS D-9.
+# falsify_C4_edges: rounds=5 warmup=1 order=alternate started=2026-11-02T23:02:34+0800
+lookup_c4_n64_k32 vs bits_n64_k32: ratio bits/lookup = 2.16x [1.95, 2.29] (medians 41.60 ms / 19.30 ms, failures 0)
+lookup_c8_n64_k32 vs bits_n64_k32: ratio bits/lookup = 3.82x [3.67, 4.17] (medians 41.60 ms / 10.90 ms, failures 0)
+lookup_c16_n64_k32 vs bits_n64_k32: ratio bits/lookup = 0.04x [0.04, 0.04] (medians 41.60 ms / 1041.29 ms, failures 0)
+lookup_c8_n16_k16 vs bits_n16_k16: ratio bits/lookup = 1.09x [1.07, 1.18] (medians 5.40 ms / 4.95 ms, failures 0)

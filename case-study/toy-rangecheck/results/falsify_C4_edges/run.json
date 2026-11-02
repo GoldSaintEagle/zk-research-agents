@@ -1,0 +1,495 @@
+{
+  "arms": {
+    "bits_n64_k32": "<venv>/bin/python impl/prove.py --arm bits --k 32 --n 64",
+    "lookup_c4_n64_k32": "<venv>/bin/python impl/prove.py --arm lookup --k 32 --n 64 --c 4",
+    "lookup_c8_n64_k32": "<venv>/bin/python impl/prove.py --arm lookup --k 32 --n 64 --c 8",
+    "lookup_c16_n64_k32": "<venv>/bin/python impl/prove.py --arm lookup --k 32 --n 64 --c 16",
+    "bits_n16_k16": "<venv>/bin/python impl/prove.py --arm bits --k 16 --n 16",
+    "lookup_c8_n16_k16": "<venv>/bin/python impl/prove.py --arm lookup --k 16 --n 16 --c 8"
+  },
+  "order": "alternate",
+  "repeats": 5,
+  "warmup": 1,
+  "metric": "time",
+  "executions": [
+    {
+      "arm": "bits_n64_k32",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.3384996659588069,
+      "value": 0.0388,
+      "log": "results/falsify_C4_edges/bits_n64_k32/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c4_n64_k32",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.18714045803062618,
+      "value": 0.018598,
+      "log": "results/falsify_C4_edges/lookup_c4_n64_k32/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n64_k32",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.17993283295072615,
+      "value": 0.010238,
+      "log": "results/falsify_C4_edges/lookup_c8_n64_k32/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c16_n64_k32",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 1.4809150830842555,
+      "value": 0.980056,
+      "log": "results/falsify_C4_edges/lookup_c16_n64_k32/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n16_k16",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.16713595809414983,
+      "value": 0.005104,
+      "log": "results/falsify_C4_edges/bits_n16_k16/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n16_k16",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.170561584061943,
+      "value": 0.004793,
+      "log": "results/falsify_C4_edges/lookup_c8_n16_k16/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c4_n64_k32",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18789612501859665,
+      "value": 0.018855,
+      "log": "results/falsify_C4_edges/lookup_c4_n64_k32/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n64_k32",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17906479199882597,
+      "value": 0.010418,
+      "log": "results/falsify_C4_edges/lookup_c8_n64_k32/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c16_n64_k32",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 1.4862771660555154,
+      "value": 0.9791799999999999,
+      "log": "results/falsify_C4_edges/lookup_c16_n64_k32/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n16_k16",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.16790579201187938,
+      "value": 0.005067,
+      "log": "results/falsify_C4_edges/bits_n16_k16/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n16_k16",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17370004090480506,
+      "value": 0.0048070000000000005,
+      "log": "results/falsify_C4_edges/lookup_c8_n16_k16/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n64_k32",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21515637496486306,
+      "value": 0.039473999999999995,
+      "log": "results/falsify_C4_edges/bits_n64_k32/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n64_k32",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18047337501775473,
+      "value": 0.010308999999999999,
+      "log": "results/falsify_C4_edges/lookup_c8_n64_k32/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c16_n64_k32",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 1.4622959999833256,
+      "value": 0.968394,
+      "log": "results/falsify_C4_edges/lookup_c16_n64_k32/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n16_k16",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17140191595535725,
+      "value": 0.0050030000000000005,
+      "log": "results/falsify_C4_edges/bits_n16_k16/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n16_k16",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1719828750938177,
+      "value": 0.00477,
+      "log": "results/falsify_C4_edges/lookup_c8_n16_k16/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n64_k32",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21300529199652374,
+      "value": 0.038861,
+      "log": "results/falsify_C4_edges/bits_n64_k32/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c4_n64_k32",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1869389999192208,
+      "value": 0.018775,
+      "log": "results/falsify_C4_edges/lookup_c4_n64_k32/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c16_n64_k32",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 1.47141320805531,
+      "value": 0.970459,
+      "log": "results/falsify_C4_edges/lookup_c16_n64_k32/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n16_k16",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17737983400002122,
+      "value": 0.005091,
+      "log": "results/falsify_C4_edges/bits_n16_k16/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n16_k16",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1721655000001192,
+      "value": 0.004759,
+      "log": "results/falsify_C4_edges/lookup_c8_n16_k16/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n64_k32",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21585062507074326,
+      "value": 0.039212000000000004,
+      "log": "results/falsify_C4_edges/bits_n64_k32/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c4_n64_k32",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1878180829808116,
+      "value": 0.018963999999999998,
+      "log": "results/falsify_C4_edges/lookup_c4_n64_k32/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n64_k32",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1778285000473261,
+      "value": 0.01041,
+      "log": "results/falsify_C4_edges/lookup_c8_n64_k32/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n16_k16",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.16932266706135124,
+      "value": 0.005139,
+      "log": "results/falsify_C4_edges/bits_n16_k16/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n16_k16",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1759589590365067,
+      "value": 0.004842,
+      "log": "results/falsify_C4_edges/lookup_c8_n16_k16/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n64_k32",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2174678749870509,
+      "value": 0.039236,
+      "log": "results/falsify_C4_edges/bits_n64_k32/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c4_n64_k32",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1902917920378968,
+      "value": 0.018903,
+      "log": "results/falsify_C4_edges/lookup_c4_n64_k32/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n64_k32",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18049854203127325,
+      "value": 0.010526,
+      "log": "results/falsify_C4_edges/lookup_c8_n64_k32/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c16_n64_k32",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 1.4688999170903116,
+      "value": 0.9731090000000001,
+      "log": "results/falsify_C4_edges/lookup_c16_n64_k32/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n16_k16",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1774397500557825,
+      "value": 0.00491,
+      "log": "results/falsify_C4_edges/lookup_c8_n16_k16/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n64_k32",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.211631124955602,
+      "value": 0.039078,
+      "log": "results/falsify_C4_edges/bits_n64_k32/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c4_n64_k32",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1915219168877229,
+      "value": 0.018945,
+      "log": "results/falsify_C4_edges/lookup_c4_n64_k32/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c8_n64_k32",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17813883302733302,
+      "value": 0.010341,
+      "log": "results/falsify_C4_edges/lookup_c8_n64_k32/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_c16_n64_k32",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 1.4785682500805706,
+      "value": 0.9789140000000001,
+      "log": "results/falsify_C4_edges/lookup_c16_n64_k32/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_n16_k16",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17038333299569786,
+      "value": 0.00504,
+      "log": "results/falsify_C4_edges/bits_n16_k16/r005.log",
+      "error": ""
+    }
+  ],
+  "env": {
+    "captured_at": "2026-11-02T22:28:02+0800",
+    "host_id": "29e583a2ecd7",
+    "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "python": "3.13.12",
+    "cpu": {
+      "machine": "arm64",
+      "logical_cpus": 10,
+      "loadavg": [
+        1.44091796875,
+        1.58349609375,
+        1.74267578125
+      ]
+    },
+    "compilers": {
+      "gcc": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+      "g++": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+      "clang": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+      "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+      "cargo": "cargo 1.92.0 (344c4567c 2025-10-21)",
+      "go": "go version go1.27.0 darwin/arm64",
+      "lean": "Lean (version 4.28.0, arm64-apple-darwin24.6.0, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)"
+    },
+    "env": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "target": {
+      "dir_name": "toy-rangecheck",
+      "git_commit": "942aba1b789471a52e741cc3be8db5e8c99b20d7",
+      "git_dirty": true,
+      "git_describe": "942aba1"
+    },
+    "bench": {
+      "threads": 1,
+      "cpus": null,
+      "order": "alternate",
+      "seed": 0
+    }
+  },
+  "warnings": [
+    "target working tree is dirty: record the diff or commit before benchmarking"
+  ],
+  "started": "2026-11-02T22:28:08+0800",
+  "finished": "2026-11-02T22:28:23+0800",
+  "summary": {
+    "bits_n64_k32": {
+      "n": 5,
+      "median": 0.039212000000000004,
+      "q1": 0.039078,
+      "q3": 0.039236,
+      "iqr": 0.00015799999999999842,
+      "min": 0.038861,
+      "max": 0.039473999999999995,
+      "ci_low": 0.038861,
+      "ci_high": 0.039473999999999995,
+      "failures": 0
+    },
+    "lookup_c4_n64_k32": {
+      "n": 5,
+      "median": 0.018903,
+      "q1": 0.018855,
+      "q3": 0.018945,
+      "iqr": 8.99999999999998e-05,
+      "min": 0.018775,
+      "max": 0.018963999999999998,
+      "ci_low": 0.018775,
+      "ci_high": 0.018963999999999998,
+      "failures": 0
+    },
+    "lookup_c8_n64_k32": {
+      "n": 5,
+      "median": 0.01041,
+      "q1": 0.010341,
+      "q3": 0.010418,
+      "iqr": 7.700000000000068e-05,
+      "min": 0.010308999999999999,
+      "max": 0.010526,
+      "ci_low": 0.010308999999999999,
+      "ci_high": 0.010526,
+      "failures": 0
+    },
+    "lookup_c16_n64_k32": {
+      "n": 5,
+      "median": 0.9731090000000001,
+      "q1": 0.970459,
+      "q3": 0.9789140000000001,
+      "iqr": 0.008455000000000101,
+      "min": 0.968394,
+      "max": 0.9791799999999999,
+      "ci_low": 0.968394,
+      "ci_high": 0.9791799999999999,
+      "failures": 0
+    },
+    "bits_n16_k16": {
+      "n": 5,
+      "median": 0.005067,
+      "q1": 0.00504,
+      "q3": 0.005091,
+      "iqr": 5.099999999999983e-05,
+      "min": 0.0050030000000000005,
+      "max": 0.005139,
+      "ci_low": 0.0050030000000000005,
+      "ci_high": 0.005139,
+      "failures": 0
+    },
+    "lookup_c8_n16_k16": {
+      "n": 5,
+      "median": 0.0048070000000000005,
+      "q1": 0.00477,
+      "q3": 0.004842,
+      "iqr": 7.200000000000002e-05,
+      "min": 0.004759,
+      "max": 0.00491,
+      "ci_low": 0.004759,
+      "ci_high": 0.00491,
+      "failures": 0
+    }
+  }
+}

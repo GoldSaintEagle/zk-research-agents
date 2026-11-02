@@ -1,0 +1,29 @@
+selfcheck[bits v2] k=4: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v2] k=8: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v2] k=12: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v2] k=16: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v2] k=24: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v2] k=32: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v2] k=48: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v2] k=63: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v2] k=4: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v2] k=8: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v2] k=12: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v2] k=16: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v2] k=24: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v2] k=32: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v2] k=48: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v2] k=63: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v2] k=4: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v2] k=8: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v2] k=12: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v2] k=16: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v2] k=24: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v2] k=32: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v2] k=48: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v2] k=63: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v2] exhaustive over F_11, k = 3, c = 2: PASS
+selfcheck[lookup v2] exhaustive over F_11, k = 3, c = 2: PASS
+selfcheck[bits v2] exhaustive over F_13, k = 3, c = 2: PASS
+selfcheck[lookup v2] exhaustive over F_13, k = 3, c = 2: PASS
+builder self-audit (v2): PASS (differential, negative and exhaustive small-field tests)

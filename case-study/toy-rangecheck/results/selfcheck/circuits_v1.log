@@ -1,0 +1,25 @@
+selfcheck[bits v1] k=4: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v1] k=8: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v1] k=12: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v1] k=16: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v1] k=24: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v1] k=32: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v1] k=48: differential 203 inputs PASS; negative tests PASS
+selfcheck[bits v1] k=63: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v1] k=4: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v1] k=8: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v1] k=12: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v1] k=16: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v1] k=24: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v1] k=32: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v1] k=48: differential 203 inputs PASS; negative tests PASS
+selfcheck[lookup v1] k=63: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v1] k=4: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v1] k=8: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v1] k=12: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v1] k=16: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v1] k=24: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v1] k=32: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v1] k=48: differential 203 inputs PASS; negative tests PASS
+selfcheck[r1cs v1] k=63: differential 203 inputs PASS; negative tests PASS
+builder self-audit (v1): PASS (random differential + negative tests only; no exhaustive small-field search)

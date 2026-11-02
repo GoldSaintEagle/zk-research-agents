@@ -1,0 +1,11 @@
+# REPRODUCTION RUN (WALKTHROUGH block B, results-rerun/, not the evidence of the paper numbers); kept for DECISIONS D-9.
+# bench_kscan: toy prover CPU time (build + prove), n = 64, c = 8, Goldilocks, pure Python, 1 thread
+# rounds=7 warmup=1 order=alternate started=2026-11-02T23:01:57+0800 finished=2026-11-02T23:02:23+0800
+k=4 bits_median_ms=5.60 bits_iqr_ms=0.16 lookup_median_ms=5.62 lookup_iqr_ms=0.15 ratio_bits_over_lookup=1.00x [0.96, 1.01] failures=0
+k=8 bits_median_ms=10.61 bits_iqr_ms=0.45 lookup_median_ms=5.16 lookup_iqr_ms=0.16 ratio_bits_over_lookup=2.06x [1.98, 2.15] failures=0
+k=12 bits_median_ms=10.54 bits_iqr_ms=0.23 lookup_median_ms=6.36 lookup_iqr_ms=0.16 ratio_bits_over_lookup=1.66x [1.63, 1.72] failures=0
+k=16 bits_median_ms=21.11 bits_iqr_ms=0.39 lookup_median_ms=5.63 lookup_iqr_ms=0.12 ratio_bits_over_lookup=3.75x [3.57, 3.79] failures=0
+k=24 bits_median_ms=20.20 bits_iqr_ms=0.53 lookup_median_ms=5.32 lookup_iqr_ms=0.15 ratio_bits_over_lookup=3.80x [3.60, 3.91] failures=0
+k=32 bits_median_ms=40.66 bits_iqr_ms=1.87 lookup_median_ms=11.03 lookup_iqr_ms=0.44 ratio_bits_over_lookup=3.69x [3.58, 3.97] failures=0
+k=48 bits_median_ms=42.12 bits_iqr_ms=1.92 lookup_median_ms=11.54 lookup_iqr_ms=0.20 ratio_bits_over_lookup=3.65x [3.56, 3.86] failures=0
+k=64 bits_median_ms=83.40 bits_iqr_ms=1.47 lookup_median_ms=21.62 lookup_iqr_ms=0.80 ratio_bits_over_lookup=3.86x [3.77, 4.04] failures=0

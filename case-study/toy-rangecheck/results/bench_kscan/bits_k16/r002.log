@@ -1,0 +1,15 @@
+# crbench arm=bits_k16 round=2 warmup=False
+# cmd: <venv>/bin/python impl/prove.py --arm bits --k 16 --n 64 --c 8
+# rc=0 wall=0.194298s value=0.0198 error=
+# ---
+build: 0.218 ms
+witness: 0.739 ms
+commit: 1.372 ms
+logup: 0.000 ms
+zerocheck: 17.450 ms
+grandsum: 0.001 ms
+prove time: 19.800 ms
+prove_wall elapsed: 19.802 ms
+verify time: 4.630 ms
+verified: True
+RESULT arm=bits n=64 k=16 c=8 circuits=v2 rows=1088 table_rows=0 lookups=0 height_pow2=2048 vars=11 zerocheck_degree=4

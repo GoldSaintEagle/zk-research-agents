@@ -1,0 +1,11 @@
+# SUPERSEDED (circuits v1, prover v1; before DECISIONS D-5/D-6). Kept as a record; no EVIDENCE row points here.
+# bench_kscan: toy prover CPU time (build + prove), n = 64, c = 8, Goldilocks, pure Python, 1 thread
+# rounds=7 warmup=1 order=alternate started=2026-11-02T22:18:55+0800 finished=2026-11-02T22:19:19+0800
+k=4 bits_median_ms=5.19 bits_iqr_ms=0.04 lookup_median_ms=4.65 lookup_iqr_ms=0.03 ratio_bits_over_lookup=1.12x [1.11, 1.13] failures=0
+k=8 bits_median_ms=10.25 bits_iqr_ms=0.14 lookup_median_ms=4.84 lookup_iqr_ms=0.03 ratio_bits_over_lookup=2.12x [2.10, 2.16] failures=0
+k=12 bits_median_ms=10.33 bits_iqr_ms=0.03 lookup_median_ms=5.43 lookup_iqr_ms=0.04 ratio_bits_over_lookup=1.90x [1.88, 1.91] failures=0
+k=16 bits_median_ms=19.87 bits_iqr_ms=0.11 lookup_median_ms=5.44 lookup_iqr_ms=0.04 ratio_bits_over_lookup=3.65x [3.62, 3.67] failures=0
+k=24 bits_median_ms=19.68 bits_iqr_ms=0.10 lookup_median_ms=5.25 lookup_iqr_ms=0.05 ratio_bits_over_lookup=3.75x [3.74, 3.81] failures=0
+k=32 bits_median_ms=39.34 bits_iqr_ms=0.16 lookup_median_ms=10.33 lookup_iqr_ms=0.08 ratio_bits_over_lookup=3.81x [3.79, 3.86] failures=0
+k=48 bits_median_ms=39.95 bits_iqr_ms=0.31 lookup_median_ms=10.74 lookup_iqr_ms=0.11 ratio_bits_over_lookup=3.72x [3.67, 3.75] failures=0
+k=64 bits_median_ms=79.05 bits_iqr_ms=0.59 lookup_median_ms=20.35 lookup_iqr_ms=0.39 ratio_bits_over_lookup=3.88x [3.83, 3.95] failures=0

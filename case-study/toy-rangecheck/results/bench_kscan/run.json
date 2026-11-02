@@ -1,0 +1,1544 @@
+{
+  "arms": {
+    "bits_k4": "<venv>/bin/python impl/prove.py --arm bits --k 4 --n 64 --c 8",
+    "lookup_k4": "<venv>/bin/python impl/prove.py --arm lookup --k 4 --n 64 --c 8",
+    "bits_k8": "<venv>/bin/python impl/prove.py --arm bits --k 8 --n 64 --c 8",
+    "lookup_k8": "<venv>/bin/python impl/prove.py --arm lookup --k 8 --n 64 --c 8",
+    "bits_k12": "<venv>/bin/python impl/prove.py --arm bits --k 12 --n 64 --c 8",
+    "lookup_k12": "<venv>/bin/python impl/prove.py --arm lookup --k 12 --n 64 --c 8",
+    "bits_k16": "<venv>/bin/python impl/prove.py --arm bits --k 16 --n 64 --c 8",
+    "lookup_k16": "<venv>/bin/python impl/prove.py --arm lookup --k 16 --n 64 --c 8",
+    "bits_k24": "<venv>/bin/python impl/prove.py --arm bits --k 24 --n 64 --c 8",
+    "lookup_k24": "<venv>/bin/python impl/prove.py --arm lookup --k 24 --n 64 --c 8",
+    "bits_k32": "<venv>/bin/python impl/prove.py --arm bits --k 32 --n 64 --c 8",
+    "lookup_k32": "<venv>/bin/python impl/prove.py --arm lookup --k 32 --n 64 --c 8",
+    "bits_k48": "<venv>/bin/python impl/prove.py --arm bits --k 48 --n 64 --c 8",
+    "lookup_k48": "<venv>/bin/python impl/prove.py --arm lookup --k 48 --n 64 --c 8",
+    "bits_k64": "<venv>/bin/python impl/prove.py --arm bits --k 64 --n 64 --c 8",
+    "lookup_k64": "<venv>/bin/python impl/prove.py --arm lookup --k 64 --n 64 --c 8"
+  },
+  "order": "alternate",
+  "repeats": 7,
+  "warmup": 1,
+  "metric": "time",
+  "executions": [
+    {
+      "arm": "bits_k4",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.24582108296453953,
+      "value": 0.004912,
+      "log": "results/bench_kscan/bits_k4/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k4",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.16423087497241795,
+      "value": 0.005344000000000001,
+      "log": "results/bench_kscan/lookup_k4/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k8",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.17925845796708018,
+      "value": 0.010194000000000002,
+      "log": "results/bench_kscan/bits_k8/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k8",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.16545333294197917,
+      "value": 0.004732999999999999,
+      "log": "results/bench_kscan/lookup_k8/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k12",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.1714319169986993,
+      "value": 0.01025,
+      "log": "results/bench_kscan/bits_k12/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k12",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.16772108396980911,
+      "value": 0.0058070000000000005,
+      "log": "results/bench_kscan/lookup_k12/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k16",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.20117508305702358,
+      "value": 0.019811,
+      "log": "results/bench_kscan/bits_k16/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k16",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.17248758301138878,
+      "value": 0.005366,
+      "log": "results/bench_kscan/lookup_k16/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k24",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.1825141670415178,
+      "value": 0.019528,
+      "log": "results/bench_kscan/bits_k24/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k24",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.1723412909777835,
+      "value": 0.00523,
+      "log": "results/bench_kscan/lookup_k24/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k32",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.2120727919973433,
+      "value": 0.039276000000000005,
+      "log": "results/bench_kscan/bits_k32/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k32",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.18323058390524238,
+      "value": 0.010385,
+      "log": "results/bench_kscan/lookup_k32/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k48",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.21857450006064028,
+      "value": 0.040715,
+      "log": "results/bench_kscan/bits_k48/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k48",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.19257516704965383,
+      "value": 0.010634000000000001,
+      "log": "results/bench_kscan/lookup_k48/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k64",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.2637175840791315,
+      "value": 0.08076000000000001,
+      "log": "results/bench_kscan/bits_k64/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k64",
+      "round": 0,
+      "warmup": true,
+      "returncode": 0,
+      "wall": 0.19425299996510148,
+      "value": 0.020035,
+      "log": "results/bench_kscan/lookup_k64/r000_warmup.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k4",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17762737500015646,
+      "value": 0.005522,
+      "log": "results/bench_kscan/lookup_k4/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k8",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17615820898208767,
+      "value": 0.010249000000000001,
+      "log": "results/bench_kscan/bits_k8/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k8",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1698675419902429,
+      "value": 0.0047729999999999995,
+      "log": "results/bench_kscan/lookup_k8/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k12",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17523787496611476,
+      "value": 0.01033,
+      "log": "results/bench_kscan/bits_k12/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k12",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17384295898955315,
+      "value": 0.006243,
+      "log": "results/bench_kscan/lookup_k12/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k16",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.19252579100430012,
+      "value": 0.019908000000000002,
+      "log": "results/bench_kscan/bits_k16/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k16",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17457183299120516,
+      "value": 0.005426,
+      "log": "results/bench_kscan/lookup_k16/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k24",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18563333398196846,
+      "value": 0.019416,
+      "log": "results/bench_kscan/bits_k24/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k24",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1692235830705613,
+      "value": 0.005171,
+      "log": "results/bench_kscan/lookup_k24/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k32",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2132045840844512,
+      "value": 0.039296,
+      "log": "results/bench_kscan/bits_k32/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k32",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1808922910131514,
+      "value": 0.010337,
+      "log": "results/bench_kscan/lookup_k32/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k48",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21633754100184888,
+      "value": 0.040156,
+      "log": "results/bench_kscan/bits_k48/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k48",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17727729107718915,
+      "value": 0.010629,
+      "log": "results/bench_kscan/lookup_k48/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k64",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.3913042499916628,
+      "value": 0.10477500000000001,
+      "log": "results/bench_kscan/bits_k64/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k64",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1958461250178516,
+      "value": 0.020222,
+      "log": "results/bench_kscan/lookup_k64/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k4",
+      "round": 1,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18470395903568715,
+      "value": 0.005248,
+      "log": "results/bench_kscan/bits_k4/r001.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k8",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18693129101302475,
+      "value": 0.010230000000000001,
+      "log": "results/bench_kscan/bits_k8/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k8",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.16936654096934944,
+      "value": 0.00475,
+      "log": "results/bench_kscan/lookup_k8/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k12",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17692945804446936,
+      "value": 0.010289999999999999,
+      "log": "results/bench_kscan/bits_k12/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k12",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17588708293624222,
+      "value": 0.006198,
+      "log": "results/bench_kscan/lookup_k12/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k16",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1942984169581905,
+      "value": 0.0198,
+      "log": "results/bench_kscan/bits_k16/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k16",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18349695892538875,
+      "value": 0.00541,
+      "log": "results/bench_kscan/lookup_k16/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k24",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18952375010121614,
+      "value": 0.019943000000000002,
+      "log": "results/bench_kscan/bits_k24/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k24",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.16997970803640783,
+      "value": 0.005208,
+      "log": "results/bench_kscan/lookup_k24/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k32",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21387408301234245,
+      "value": 0.039352,
+      "log": "results/bench_kscan/bits_k32/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k32",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1805112090660259,
+      "value": 0.010315,
+      "log": "results/bench_kscan/lookup_k32/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k48",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.22773783304728568,
+      "value": 0.040212000000000005,
+      "log": "results/bench_kscan/bits_k48/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k48",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18022500001825392,
+      "value": 0.010816000000000001,
+      "log": "results/bench_kscan/lookup_k48/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k64",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2659082090249285,
+      "value": 0.08006,
+      "log": "results/bench_kscan/bits_k64/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k64",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1961545420344919,
+      "value": 0.020284,
+      "log": "results/bench_kscan/lookup_k64/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k4",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17711050005163997,
+      "value": 0.005274,
+      "log": "results/bench_kscan/bits_k4/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k4",
+      "round": 2,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18880254193209112,
+      "value": 0.005533000000000001,
+      "log": "results/bench_kscan/lookup_k4/r002.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k8",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17249924992211163,
+      "value": 0.004806,
+      "log": "results/bench_kscan/lookup_k8/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k12",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17628600005991757,
+      "value": 0.010336,
+      "log": "results/bench_kscan/bits_k12/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k12",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17724708397872746,
+      "value": 0.006203,
+      "log": "results/bench_kscan/lookup_k12/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k16",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18663962499704212,
+      "value": 0.020073,
+      "log": "results/bench_kscan/bits_k16/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k16",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17907341697718948,
+      "value": 0.005472,
+      "log": "results/bench_kscan/lookup_k16/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k24",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1935174580430612,
+      "value": 0.019774,
+      "log": "results/bench_kscan/bits_k24/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k24",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17135562503244728,
+      "value": 0.0053609999999999994,
+      "log": "results/bench_kscan/lookup_k24/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k32",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21658720797859132,
+      "value": 0.039661,
+      "log": "results/bench_kscan/bits_k32/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k32",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17930612491909415,
+      "value": 0.010393000000000001,
+      "log": "results/bench_kscan/lookup_k32/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k48",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21327449998352677,
+      "value": 0.040488,
+      "log": "results/bench_kscan/bits_k48/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k48",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18263762502465397,
+      "value": 0.010803000000000002,
+      "log": "results/bench_kscan/lookup_k48/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k64",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.265271499985829,
+      "value": 0.080279,
+      "log": "results/bench_kscan/bits_k64/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k64",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18903104099445045,
+      "value": 0.020163,
+      "log": "results/bench_kscan/lookup_k64/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k4",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17010970890987664,
+      "value": 0.0052580000000000005,
+      "log": "results/bench_kscan/bits_k4/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k4",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17496112501248717,
+      "value": 0.005593,
+      "log": "results/bench_kscan/lookup_k4/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k8",
+      "round": 3,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1821955410996452,
+      "value": 0.010373,
+      "log": "results/bench_kscan/bits_k8/r003.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k12",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1796219159150496,
+      "value": 0.010289999999999999,
+      "log": "results/bench_kscan/bits_k12/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k12",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17584191705100238,
+      "value": 0.006214000000000001,
+      "log": "results/bench_kscan/lookup_k12/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k16",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.19060529093258083,
+      "value": 0.019937,
+      "log": "results/bench_kscan/bits_k16/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k16",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1739113749936223,
+      "value": 0.005364,
+      "log": "results/bench_kscan/lookup_k16/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k24",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.19955029094126076,
+      "value": 0.019635000000000003,
+      "log": "results/bench_kscan/bits_k24/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k24",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17226787493564188,
+      "value": 0.005248,
+      "log": "results/bench_kscan/lookup_k24/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k32",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21600904199294746,
+      "value": 0.039253,
+      "log": "results/bench_kscan/bits_k32/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k32",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1804012090433389,
+      "value": 0.010267,
+      "log": "results/bench_kscan/lookup_k32/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k48",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21737570804543793,
+      "value": 0.039959,
+      "log": "results/bench_kscan/bits_k48/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k48",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17985216702800244,
+      "value": 0.010641,
+      "log": "results/bench_kscan/lookup_k48/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k64",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2608843329362571,
+      "value": 0.080125,
+      "log": "results/bench_kscan/bits_k64/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k64",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.19119949999731034,
+      "value": 0.020101,
+      "log": "results/bench_kscan/lookup_k64/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k4",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17127737496048212,
+      "value": 0.00528,
+      "log": "results/bench_kscan/bits_k4/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k4",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17494308296591043,
+      "value": 0.00551,
+      "log": "results/bench_kscan/lookup_k4/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k8",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18975366698578,
+      "value": 0.010433,
+      "log": "results/bench_kscan/bits_k8/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k8",
+      "round": 4,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17064691695850343,
+      "value": 0.0048070000000000005,
+      "log": "results/bench_kscan/lookup_k8/r004.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k12",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17631358397193253,
+      "value": 0.006224,
+      "log": "results/bench_kscan/lookup_k12/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k16",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1957392500480637,
+      "value": 0.019943000000000002,
+      "log": "results/bench_kscan/bits_k16/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k16",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17178520804736763,
+      "value": 0.005397000000000001,
+      "log": "results/bench_kscan/lookup_k16/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k24",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.19114633300341666,
+      "value": 0.019702,
+      "log": "results/bench_kscan/bits_k24/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k24",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18970283307135105,
+      "value": 0.005396,
+      "log": "results/bench_kscan/lookup_k24/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k32",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21974804194178432,
+      "value": 0.039209,
+      "log": "results/bench_kscan/bits_k32/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k32",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18063683400396258,
+      "value": 0.010368,
+      "log": "results/bench_kscan/lookup_k32/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k48",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2142887091031298,
+      "value": 0.040181,
+      "log": "results/bench_kscan/bits_k48/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k48",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1835333340568468,
+      "value": 0.010841,
+      "log": "results/bench_kscan/lookup_k48/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k64",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.267520249937661,
+      "value": 0.079743,
+      "log": "results/bench_kscan/bits_k64/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k64",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.19698620797134936,
+      "value": 0.02009,
+      "log": "results/bench_kscan/lookup_k64/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k4",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1747116670012474,
+      "value": 0.005216,
+      "log": "results/bench_kscan/bits_k4/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k4",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1767571250675246,
+      "value": 0.005538,
+      "log": "results/bench_kscan/lookup_k4/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k8",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17858345806598663,
+      "value": 0.010288,
+      "log": "results/bench_kscan/bits_k8/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k8",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17843891691882163,
+      "value": 0.004824,
+      "log": "results/bench_kscan/lookup_k8/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k12",
+      "round": 5,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18260295793879777,
+      "value": 0.010307,
+      "log": "results/bench_kscan/bits_k12/r005.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k16",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.19126166601199657,
+      "value": 0.019776000000000002,
+      "log": "results/bench_kscan/bits_k16/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k16",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1770742500666529,
+      "value": 0.0054859999999999996,
+      "log": "results/bench_kscan/lookup_k16/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k24",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.19247624999843538,
+      "value": 0.019600000000000003,
+      "log": "results/bench_kscan/bits_k24/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k24",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17956770805176347,
+      "value": 0.005224,
+      "log": "results/bench_kscan/lookup_k24/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k32",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.21257749991491437,
+      "value": 0.039238,
+      "log": "results/bench_kscan/bits_k32/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k32",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18270399991888553,
+      "value": 0.010303000000000001,
+      "log": "results/bench_kscan/lookup_k32/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k48",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2154169169953093,
+      "value": 0.040214,
+      "log": "results/bench_kscan/bits_k48/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k48",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17967974999919534,
+      "value": 0.010647,
+      "log": "results/bench_kscan/lookup_k48/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k64",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2693929170491174,
+      "value": 0.080168,
+      "log": "results/bench_kscan/bits_k64/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k64",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.20780699991155416,
+      "value": 0.020411000000000002,
+      "log": "results/bench_kscan/lookup_k64/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k4",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18437445792369545,
+      "value": 0.00531,
+      "log": "results/bench_kscan/bits_k4/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k4",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17243229097221047,
+      "value": 0.005484,
+      "log": "results/bench_kscan/lookup_k4/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k8",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18621008296031505,
+      "value": 0.010337,
+      "log": "results/bench_kscan/bits_k8/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k8",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18126766697969288,
+      "value": 0.004834,
+      "log": "results/bench_kscan/lookup_k8/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k12",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18228987499605864,
+      "value": 0.010414999999999999,
+      "log": "results/bench_kscan/bits_k12/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k12",
+      "round": 6,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17699554096907377,
+      "value": 0.006273,
+      "log": "results/bench_kscan/lookup_k12/r006.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k16",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17910383304115385,
+      "value": 0.005385,
+      "log": "results/bench_kscan/lookup_k16/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k24",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18884683295618743,
+      "value": 0.019564,
+      "log": "results/bench_kscan/bits_k24/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k24",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1762587500270456,
+      "value": 0.00528,
+      "log": "results/bench_kscan/lookup_k24/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k32",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2278149580815807,
+      "value": 0.039435000000000005,
+      "log": "results/bench_kscan/bits_k32/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k32",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1818018340272829,
+      "value": 0.010244999999999999,
+      "log": "results/bench_kscan/lookup_k32/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k48",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2151232910109684,
+      "value": 0.039906,
+      "log": "results/bench_kscan/bits_k48/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k48",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18404145806562155,
+      "value": 0.010782,
+      "log": "results/bench_kscan/lookup_k48/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k64",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.2633235000539571,
+      "value": 0.08129800000000001,
+      "log": "results/bench_kscan/bits_k64/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k64",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.19297308393288404,
+      "value": 0.020168,
+      "log": "results/bench_kscan/lookup_k64/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k4",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.17690895893611014,
+      "value": 0.0053040000000000006,
+      "log": "results/bench_kscan/bits_k4/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k4",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1766912080347538,
+      "value": 0.005513,
+      "log": "results/bench_kscan/lookup_k4/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k8",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18499900004826486,
+      "value": 0.010157000000000001,
+      "log": "results/bench_kscan/bits_k8/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k8",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1770875829970464,
+      "value": 0.00484,
+      "log": "results/bench_kscan/lookup_k8/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k12",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.18510095798410475,
+      "value": 0.010383,
+      "log": "results/bench_kscan/bits_k12/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "lookup_k12",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1799180000089109,
+      "value": 0.0061589999999999995,
+      "log": "results/bench_kscan/lookup_k12/r007.log",
+      "error": ""
+    },
+    {
+      "arm": "bits_k16",
+      "round": 7,
+      "warmup": false,
+      "returncode": 0,
+      "wall": 0.1942366660805419,
+      "value": 0.019971,
+      "log": "results/bench_kscan/bits_k16/r007.log",
+      "error": ""
+    }
+  ],
+  "env": {
+    "captured_at": "2026-11-02T22:26:54+0800",
+    "host_id": "29e583a2ecd7",
+    "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "python": "3.13.12",
+    "cpu": {
+      "machine": "arm64",
+      "logical_cpus": 10,
+      "loadavg": [
+        1.498046875,
+        1.60302734375,
+        1.7646484375
+      ]
+    },
+    "compilers": {
+      "gcc": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+      "g++": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+      "clang": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+      "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+      "cargo": "cargo 1.92.0 (344c4567c 2025-10-21)",
+      "go": "go version go1.27.0 darwin/arm64"
+    },
+    "env": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "target": {
+      "dir_name": "toy-rangecheck",
+      "git_commit": "942aba1b789471a52e741cc3be8db5e8c99b20d7",
+      "git_dirty": true,
+      "git_describe": "942aba1"
+    },
+    "bench": {
+      "threads": 1,
+      "cpus": null,
+      "order": "alternate",
+      "seed": 0
+    }
+  },
+  "warnings": [
+    "target working tree is dirty: record the diff or commit before benchmarking"
+  ],
+  "started": "2026-11-02T22:27:04+0800",
+  "finished": "2026-11-02T22:27:29+0800",
+  "summary": {
+    "bits_k4": {
+      "n": 7,
+      "median": 0.005274,
+      "q1": 0.005253000000000001,
+      "q3": 0.005292,
+      "iqr": 3.8999999999999105e-05,
+      "min": 0.005216,
+      "max": 0.00531,
+      "ci_low": 0.005248,
+      "ci_high": 0.0053040000000000006,
+      "failures": 0
+    },
+    "lookup_k4": {
+      "n": 7,
+      "median": 0.005522,
+      "q1": 0.0055115,
+      "q3": 0.0055355000000000005,
+      "iqr": 2.4000000000000583e-05,
+      "min": 0.005484,
+      "max": 0.005593,
+      "ci_low": 0.00551,
+      "ci_high": 0.005538,
+      "failures": 0
+    },
+    "bits_k8": {
+      "n": 7,
+      "median": 0.010288,
+      "q1": 0.010239500000000002,
+      "q3": 0.010355,
+      "iqr": 0.00011549999999999755,
+      "min": 0.010157000000000001,
+      "max": 0.010433,
+      "ci_low": 0.010230000000000001,
+      "ci_high": 0.010373,
+      "failures": 0
+    },
+    "lookup_k8": {
+      "n": 7,
+      "median": 0.0048070000000000005,
+      "q1": 0.0047895,
+      "q3": 0.004829,
+      "iqr": 3.9499999999999605e-05,
+      "min": 0.00475,
+      "max": 0.00484,
+      "ci_low": 0.0047729999999999995,
+      "ci_high": 0.004834,
+      "failures": 0
+    },
+    "bits_k12": {
+      "n": 7,
+      "median": 0.01033,
+      "q1": 0.010298499999999999,
+      "q3": 0.0103595,
+      "iqr": 6.1000000000002025e-05,
+      "min": 0.010289999999999999,
+      "max": 0.010414999999999999,
+      "ci_low": 0.010289999999999999,
+      "ci_high": 0.010383,
+      "failures": 0
+    },
+    "lookup_k12": {
+      "n": 7,
+      "median": 0.006214000000000001,
+      "q1": 0.0062005,
+      "q3": 0.0062335,
+      "iqr": 3.300000000000004e-05,
+      "min": 0.0061589999999999995,
+      "max": 0.006273,
+      "ci_low": 0.006198,
+      "ci_high": 0.006243,
+      "failures": 0
+    },
+    "bits_k16": {
+      "n": 7,
+      "median": 0.019937,
+      "q1": 0.019854000000000004,
+      "q3": 0.019957000000000003,
+      "iqr": 0.00010299999999999893,
+      "min": 0.019776000000000002,
+      "max": 0.020073,
+      "ci_low": 0.0198,
+      "ci_high": 0.019971,
+      "failures": 0
+    },
+    "lookup_k16": {
+      "n": 7,
+      "median": 0.00541,
+      "q1": 0.005391,
+      "q3": 0.005449000000000001,
+      "iqr": 5.800000000000076e-05,
+      "min": 0.005364,
+      "max": 0.0054859999999999996,
+      "ci_low": 0.005385,
+      "ci_high": 0.005472,
+      "failures": 0
+    },
+    "bits_k24": {
+      "n": 7,
+      "median": 0.019635000000000003,
+      "q1": 0.019582000000000002,
+      "q3": 0.019738,
+      "iqr": 0.00015599999999999642,
+      "min": 0.019416,
+      "max": 0.019943000000000002,
+      "ci_low": 0.019564,
+      "ci_high": 0.019774,
+      "failures": 0
+    },
+    "lookup_k24": {
+      "n": 7,
+      "median": 0.005248,
+      "q1": 0.005216,
+      "q3": 0.0053205,
+      "iqr": 0.00010449999999999956,
+      "min": 0.005171,
+      "max": 0.005396,
+      "ci_low": 0.005208,
+      "ci_high": 0.0053609999999999994,
+      "failures": 0
+    },
+    "bits_k32": {
+      "n": 7,
+      "median": 0.039296,
+      "q1": 0.0392455,
+      "q3": 0.0393935,
+      "iqr": 0.00014799999999999536,
+      "min": 0.039209,
+      "max": 0.039661,
+      "ci_low": 0.039238,
+      "ci_high": 0.039435000000000005,
+      "failures": 0
+    },
+    "lookup_k32": {
+      "n": 7,
+      "median": 0.010315,
+      "q1": 0.010285,
+      "q3": 0.0103525,
+      "iqr": 6.749999999999985e-05,
+      "min": 0.010244999999999999,
+      "max": 0.010393000000000001,
+      "ci_low": 0.010267,
+      "ci_high": 0.010368,
+      "failures": 0
+    },
+    "bits_k48": {
+      "n": 7,
+      "median": 0.040181,
+      "q1": 0.040057499999999996,
+      "q3": 0.040213,
+      "iqr": 0.00015550000000000286,
+      "min": 0.039906,
+      "max": 0.040488,
+      "ci_low": 0.039959,
+      "ci_high": 0.040214,
+      "failures": 0
+    },
+    "lookup_k48": {
+      "n": 7,
+      "median": 0.010782,
+      "q1": 0.010644,
+      "q3": 0.010809500000000001,
+      "iqr": 0.00016550000000000072,
+      "min": 0.010629,
+      "max": 0.010841,
+      "ci_low": 0.010641,
+      "ci_high": 0.010816000000000001,
+      "failures": 0
+    },
+    "bits_k64": {
+      "n": 7,
+      "median": 0.080168,
+      "q1": 0.08009250000000001,
+      "q3": 0.08078850000000001,
+      "iqr": 0.0006960000000000022,
+      "min": 0.079743,
+      "max": 0.10477500000000001,
+      "ci_low": 0.08006,
+      "ci_high": 0.08129800000000001,
+      "failures": 0
+    },
+    "lookup_k64": {
+      "n": 7,
+      "median": 0.020168,
+      "q1": 0.020132,
+      "q3": 0.020253,
+      "iqr": 0.00012099999999999958,
+      "min": 0.02009,
+      "max": 0.020411000000000002,
+      "ci_low": 0.020101,
+      "ci_high": 0.020284,
+      "failures": 0
+    }
+  }
+}

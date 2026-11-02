@@ -1,0 +1,10 @@
+# bench_kscan: toy prover CPU time (build + prove), n = 64, c = 8, Goldilocks, pure Python, 1 thread
+# rounds=7 warmup=1 order=alternate started=2026-11-02T22:27:04+0800 finished=2026-11-02T22:27:29+0800
+k=4 bits_median_ms=5.27 bits_iqr_ms=0.04 lookup_median_ms=5.52 lookup_iqr_ms=0.02 ratio_bits_over_lookup=0.96x [0.95, 0.96] failures=0
+k=8 bits_median_ms=10.29 bits_iqr_ms=0.12 lookup_median_ms=4.81 lookup_iqr_ms=0.04 ratio_bits_over_lookup=2.14x [2.12, 2.16] failures=0
+k=12 bits_median_ms=10.33 bits_iqr_ms=0.06 lookup_median_ms=6.21 lookup_iqr_ms=0.03 ratio_bits_over_lookup=1.66x [1.65, 1.68] failures=0
+k=16 bits_median_ms=19.94 bits_iqr_ms=0.10 lookup_median_ms=5.41 lookup_iqr_ms=0.06 ratio_bits_over_lookup=3.69x [3.62, 3.71] failures=0
+k=24 bits_median_ms=19.64 bits_iqr_ms=0.16 lookup_median_ms=5.25 lookup_iqr_ms=0.10 ratio_bits_over_lookup=3.74x [3.68, 3.79] failures=0
+k=32 bits_median_ms=39.30 bits_iqr_ms=0.15 lookup_median_ms=10.31 lookup_iqr_ms=0.07 ratio_bits_over_lookup=3.81x [3.78, 3.83] failures=0
+k=48 bits_median_ms=40.18 bits_iqr_ms=0.16 lookup_median_ms=10.78 lookup_iqr_ms=0.17 ratio_bits_over_lookup=3.73x [3.71, 3.78] failures=0
+k=64 bits_median_ms=80.17 bits_iqr_ms=0.70 lookup_median_ms=20.17 lookup_iqr_ms=0.12 ratio_bits_over_lookup=3.98x [3.95, 4.03] failures=0

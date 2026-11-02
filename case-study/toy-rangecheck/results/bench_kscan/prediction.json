@@ -1,0 +1,313 @@
+{
+ "units": {
+  "hash_s": 3.1388108900012084e-07,
+  "eval_s": 1.585392654815393e-07,
+  "inv_s": 5.945222455557724e-08
+ },
+ "points": {
+  "bits_k4": {
+   "ops": {
+    "H": 512,
+    "v": 9,
+    "d": 4,
+    "tables": 7,
+    "hashes": 1023,
+    "helper_hashes": 0,
+    "zc_evals": 21469,
+    "gs_evals": 0,
+    "inversions": 0
+   },
+   "predicted_s": {
+    "commit": 0.00032110035404712365,
+    "logup": 0.0,
+    "zerocheck": 0.0034036794906231677,
+    "grandsum": 0.0
+   }
+  },
+  "bits_k8": {
+   "ops": {
+    "H": 1024,
+    "v": 10,
+    "d": 4,
+    "tables": 7,
+    "hashes": 2047,
+    "helper_hashes": 0,
+    "zc_evals": 42973,
+    "gs_evals": 0,
+    "inversions": 0
+   },
+   "predicted_s": {
+    "commit": 0.0006425145891832474,
+    "logup": 0.0,
+    "zerocheck": 0.006812907855538189,
+    "grandsum": 0.0
+   }
+  },
+  "bits_k12": {
+   "ops": {
+    "H": 1024,
+    "v": 10,
+    "d": 4,
+    "tables": 7,
+    "hashes": 2047,
+    "helper_hashes": 0,
+    "zc_evals": 42973,
+    "gs_evals": 0,
+    "inversions": 0
+   },
+   "predicted_s": {
+    "commit": 0.0006425145891832474,
+    "logup": 0.0,
+    "zerocheck": 0.006812907855538189,
+    "grandsum": 0.0
+   }
+  },
+  "bits_k16": {
+   "ops": {
+    "H": 2048,
+    "v": 11,
+    "d": 4,
+    "tables": 7,
+    "hashes": 4095,
+    "helper_hashes": 0,
+    "zc_evals": 85981,
+    "gs_evals": 0,
+    "inversions": 0
+   },
+   "predicted_s": {
+    "commit": 0.0012853430594554948,
+    "logup": 0.0,
+    "zerocheck": 0.013631364585368231,
+    "grandsum": 0.0
+   }
+  },
+  "bits_k24": {
+   "ops": {
+    "H": 2048,
+    "v": 11,
+    "d": 4,
+    "tables": 7,
+    "hashes": 4095,
+    "helper_hashes": 0,
+    "zc_evals": 85981,
+    "gs_evals": 0,
+    "inversions": 0
+   },
+   "predicted_s": {
+    "commit": 0.0012853430594554948,
+    "logup": 0.0,
+    "zerocheck": 0.013631364585368231,
+    "grandsum": 0.0
+   }
+  },
+  "bits_k32": {
+   "ops": {
+    "H": 4096,
+    "v": 12,
+    "d": 4,
+    "tables": 7,
+    "hashes": 8191,
+    "helper_hashes": 0,
+    "zc_evals": 171997,
+    "gs_evals": 0,
+    "inversions": 0
+   },
+   "predicted_s": {
+    "commit": 0.00257099999999999,
+    "logup": 0.0,
+    "zerocheck": 0.027268278045028318,
+    "grandsum": 0.0
+   }
+  },
+  "bits_k48": {
+   "ops": {
+    "H": 4096,
+    "v": 12,
+    "d": 4,
+    "tables": 7,
+    "hashes": 8191,
+    "helper_hashes": 0,
+    "zc_evals": 171997,
+    "gs_evals": 0,
+    "inversions": 0
+   },
+   "predicted_s": {
+    "commit": 0.00257099999999999,
+    "logup": 0.0,
+    "zerocheck": 0.027268278045028318,
+    "grandsum": 0.0
+   }
+  },
+  "bits_k64": {
+   "ops": {
+    "H": 8192,
+    "v": 13,
+    "d": 4,
+    "tables": 7,
+    "hashes": 16383,
+    "helper_hashes": 0,
+    "zc_evals": 344029,
+    "gs_evals": 0,
+    "inversions": 0
+   },
+   "predicted_s": {
+    "commit": 0.0051423138810889795,
+    "logup": 0.0,
+    "zerocheck": 0.05454210496434849,
+    "grandsum": 0.0
+   }
+  },
+  "lookup_k4": {
+   "ops": {
+    "H": 256,
+    "v": 8,
+    "d": 3,
+    "tables": 18,
+    "hashes": 1533,
+    "helper_hashes": 1533,
+    "zc_evals": 22968,
+    "gs_evals": 2298,
+    "inversions": 768
+   },
+   "predicted_s": {
+    "commit": 0.00048117970943718525,
+    "logup": 0.0005268390178958686,
+    "zerocheck": 0.003641329849579995,
+    "grandsum": 0.00036432323207657736
+   }
+  },
+  "lookup_k8": {
+   "ops": {
+    "H": 256,
+    "v": 8,
+    "d": 3,
+    "tables": 16,
+    "hashes": 1533,
+    "helper_hashes": 1022,
+    "zc_evals": 20416,
+    "gs_evals": 1532,
+    "inversions": 512
+   },
+   "predicted_s": {
+    "commit": 0.00048117970943718525,
+    "logup": 0.00035122601193057903,
+    "zerocheck": 0.0032367376440711067,
+    "grandsum": 0.00024288215471771822
+   }
+  },
+  "lookup_k12": {
+   "ops": {
+    "H": 256,
+    "v": 8,
+    "d": 3,
+    "tables": 18,
+    "hashes": 1533,
+    "helper_hashes": 1533,
+    "zc_evals": 22968,
+    "gs_evals": 2298,
+    "inversions": 768
+   },
+   "predicted_s": {
+    "commit": 0.00048117970943718525,
+    "logup": 0.0005268390178958686,
+    "zerocheck": 0.003641329849579995,
+    "grandsum": 0.00036432323207657736
+   }
+  },
+  "lookup_k16": {
+   "ops": {
+    "H": 256,
+    "v": 8,
+    "d": 3,
+    "tables": 16,
+    "hashes": 1533,
+    "helper_hashes": 1022,
+    "zc_evals": 20416,
+    "gs_evals": 1532,
+    "inversions": 512
+   },
+   "predicted_s": {
+    "commit": 0.00048117970943718525,
+    "logup": 0.00035122601193057903,
+    "zerocheck": 0.0032367376440711067,
+    "grandsum": 0.00024288215471771822
+   }
+  },
+  "lookup_k24": {
+   "ops": {
+    "H": 256,
+    "v": 8,
+    "d": 3,
+    "tables": 16,
+    "hashes": 1533,
+    "helper_hashes": 1022,
+    "zc_evals": 20416,
+    "gs_evals": 1532,
+    "inversions": 512
+   },
+   "predicted_s": {
+    "commit": 0.00048117970943718525,
+    "logup": 0.00035122601193057903,
+    "zerocheck": 0.0032367376440711067,
+    "grandsum": 0.00024288215471771822
+   }
+  },
+  "lookup_k32": {
+   "ops": {
+    "H": 512,
+    "v": 9,
+    "d": 3,
+    "tables": 16,
+    "hashes": 3069,
+    "helper_hashes": 2046,
+    "zc_evals": 40896,
+    "gs_evals": 3068,
+    "inversions": 1024
+   },
+   "predicted_s": {
+    "commit": 0.0009633010621413709,
+    "logup": 0.0007030797860391584,
+    "zerocheck": 0.006483621801133032,
+    "grandsum": 0.00048639846649736263
+   }
+  },
+  "lookup_k48": {
+   "ops": {
+    "H": 512,
+    "v": 9,
+    "d": 3,
+    "tables": 16,
+    "hashes": 3069,
+    "helper_hashes": 2046,
+    "zc_evals": 40896,
+    "gs_evals": 3068,
+    "inversions": 1024
+   },
+   "predicted_s": {
+    "commit": 0.0009633010621413709,
+    "logup": 0.0007030797860391584,
+    "zerocheck": 0.006483621801133032,
+    "grandsum": 0.00048639846649736263
+   }
+  },
+  "lookup_k64": {
+   "ops": {
+    "H": 1024,
+    "v": 10,
+    "d": 3,
+    "tables": 16,
+    "hashes": 6141,
+    "helper_hashes": 4094,
+    "zc_evals": 81856,
+    "gs_evals": 6140,
+    "inversions": 2048
+   },
+   "predicted_s": {
+    "commit": 0.0019275437675497422,
+    "logup": 0.001406787334256317,
+    "zerocheck": 0.012977390115256882,
+    "grandsum": 0.0009734310900566513
+   }
+  }
+ }
+}

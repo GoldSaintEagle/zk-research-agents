@@ -1,0 +1,12 @@
+b65ea8c3c415377c  circuits/count.py
+1da7283edd4024f3  circuits/range_gadgets.py
+38cd9ecc43483f18  circuits/selfcheck.py
+9027367bb33c890d  impl/fs_selfaudit.py
+b3420f9df16d0675  impl/prove.py
+699bef9621f056b6  impl/toy_prover.py
+55cb65e3d2accbf6  code/cost_model.py
+3a9ae991345c6402  code/ledger.py
+d77ad9e0f1b12ed9  code/make_figures.py
+0c1806633520acce  code/run_experiments.py
+5ce775014e489b96  theory/budget.py
+91e16bf557b521ac  theory/check_gadgets.py

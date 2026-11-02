@@ -1,0 +1,15 @@
+# crbench arm=lookup_k4 round=4 warmup=False
+# cmd: <venv>/bin/python impl/prove.py --arm lookup --k 4 --n 64 --c 8
+# rc=0 wall=0.174943s value=0.00551 error=
+# ---
+build: 0.053 ms
+witness: 0.278 ms
+commit: 0.524 ms
+logup: 0.822 ms
+zerocheck: 3.439 ms
+grandsum: 0.378 ms
+prove time: 5.510 ms
+prove_wall elapsed: 5.511 ms
+verify time: 2.211 ms
+verified: True
+RESULT arm=lookup n=64 k=4 c=8 circuits=v2 rows=128 table_rows=256 lookups=128 height_pow2=256 vars=8 zerocheck_degree=3
