@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+# smoke runs and moved-aside old runs are never evidence
+results-quick/
+results-rerun/

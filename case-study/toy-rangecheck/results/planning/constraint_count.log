@@ -1,0 +1,60 @@
+## n=64 k=4
+range check of n = 64 values to k = 4 bits (planning estimate; paper numbers come from the compiler)
+| encoding | constraints | rows | nonzeros | advice_cols | fixed_cols | max_degree | lookups | table_rows | height_pow2 |
+|---|---|---|---|---|---|---|---|---|---|
+| r1cs-bits | 320 |  | 1152 |  |  | 2 | 0 |  | 512 |
+| plonk-bits |  | 448 |  | 3 |  | 2 | 0 |  | 512 |
+| plonk-runsum |  | 320 |  | 1 |  | 2 | 0 |  | 512 |
+| plonk-lookup c=4 |  | 128 |  | 2 | 1 | 1 | 64 | 16 | 128 |
+| plonk-lookup c=8 |  | 128 |  | 2 | 1 | 1 | 128 | 256 | 256 |
+| plonk-lookup c=16 |  | 128 |  | 2 | 1 | 1 | 128 | 65536 | 65536 |
+## n=64 k=8
+range check of n = 64 values to k = 8 bits (planning estimate; paper numbers come from the compiler)
+| encoding | constraints | rows | nonzeros | advice_cols | fixed_cols | max_degree | lookups | table_rows | height_pow2 |
+|---|---|---|---|---|---|---|---|---|---|
+| r1cs-bits | 576 |  | 2176 |  |  | 2 | 0 |  | 1024 |
+| plonk-bits |  | 960 |  | 3 |  | 2 | 0 |  | 1024 |
+| plonk-runsum |  | 576 |  | 1 |  | 2 | 0 |  | 1024 |
+| plonk-lookup c=4 |  | 192 |  | 2 | 1 | 1 | 128 | 16 | 256 |
+| plonk-lookup c=8 |  | 128 |  | 2 | 1 | 1 | 64 | 256 | 256 |
+| plonk-lookup c=16 |  | 128 |  | 2 | 1 | 1 | 128 | 65536 | 65536 |
+## n=64 k=12
+range check of n = 64 values to k = 12 bits (planning estimate; paper numbers come from the compiler)
+| encoding | constraints | rows | nonzeros | advice_cols | fixed_cols | max_degree | lookups | table_rows | height_pow2 |
+|---|---|---|---|---|---|---|---|---|---|
+| r1cs-bits | 832 |  | 3200 |  |  | 2 | 0 |  | 1024 |
+| plonk-bits |  | 1472 |  | 3 |  | 2 | 0 |  | 2048 |
+| plonk-runsum |  | 832 |  | 1 |  | 2 | 0 |  | 1024 |
+| plonk-lookup c=4 |  | 256 |  | 2 | 1 | 1 | 192 | 16 | 256 |
+| plonk-lookup c=8 |  | 192 |  | 2 | 1 | 1 | 192 | 256 | 256 |
+| plonk-lookup c=16 |  | 128 |  | 2 | 1 | 1 | 128 | 65536 | 65536 |
+## n=64 k=16
+range check of n = 64 values to k = 16 bits (planning estimate; paper numbers come from the compiler)
+| encoding | constraints | rows | nonzeros | advice_cols | fixed_cols | max_degree | lookups | table_rows | height_pow2 |
+|---|---|---|---|---|---|---|---|---|---|
+| r1cs-bits | 1088 |  | 4224 |  |  | 2 | 0 |  | 2048 |
+| plonk-bits |  | 1984 |  | 3 |  | 2 | 0 |  | 2048 |
+| plonk-runsum |  | 1088 |  | 1 |  | 2 | 0 |  | 2048 |
+| plonk-lookup c=4 |  | 320 |  | 2 | 1 | 1 | 256 | 16 | 512 |
+| plonk-lookup c=8 |  | 192 |  | 2 | 1 | 1 | 128 | 256 | 256 |
+| plonk-lookup c=16 |  | 128 |  | 2 | 1 | 1 | 64 | 65536 | 65536 |
+## n=64 k=32
+range check of n = 64 values to k = 32 bits (planning estimate; paper numbers come from the compiler)
+| encoding | constraints | rows | nonzeros | advice_cols | fixed_cols | max_degree | lookups | table_rows | height_pow2 |
+|---|---|---|---|---|---|---|---|---|---|
+| r1cs-bits | 2112 |  | 8320 |  |  | 2 | 0 |  | 4096 |
+| plonk-bits |  | 4032 |  | 3 |  | 2 | 0 |  | 4096 |
+| plonk-runsum |  | 2112 |  | 1 |  | 2 | 0 |  | 4096 |
+| plonk-lookup c=4 |  | 576 |  | 2 | 1 | 1 | 512 | 16 | 1024 |
+| plonk-lookup c=8 |  | 320 |  | 2 | 1 | 1 | 256 | 256 | 512 |
+| plonk-lookup c=16 |  | 192 |  | 2 | 1 | 1 | 128 | 65536 | 65536 |
+## n=64 k=64
+range check of n = 64 values to k = 64 bits (planning estimate; paper numbers come from the compiler)
+| encoding | constraints | rows | nonzeros | advice_cols | fixed_cols | max_degree | lookups | table_rows | height_pow2 |
+|---|---|---|---|---|---|---|---|---|---|
+| r1cs-bits | 4160 |  | 16512 |  |  | 2 | 0 |  | 8192 |
+| plonk-bits |  | 8128 |  | 3 |  | 2 | 0 |  | 8192 |
+| plonk-runsum |  | 4160 |  | 1 |  | 2 | 0 |  | 8192 |
+| plonk-lookup c=4 |  | 1088 |  | 2 | 1 | 1 | 1024 | 16 | 2048 |
+| plonk-lookup c=8 |  | 576 |  | 2 | 1 | 1 | 512 | 256 | 1024 |
+| plonk-lookup c=16 |  | 320 |  | 2 | 1 | 1 | 256 | 65536 | 65536 |

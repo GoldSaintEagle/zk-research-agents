@@ -1,0 +1,5 @@
+{"id": "L1 running-sum bits = [0,2^k), unique (2^k < p)", "cases": 722, "counterexamples": [], "status": "PASS", "note": ""}
+{"id": "L2 limbs + top-limb check = [0,2^k), unique", "cases": 682, "counterexamples": [], "status": "PASS", "note": ""}
+{"id": "L2n without the top-limb check extra values are accepted (r != 0)", "cases": 3, "counterexamples": [], "status": "PASS", "note": "e.g. p=17,k=3,c=2 accepts [8, 9, 10, 11, 12, 13, 14, 15]"}
+{"id": "L3 2^k > p: x < 2^k - p has two witnesses", "cases": 23, "counterexamples": [], "status": "PASS", "note": "models k = 64 in Goldilocks"}
+{"id": "L4 logUp: wrong lookup passes for <= M+T-1 challenges (F_17)", "cases": 6480, "counterexamples": [], "status": "PASS", "note": ""}

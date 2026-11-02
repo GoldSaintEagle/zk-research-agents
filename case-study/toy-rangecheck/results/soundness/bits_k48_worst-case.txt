@@ -1,0 +1,16 @@
+### toy-rangecheck bits k=48 (n=64, c=8, Goldilocks; TOY)
+
+Security-level definition: **worst-case** [CY24 §Security levels, section:security-levels]. Regime: **proven**. Terms evaluated at t = 2^30.
+
+| term | eps(t) | bits | regime | source |
+|---|---|---|---|---|
+| IOP via RBR, (t + 13) eps_rbr, eps_rbr = 14/p | 2^-30.19 | 30.19 | proven | [CY24 §RBR soundness implies SR soundness, theorem:rbr-soundness-to-sr-soundness]; rounds: [Thaler §3.4, Schwartz-Zippel Lemma], [Thaler §4.1, The Sum-Check Protocol]; logUp: source: other, ePrint 2022/1530 |
+| Merkle multi-extraction (1 columns of 4096 leaves) | 2^-194.68 | 194.68 | proven | [CY24 §Extractability, lemma:mt-multi-configuration-multi-extractability] |
+| **union bound** | 2^-30.19 | 30.19 | proven | sum of the rows |
+
+**Security level: 30 bits (worst-case, proven)**; limited by: union bound over the terms.
+
+EVIDENCE rows (fill the ID, save this output under the log path, see skills/log-to-evidence):
+| ID | number/fact as printed in paper | command | log path | commit | machine | date | runs/median |
+|---|---|---|---|---|---|---|---|
+| E? | 30 bits (worst-case, proven) | python3 ../../skills/soundness-budget/scripts/soundness_calc.py --config results/soundness/bits_k48_worst-case.json --level worst-case --evidence --log results/soundness/bits_k48_worst-case.txt | results/soundness/bits_k48_worst-case.txt | 942aba1b7894 | n/a (exact computation) | 2026-11-02 | 1 / exact |

@@ -1,0 +1,24 @@
+{
+ "title": "toy-rangecheck bits k=32 (n=64, c=8, Goldilocks; TOY)",
+ "level": "worst-case",
+ "lambda": 256,
+ "terms": [
+  {
+   "name": "IOP via RBR, (t + 13) eps_rbr, eps_rbr = 14/p",
+   "kind": "rbr",
+   "k": 13,
+   "eps_rbr": "14/18446744069414584321",
+   "regime": "proven",
+   "source": "[CY24 §RBR soundness implies SR soundness, theorem:rbr-soundness-to-sr-soundness]; rounds: [Thaler §3.4, Schwartz-Zippel Lemma], [Thaler §4.1, The Sum-Check Protocol]; logUp: source: other, ePrint 2022/1530"
+  },
+  {
+   "name": "Merkle multi-extraction (1 columns of 4096 leaves)",
+   "kind": "merkle_multi",
+   "ells": [
+    4096
+   ],
+   "regime": "proven",
+   "source": "[CY24 §Extractability, lemma:mt-multi-configuration-multi-extractability]"
+  }
+ ]
+}
