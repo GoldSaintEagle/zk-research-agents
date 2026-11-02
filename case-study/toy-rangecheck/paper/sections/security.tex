@@ -1,0 +1,41 @@
+\section{Correctness, Soundness and Two Audit Findings}\label{sec:security}
+
+\begin{lemma}\label{lem:gadgets}
+If $2^k < p$ (and $2^{2c} < p$ for the limb encoding), each encoding admits a witness for $x$ iff $x < 2^k$, and
+that witness is unique. Without the top-limb lookup the limb encoding accepts every $x < 2^{cL}$.
+\end{lemma}
+The proof is the usual digit argument~\cite[§6.5.4]{Thaler}; we checked the statement exhaustively over small
+fields (\cref{app:checks}). For $k = 64$ the hypothesis fails in Goldilocks: $5$ and $5 + p$ both have 64-bit
+digit vectors, so neither encoding is a range check there, and all our claims stop at $k = 63$.
+
+\subsubsection{Finding 1: an under-constrained top limb.} Our first lookup circuit omitted the second lookup of the
+top limb. Its builder had tested it with random in-range values and with out-of-range inputs that the witness
+generator refuses; both tests pass on the faulty circuit, because the honest witness satisfies the weaker system.
+The falsifier re-ran the real circuit builder over $\mathbb{F}_{11}$ with $k = 3$, $c = 2$ and every assignment
+of every cell: the circuit accepts 8\evid{E30}, 9 and 10. In Goldilocks with $k = 12$ the faulty circuit accepts
+$x = 2^{12}$\evid{E31} with limbs $(16, 0)$. The fix adds one lookup per value when $c \nmid k$; the trace height is
+unchanged.
+
+\subsubsection{Finding 2: sub-transcripts that ignore the statement.} Our first prover ran both sum-checks with a
+fresh transcript, as the library's default does. Their challenges then depend on the round messages but not on
+the statement or the commitments: with all-zero messages the point $r^*$ is known in advance, and a prover can
+pick a false statement and columns that vanish at $r^*$. Our verifier accepted 4/4 such forgeries\evid{E32} of
+$x_0 = 2^k$; this is the classical failure of Fiat--Shamir without the statement in the
+hash~\cite{BPW12,CY24}. The fix continues the outer transcript inside every sum-check; the same forgeries are
+rejected. Re-proving honestly does not reveal the problem (honest messages change with the statement); holding
+the prover messages fixed and changing only the statement does.
+
+\begin{theorem}[toy argument, informal]\label{thm:toy}
+In the random oracle model, with a verifier that has oracle access to the committed columns, the non-interactive
+argument of \cref{sec:construction} is sound for the relation of \cref{lem:gadgets}: a prover making $t$ oracle
+queries convinces the verifier of a false statement with probability at most $(t + K)\,\serr_{\mathrm{rbr}}$ plus the
+Merkle extraction error, where $K$ is the number of rounds (RBR implies state-restoration soundness~\cite{CY24}).
+\end{theorem}
+
+\subsubsection{Soundness budget.} With challenges in $\Fp$, the protocol has round-by-round soundness with per-round
+error at most $\max\{(2(M+T)-1), m_c - 1 + v, d\}/p$ ($M$ lookups, $T$ table rows, $m_c$ constraint families, $v$
+variables, degree $d$), which is $\serr_{\mathrm{rbr}}$ in \cref{thm:toy}. The resulting
+level is 26 bits\evid{E20} worst-case and 48 bits\evid{E21} average-case for the lookup arm at $k = 64$, and
+30 bits\evid{E22} and 56 bits\evid{E23} for the bits arm; an independent recomputation from the code's parameters
+agreed at every grid point. These are toy parameters: the argument is insecure, and the lookup arm is
+weaker than the bits arm at equal field size (26 bits\evid{E20} against 30 bits\evid{E22} at $k = 64$).

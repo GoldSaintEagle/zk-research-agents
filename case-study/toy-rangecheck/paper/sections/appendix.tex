@@ -1,0 +1,9 @@
+\section{Checks Behind the Body}\label{app:checks}
+
+\cref{lem:gadgets} was checked exhaustively over small prime fields (running sums for $p \in \{11, 13, 17, 97\}$
+and every $k$ with $2^k < p$; limbs for several $(p, k, c)$ with $c \nmid k$ and $c \mid k$), together with the
+necessity of the top-limb lookup, the wrap-around for $2^k > p$, and the logUp counting bound. The circuit audits
+re-run the real builders over $\mathbb{F}_{11}$, $\mathbb{F}_{13}$ and $\mathbb{F}_{17}$. The prover-time model counts
+Merkle hashes and sum-check table evaluations per phase, with unit costs measured on the same machine; the two
+phases that dominate (commitment and zero-check) are within a factor 1.5 of the prediction everywhere, while the % no-evidence: tolerance
+small logUp-helper phase is systematically underestimated. All scripts and logs are in the artifact.

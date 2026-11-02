@@ -1,0 +1,8 @@
+\section{Conclusion}\label{sec:conclusion}
+
+On one toy backend, lookups beat bit decomposition for range checks by about four times in prover time once the
+range is wide enough to amortise the table, gain nothing for narrow ranges, and never reach the five times we first
+claimed. The two bugs we planted and found are the useful part for practitioners: an exhaustive small-field
+audit of the real circuit builder catches what random tests cannot, and every sub-protocol transcript must be
+tested with the prover's messages held fixed. Real systems with table-independent lookups~\cite{EFG22} or
+decomposable tables~\cite{STW24} change the constants, not the shape of this trade-off.

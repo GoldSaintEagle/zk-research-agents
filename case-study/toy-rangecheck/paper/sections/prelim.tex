@@ -1,0 +1,11 @@
+\section{Preliminaries}\label{sec:prelim}
+
+We work over Goldilocks, $p = 2^{64} - 2^{32} + 1$. % no-evidence: field definition
+A table with $H = 2^v$ rows is identified with a function $\{0,1\}^v \to \Fp$ and its multilinear extension
+$\mlext{f}$~\cite[§3.5]{Thaler}. The sum-check protocol proves $\sum_{b \in \{0,1\}^v} g(b) = s$ with soundness
+error $v d/p$ for $g$ of degree $d$ in each variable~\cite[§4.1]{Thaler}; a zero-check proves that a row
+polynomial vanishes on every row by a sum-check of $\mathrm{eq}(\tau, \cdot)$ times it~\cite{CBBZ23}.
+logUp~\cite{Hab22} proves that every $f_i$ lies in a table $t$ via
+$\sum_i 1/(\beta - f_i) = \sum_j m_j/(\beta - t_j)$ for a random $\beta$ and prover-supplied multiplicities $m_j$.
+Security levels follow~\cite{CY24}: \emph{worst-case} $s$ bits if $\serr(t) \le 2^{-s}$ for all $t \le 2^s$ queries,
+\emph{average-case} $s$ bits if $t/\serr(t) \ge 2^s$.

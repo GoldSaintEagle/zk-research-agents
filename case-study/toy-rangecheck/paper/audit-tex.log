@@ -1,0 +1,18 @@
+## paper/main.tex
+audit-tex: 0 errors, 0 warnings (27 ledger rows)
+## paper/sections/abstract.tex
+audit-tex: 0 errors, 0 warnings (27 ledger rows)
+## paper/sections/appendix.tex
+audit-tex: 0 errors, 0 warnings (27 ledger rows)
+## paper/sections/conclusion.tex
+audit-tex: 0 errors, 0 warnings (27 ledger rows)
+## paper/sections/construction.tex
+audit-tex: 0 errors, 0 warnings (27 ledger rows)
+## paper/sections/experiments.tex
+audit-tex: 0 errors, 0 warnings (27 ledger rows)
+## paper/sections/intro.tex
+audit-tex: 0 errors, 0 warnings (27 ledger rows)
+## paper/sections/prelim.tex
+audit-tex: 0 errors, 0 warnings (27 ledger rows)
+## paper/sections/security.tex
+audit-tex: 0 errors, 0 warnings (27 ledger rows)

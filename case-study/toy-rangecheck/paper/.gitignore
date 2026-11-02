@@ -1,0 +1,19 @@
+llncs.cls
+splncs04.bst
+*.aux
+*.log
+*.bbl
+*.blg
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.run.xml
+*.pdf
+.denylist.txt
+# case study: keep the built paper, the figure and the check logs (the TeX build log main.log stays ignored)
+!main.pdf
+!figs/*.pdf
+!anon-check.log
+!audit-tex.log
+!pdf-checks.log

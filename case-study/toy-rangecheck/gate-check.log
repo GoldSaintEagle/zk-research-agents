@@ -1,0 +1,56 @@
+== 2026-11-02T14:05:31Z gate P0
+PASS  gate P0: 7 items ticked (0 waived)
+
+Gate P0: PASS
+== 2026-11-02T14:08:37Z gate P1
+PASS  gate P1: 6 items ticked (1 waived)
+
+Gate P1: PASS
+== 2026-11-02T14:10:00Z gate P2
+PASS  gate P2: 4 items ticked (1 waived)
+
+Gate P2: PASS
+== 2026-11-02T14:16:10Z gate P3
+PASS  gate P3: 4 items ticked (0 waived)
+
+Gate P3: PASS
+== 2026-11-02T14:16:29Z gate P4
+PASS  gate P4: 4 items ticked (1 waived)
+
+Gate P4: PASS
+== 2026-11-02T14:21:40Z gate P5 (circuits v1, prover v1)
+PASS  gate P5: 6 items ticked (0 waived)
+
+Gate P5: PASS
+== 2026-11-02T14:22:58Z gate P5 (re-run after cost-model.md and CIRCUITS.md)
+PASS  gate P5: 6 items ticked (0 waived)
+
+Gate P5: PASS
+== 2026-11-02T14:38:06Z gate P5 (re-run after the P6 loop: circuits v2, prover v2)
+PASS  gate P5: 6 items ticked (0 waived)
+
+Gate P5: PASS
+== 2026-11-02T14:38:06Z gate P6
+PASS  gate P6: 7 items ticked (0 waived)
+PASS  CLAIMS.md: 9 claims ruled on
+
+Gate P6: PASS
+== 2026-11-02T14:46:06Z gate P7
+PASS  gate P7: 6 items ticked (0 waived)
+PASS  CLAIMS.md: 9 claims ruled on
+PASS  every number in the paper has an EVIDENCE row
+
+Gate P7: PASS
+== 2026-11-02T14:52:02Z gate P7 (re-run after review round R1, D-8)
+PASS  gate P7: 6 items ticked (0 waived)
+PASS  CLAIMS.md: 9 claims ruled on
+PASS  every number in the paper has an EVIDENCE row
+
+Gate P7: PASS
+== 2026-11-02T14:52:02Z gate P8
+PASS  gate P8: 5 items ticked (1 waived)
+PASS  CLAIMS.md: 9 claims ruled on
+PASS  every number in the paper has an EVIDENCE row
+PASS  bib-verify report clean
+
+Gate P8: PASS

@@ -1,0 +1,33 @@
+\section{Introduction}\label{sec:intro}
+
+A $k$-bit range check proves that a field element $x$ is an integer in $[0, 2^k)$. Written with bits it costs
+about $k$ booleanity constraints and a recomposition~\cite[§6.5.4]{Thaler}; written with lookups into a table of
+the $2^c$ values $[0, 2^c)$ it costs about $\lceil k/c \rceil$ lookups, a recomposition and the
+table~\cite[§6.6.3]{Thaler}. Lookup arguments --- plookup~\cite{GW20}, logUp~\cite{Hab22}, cq~\cite{EFG22},
+Lasso~\cite{STW24} --- made the second option standard, and the folk version of the trade-off is ``lookups win''.
+
+Our starting thesis was deliberately strong: \emph{for $n = 64$ values over Goldilocks, a logUp range check with
+8-bit limbs is at least five times cheaper than bit decomposition, in rows and in prover time, for every
+$k \le 64$}. We then let an independent falsifier attack it. This paper reports what survived.
+
+\subsubsection{Contributions.}
+\begin{itemize}
+\item One toy multilinear Plonkish prover (zero-check plus logUp, Fiat--Shamir with Merkle commitments) proving
+  both encodings with the same code (\cref{sec:construction}).
+\item Counts from the built circuits and an interleaved timing study on that backend (\cref{sec:eval}): 8$\times$\evid{E7}
+  fewer padded rows for $16 \le k \le 63$, but a 3.69$\times$\evid{E13}--3.81$\times$\evid{E15} prover-time advantage at the
+  grid points $16 \le k \le 48$, and no gain at small $k$.
+\item Two audit findings on our own code with their fixes: a missing top-limb range constraint (found by
+  exhaustive search over a small field, missed by random differential tests) and sum-check sub-transcripts that
+  did not bind the statement (\cref{sec:security}).
+\item A soundness budget for the toy parameters under both security-level definitions of~\cite{CY24}.
+\end{itemize}
+
+\subsubsection{Related work.}
+The lookup line starts with Arya~\cite{BCGJM18} and plookup~\cite{GW20}; Caulk~\cite{ZBKMNS22} and cq~\cite{EFG22}
+make the prover sublinear in or independent of the table size, which removes the table-height effect we measure;
+logUp~\cite{Hab22} and logUp-GKR~\cite{PH23} use logarithmic derivatives that fit sum-check provers; Lasso~\cite{STW24}
+handles huge structured tables. Our prover follows the HyperPlonk zero-check~\cite{CBBZ23} and the
+sum-check protocol~\cite{LFKN92}, compiled in the style of~\cite{BCS16}; Spartan~\cite{Set20} is the R1CS
+counterpart. Under-constrained circuits are a known bug class~\cite{WSCFPCDF23,PCWRVMCG23,CMS23}, and unbound
+Fiat--Shamir transcripts a known failure~\cite{BPW12}. PLONK~\cite{GWC19} defines the Plonkish tables we use.

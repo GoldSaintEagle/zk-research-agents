@@ -1,0 +1,13 @@
+\begin{abstract}
+Range checks are among the most frequent gadgets in zero-knowledge circuits. A folk belief says that
+lookup-based range checks are always much cheaper than bit decomposition. We test a strong form of it on one
+toy multilinear Plonkish prover over the Goldilocks field: for $n = 64$ values and 8-bit limbs, a logUp range
+check needs one eighth of the padded rows of a running-sum bit decomposition for $16 \le k \le 63$, and its
+toy prover is 3.69$\times$\evid{E13} to 3.81$\times$\evid{E15} faster at the grid points $16 \le k \le 48$ ---
+never the 5$\times$ we set out to show. % no-evidence: the thesis' target, a definition For $k \le 12$ the fixed table sets the trace height and the advantage shrinks to
+0.96$\times$\evid{E10} at $k = 4$, where bit decomposition is at least as fast. Along the way, an independent audit found an
+under-constrained top limb in our first lookup circuit and a Fiat--Shamir transcript that let us prove a false
+statement; both are reported with their fixes. All parameters are toy parameters (26 bits\evid{E20} of
+worst-case soundness) and all times come from pure Python, so only ratios on this backend are meaningful.
+\keywords{range check \and lookup argument \and logUp \and circuit audit \and Fiat--Shamir}
+\end{abstract}

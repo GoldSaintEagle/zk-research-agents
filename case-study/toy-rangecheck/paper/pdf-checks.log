@@ -1,0 +1,16 @@
+[pages] total=7 references_start=5 conclusion=5 body_last=5
+[refs] '??' occurrences in PDF text: 0
+[refs] undefined: 0 []; multiply defined: []; rerun needed: False
+[boxes] overfull: 0 (>1.0pt: 0); underfull: 1
+[fonts] 25 fonts; not embedded: []; Type 3: []
+[meta] Title:           
+[meta] Subject:         
+[meta] Keywords:        
+[meta] Author:          
+[meta] Creator:         LaTeX with hyperref
+[meta] Producer:        pdfTeX-1.40.28
+[meta] Pages:           7
+[meta] Page size:       612 x 792 pts (letter)
+[width] text block on page 3 ≈ 12.2 cm (LNCS default ≈ 12.2 cm)
+[overlap] pages with overlapping words: []
+RESULT: OK

@@ -1,0 +1,22 @@
+\section{Two Encodings and One Prover}\label{sec:construction}
+
+\subsubsection{Bit decomposition (running sum).} One advice column $\mathit{acc}$ and $k+1$ rows per value, most
+significant bit first: $\mathit{acc}_0 = 0$, the degree-2 gate
+$(\mathit{acc}_{i+1} - 2\mathit{acc}_i)(\mathit{acc}_{i+1} - 2\mathit{acc}_i - 1) = 0$, and the last cell copied to
+the public $x$. This is the strongest bit encoding we know on one column; the vanilla three-wire encoding needs
+almost twice the rows and would inflate our gain. The R1CS version ($k$ booleanity constraints and one
+recomposition per value) is counted but not proven: its constraints are a different unit from Plonkish rows.
+
+\subsubsection{Limbs and logUp.} Advice columns $\mathit{acc}, \ell$ and $L + 1$ rows per value,
+$L = \lceil k/c \rceil$: $\mathit{acc}_0 = 0$, $\mathit{acc}_{i+1} = 2^c \mathit{acc}_i + \ell_i$, every limb looked up
+in the fixed table $[0, 2^c)$, and --- when $r = k \bmod c \neq 0$ --- the top limb looked up a second time as
+$2^{c-r}\ell_0$, which forces $\ell_0 < 2^r$. The table occupies $2^c$ rows of the trace, so the padded height is the
+next power of two of $\max(n(L+1), 2^c)$.
+
+\subsubsection{The toy prover.} Both encodings are proven by the same code: the prover commits each advice column
+with a Merkle tree, absorbs the statement (parameters, an index digest, every $x_j$) and the roots into one
+Fiat--Shamir transcript, squeezes $\beta$, commits the logUp helper columns $h = q/(\beta - \ell)$ and
+$h_t = m/(\beta - t)$, squeezes $\tau \in \Fp^v$ and a batching challenge $\alpha$, and runs a zero-check over all
+row constraints followed (lookup arm) by a sum-check of $\sum (h - h_t) = 0$. The verifier replays the transcript
+and evaluates the final point from the committed columns, which it reads directly: this is a toy without a
+polynomial commitment and without zero knowledge.
