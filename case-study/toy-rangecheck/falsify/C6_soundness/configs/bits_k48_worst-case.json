@@ -1,0 +1,28 @@
+{
+ "title": "falsifier recompute bits k=48",
+ "level": "worst-case",
+ "lambda": 256,
+ "terms": [
+  {
+   "name": "IOP via RBR",
+   "kind": "rbr",
+   "k": 13,
+   "eps_rbr": "14/18446744069414584321",
+   "source": "[CY24 §RBR soundness implies SR soundness, theorem:rbr-soundness-to-sr-soundness]"
+  },
+  {
+   "name": "Merkle multi-extraction",
+   "kind": "merkle_multi",
+   "ells": [
+    4096
+   ],
+   "source": "[CY24 §Extractability, lemma:mt-multi-configuration-multi-extractability]"
+  },
+  {
+   "name": "challenge sampling bias (per challenge 2^-128)",
+   "kind": "const",
+   "eps": "25/340282366920938463463374607431768211456",
+   "source": "statistical distance of (x mod q), x of bitlen(q)+128 bits"
+  }
+ ]
+}

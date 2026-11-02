@@ -1,0 +1,21 @@
+| arm | k | rounds | M | T | eps_rbr·p | falsifier worst | theorist worst | falsifier avg | theorist avg | agree |
+|---|---|---|---|---|---|---|---|---|---|---|
+| bits | 4 | 10 | 0 | 0 | 11 | 30 | 30 | 57 | 57 | yes |
+| bits | 8 | 11 | 0 | 0 | 12 | 30 | 30 | 56 | 56 | yes |
+| bits | 12 | 11 | 0 | 0 | 12 | 30 | 30 | 56 | 56 | yes |
+| bits | 16 | 12 | 0 | 0 | 13 | 30 | 30 | 56 | 56 | yes |
+| bits | 24 | 12 | 0 | 0 | 13 | 30 | 30 | 56 | 56 | yes |
+| bits | 32 | 13 | 0 | 0 | 14 | 30 | 30 | 56 | 56 | yes |
+| bits | 48 | 13 | 0 | 0 | 14 | 30 | 30 | 56 | 56 | yes |
+| bits | 64 | 14 | 0 | 0 | 15 | 30 | 30 | 56 | 56 | yes |
+| lookup | 4 | 18 | 128 | 256 | 767 | 27 | 27 | 50 | 50 | yes |
+| lookup | 8 | 18 | 64 | 256 | 639 | 27 | 27 | 50 | 50 | yes |
+| lookup | 12 | 18 | 192 | 256 | 895 | 27 | 27 | 49 | 49 | yes |
+| lookup | 16 | 18 | 128 | 256 | 767 | 27 | 27 | 50 | 50 | yes |
+| lookup | 24 | 18 | 192 | 256 | 895 | 27 | 27 | 49 | 49 | yes |
+| lookup | 32 | 20 | 256 | 256 | 1023 | 27 | 27 | 49 | 49 | yes |
+| lookup | 48 | 20 | 384 | 256 | 1279 | 26 | 26 | 49 | 49 | yes |
+| lookup | 64 | 22 | 512 | 256 | 1535 | 26 | 26 | 48 | 48 | yes |
+
+minimum over the grid: worst-case 26 bits, average-case 48 bits
+claim C6 needs >= 25 (worst) and >= 50 (average) at every point: worst holds, average FAILS

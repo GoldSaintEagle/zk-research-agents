@@ -1,0 +1,5 @@
+# falsify_C4_edges: rounds=5 warmup=1 order=alternate started=2026-11-02T22:28:08+0800
+lookup_c4_n64_k32 vs bits_n64_k32: ratio bits/lookup = 2.07x [2.06, 2.09] (medians 39.21 ms / 18.90 ms, failures 0)
+lookup_c8_n64_k32 vs bits_n64_k32: ratio bits/lookup = 3.77x [3.73, 3.79] (medians 39.21 ms / 10.41 ms, failures 0)
+lookup_c16_n64_k32 vs bits_n64_k32: ratio bits/lookup = 0.04x [0.04, 0.04] (medians 39.21 ms / 973.11 ms, failures 0)
+lookup_c8_n16_k16 vs bits_n16_k16: ratio bits/lookup = 1.05x [1.03, 1.07] (medians 5.07 ms / 4.81 ms, failures 0)

@@ -1,0 +1,10 @@
+circuits v2, n = 64, c = 8
+k=4: C3 padded 512/256 = 2 (< 5; lookup table sets the height); C7 naive R1CS constraints / lookup rows = 320/128 = 2.50
+k=8: C3 padded 1024/256 = 4 (< 5; lookup table sets the height); C7 naive R1CS constraints / lookup rows = 576/128 = 4.50
+k=12: C3 padded 1024/256 = 4 (< 5; lookup table sets the height); C7 naive R1CS constraints / lookup rows = 832/192 = 4.33
+k=16: C3 padded 2048/256 = 8 (>= 5; lookup table sets the height); C7 naive R1CS constraints / lookup rows = 1088/192 = 5.67
+k=24: C3 padded 2048/256 = 8 (>= 5; lookup table sets the height); C7 naive R1CS constraints / lookup rows = 1600/256 = 6.25
+k=32: C3 padded 4096/512 = 8 (>= 5; lookup rows set the height); C7 naive R1CS constraints / lookup rows = 2112/320 = 6.60
+k=48: C3 padded 4096/512 = 8 (>= 5; lookup rows set the height); C7 naive R1CS constraints / lookup rows = 3136/448 = 7.00
+k=64: C3 padded 8192/1024 = 8 (>= 5; lookup rows set the height); C7 naive R1CS constraints / lookup rows = 4160/576 = 7.22
+C7 definitions: R1CS constraints (degree 2, no lookups) and Plonkish rows (with lookups, a table and logUp helper columns) are different units (skills/constraint-cost §1); the like-for-like comparison is C3.

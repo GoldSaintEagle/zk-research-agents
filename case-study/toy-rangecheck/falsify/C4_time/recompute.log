@@ -1,0 +1,9 @@
+bench_kscan: 128 executions, 0 failed (non-verifying proofs exit 1)
+k=4: n=7/7 ratio bits/lookup = 0.96x [0.95, 0.96] -> C4 (>= 5x) FAILS
+k=8: n=7/7 ratio bits/lookup = 2.14x [2.12, 2.16] -> C4 (>= 5x) FAILS
+k=12: n=7/7 ratio bits/lookup = 1.66x [1.65, 1.68] -> C4 (>= 5x) FAILS
+k=16: n=7/7 ratio bits/lookup = 3.69x [3.62, 3.71] -> C4 (>= 5x) FAILS
+k=24: n=7/7 ratio bits/lookup = 3.74x [3.68, 3.79] -> C4 (>= 5x) FAILS
+k=32: n=7/7 ratio bits/lookup = 3.81x [3.78, 3.83] -> C4 (>= 5x) FAILS
+k=48: n=7/7 ratio bits/lookup = 3.73x [3.71, 3.78] -> C4 (>= 5x) FAILS
+k=64: n=7/7 ratio bits/lookup = 3.98x [3.95, 4.03] -> C4 (>= 5x) FAILS

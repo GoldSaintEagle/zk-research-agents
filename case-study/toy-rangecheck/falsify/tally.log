@@ -1,0 +1,12 @@
+C1: refuted (lenses: definitions-model, fs-soundness-budget, fairness-precedent, circuit-audit; votes: refuted, survived, survived, refuted)
+C2: survived (lenses: definitions-model, fs-soundness-budget, fairness-precedent, circuit-audit; votes: survived, survived, survived, survived)
+C3: weakened (lenses: definitions-model, fs-soundness-budget, fairness-precedent, circuit-audit; votes: weakened, survived, weakened, survived)
+    wording (from fairness-precedent): For n = 64 and c = 8 the lookup arm's padded height is 1/8 of the bits arm's for 16 <= k <= 63 (and k = 64, where neither is a range check); only 1/4 at k = 8, 12 and 1/2 at k = 4, where the 2^8-row table sets the height
+C4: weakened (lenses: definitions-model, fs-soundness-budget, fairness-precedent; votes: weakened, survived, refuted)
+    wording (from fairness-precedent): On one toy multilinear Plonkish prover (n = 64, c = 8, 1 core), the logUp arm is 3.7x to 3.8x faster than running-sum bits at the grid points 16 <= k <= 48 (3.98x at k = 64, outside the range-check domain), 1.7x to 2.1x at k = 8, 12, and no faster at k = 4 (0.96x; parity in a re-run); never 5x. The price: a 2^c-row table in every proof, four or five more committed columns, 3-4 fewer bits of soundness; with c = 16 the table makes it 25x slower
+C5: refuted (lenses: definitions-model, fs-soundness-budget, fairness-precedent; votes: refuted, refuted, survived)
+C6: weakened (lenses: definitions-model, fs-soundness-budget, fairness-precedent; votes: survived, weakened, survived)
+    wording (from fs-soundness-budget): The toy argument has a proven soundness level of at least 26 bits worst-case and at least 48 bits average-case (bits arm 30 / 56); it is insecure
+C7: refuted (lenses: definitions-model, fs-soundness-budget, fairness-precedent, circuit-audit; votes: refuted, survived, refuted, survived)
+C9: survived (lenses: definitions-model, fs-soundness-budget, fairness-precedent, circuit-audit; votes: survived, survived, survived, survived)
+C10: survived (lenses: definitions-model, fs-soundness-budget, fairness-precedent; votes: survived, survived, survived)

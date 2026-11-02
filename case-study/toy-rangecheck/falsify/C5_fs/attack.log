@@ -1,0 +1,6 @@
+[v1] bits: 13 challenges; unchanged when only the statement changes: ['r0', 'r1', 'r2', 'r3', 'r4', 'r5']
+[v1] lookup: 26 challenges; unchanged when only the statement changes: ['r0', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7']
+[current] bits: 13 challenges; unchanged when only the statement changes: none
+[current] lookup: 26 challenges; unchanged when only the statement changes: none
+v1 transcript: forged proofs accepted 4/4 (false statements with x_0 = 2^k, bits arm, k in {4, 8, 12, 16}); e.g. ('bits', 4, 16)
+current transcript: forged proofs accepted 0/4 (false statements with x_0 = 2^k, bits arm, k in {4, 8, 12, 16})

@@ -1,0 +1,44 @@
+{
+ "_note": "One vote per lens of workflows/falsify-round.js (definitions-model, fs-soundness-budget, fairness-precedent, + circuit-audit for circuit claims), written by the falsifier from the scripts in falsify/; tallied by falsify/tally.mjs with the workflow's own tally().",
+ "C1": {"text": "[circuit] lookup range check accepts x iff x < 2^k, unique witness, 1 <= k <= 64, c = 8", "votes": [
+   {"verdict": "refuted", "evidence": "k = 64 > log2 p: 5 and 5 + p both decompose; the circuit is not a 64-bit range check in Goldilocks (L3)", "script_or_log": "falsify/C1_lookup_circuit/audit.log", "weakened_wording": "restrict to 1 <= k <= 63"},
+   {"verdict": "survived", "evidence": "no FS aspect in a circuit statement"},
+   {"verdict": "survived", "evidence": "same builder for every k; no baseline involved"},
+   {"verdict": "refuted", "evidence": "v1 omits SPEC constraint 4 (top-limb check): exhaustive F_11 k=3 c=2 accepts 8, 9, 10; Goldilocks k = 12 accepts x = 2^12 with limbs [16, 0]", "script_or_log": "falsify/C1_lookup_circuit/audit.log", "weakened_wording": "v2 (with the top-limb lookup), 1 <= k <= 63: see C9"}]},
+ "C2": {"text": "[circuit] running-sum and R1CS bit decomposition accept x iff x < 2^k, unique witness, 1 <= k <= 63", "votes": [
+   {"verdict": "survived", "evidence": "domain 2^k < p stated; L1 proof; the k = 64 boundary is outside the claim (audit shows non-uniqueness exactly there)", "script_or_log": "theory/check_gadgets.log"},
+   {"verdict": "survived", "evidence": "no FS aspect"},
+   {"verdict": "survived", "evidence": "same builder module as the lookup arm"},
+   {"verdict": "survived", "evidence": "exhaustive F_11 / F_13 (Plonkish and R1CS) PASS; real-field differential + negative tests PASS", "script_or_log": "falsify/C1_lookup_circuit/audit.log"}]},
+ "C3": {"text": "lookup arm's padded height <= 1/5 of bits arm's, every k <= 64, n = 64, c = 8 (same Plonkish backend)", "votes": [
+   {"verdict": "weakened", "evidence": "k = 64 is not a range check in Goldilocks", "weakened_wording": "for 16 <= k <= 63"},
+   {"verdict": "survived", "evidence": "no FS aspect"},
+   {"verdict": "weakened", "evidence": "recomputed from counts.log: padded ratio 2 (k=4), 4 (k=8, 12), 8 (k>=16); the 2^8-row table sets the lookup height at small k", "script_or_log": "falsify/C3_C7_counts/recount.log", "weakened_wording": "For n = 64 and c = 8 the lookup arm's padded height is 1/8 of the bits arm's for 16 <= k <= 63 (and k = 64, where neither is a range check); only 1/4 at k = 8, 12 and 1/2 at k = 4, where the 2^8-row table sets the height"},
+   {"verdict": "survived", "evidence": "counts read off the built objects (circuits/count.py), padding rule = next power of two of max(rows, table)", "script_or_log": "results/counts/counts.log"}]},
+ "C4": {"text": "toy prover median CPU time, lookup <= 1/5 of bits, every k <= 64, n = 64, c = 8", "votes": [
+   {"verdict": "weakened", "evidence": "k = 64 is not a range check", "weakened_wording": "for 1 <= k <= 63"},
+   {"verdict": "survived", "evidence": "both arms run the same transcript (v2)"},
+   {"verdict": "refuted", "evidence": "ratio recomputed from raw run.json: 0.96x (k=4) ... 3.98x (k=64), below 5 at every k; edges: c = 16 gives 0.04x, c = 4 gives 2.07x at k = 32; n = 16 gives 1.05x at k = 16", "script_or_log": "falsify/C4_time/recompute.log; falsify/C4_time/edges.log", "weakened_wording": "On one toy multilinear Plonkish prover (n = 64, c = 8, 1 core), the logUp arm is 3.7x to 3.8x faster than running-sum bits at the grid points 16 <= k <= 48 (3.98x at k = 64, outside the range-check domain), 1.7x to 2.1x at k = 8, 12, and no faster at k = 4 (0.96x; parity in a re-run); never 5x. The price: a 2^c-row table in every proof, four or five more committed columns, 3-4 fewer bits of soundness; with c = 16 the table makes it 25x slower"}]},
+ "C5": {"text": "toy prover transcript passes fiat-shamir-audit items 1-10 (statement and commitments before every challenge)", "votes": [
+   {"verdict": "refuted", "evidence": "the zero-check and grand-sum challenges come from fresh transcripts without statement or commitments: only non-adaptive soundness (CY24 lack of adaptive security)", "script_or_log": "falsify/C5_fs/fs-audit.md"},
+   {"verdict": "refuted", "evidence": "fixed-message sensitivity: r_0..r_v unchanged when the statement changes; forged proofs of x_0 = 2^k accepted 4/4 by the v1 verifier", "script_or_log": "falsify/C5_fs/attack.log", "weakened_wording": "see C10 (v2)"},
+   {"verdict": "survived", "evidence": "no baseline involved"}]},
+ "C6": {"text": "toy argument >= 25 bits worst-case and >= 50 bits average-case, both arms, every grid point", "votes": [
+   {"verdict": "survived", "evidence": "both CY24 level definitions named; notion = soundness, as in the ledger"},
+   {"verdict": "weakened", "evidence": "independent budget from the code's layout (+ challenge-bias term) agrees with THEORY at every point; minimum 26 bits worst-case, 48 bits average-case (lookup arm, k = 64)", "script_or_log": "falsify/C6_soundness/recompute.log", "weakened_wording": "The toy argument has a proven soundness level of at least 26 bits worst-case and at least 48 bits average-case (bits arm 30 / 56); it is insecure"},
+   {"verdict": "survived", "evidence": "both arms budgeted with the same script and definitions"}]},
+ "C7": {"text": "lookup encoding needs >= 5x fewer constraints than R1CS bit decomposition, every k <= 64", "votes": [
+   {"verdict": "refuted", "evidence": "unit mismatch: R1CS constraints vs Plonkish rows + lookups + logUp columns (constraint-cost §1); not a well-posed comparison", "script_or_log": "falsify/C3_C7_counts/recount.log", "weakened_wording": "compare rows on one backend: C3"},
+   {"verdict": "survived", "evidence": "no FS aspect"},
+   {"verdict": "refuted", "evidence": "even read naively (R1CS constraints / lookup rows) it is 2.5x at k = 4", "script_or_log": "falsify/C3_C7_counts/recount.log"},
+   {"verdict": "survived", "evidence": "R1CS counts read off the built object; correct"}]},
+ "C9": {"text": "[circuit] v2 lookup range check (top-limb lookup) accepts x iff x < 2^k, unique witness, 1 <= k <= 63, c = 8", "votes": [
+   {"verdict": "survived", "evidence": "domain 2^k < p and 2^(2c) < p stated; L2 proof", "script_or_log": "theory/check_gadgets.log"},
+   {"verdict": "survived", "evidence": "no FS aspect"},
+   {"verdict": "survived", "evidence": "same backend and builder module as the bits arm"},
+   {"verdict": "survived", "evidence": "exhaustive F_11, F_13 (c does not divide k) and F_17 (c divides k) PASS; real field: x = 2^12 rejected", "script_or_log": "falsify/C1_lookup_circuit/audit.log"}]},
+ "C10": {"text": "v2 transcript: every challenge, sub-protocols included, depends on the statement and all commitments", "votes": [
+   {"verdict": "survived", "evidence": "basic FS with the statement first, so the RBR -> SR theorem applies (THEORY A8)"},
+   {"verdict": "survived", "evidence": "fixed-message sensitivity: no challenge unchanged; forgery accepted 0/4; FS audit items 1-10 PASS", "script_or_log": "falsify/C5_fs/attack.log"},
+   {"verdict": "survived", "evidence": "both arms use the same transcript code"}]}
+}

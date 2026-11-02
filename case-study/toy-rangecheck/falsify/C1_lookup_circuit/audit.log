@@ -1,0 +1,15 @@
+# small-field model (real builders, n = 1)
+circuit-audit[range_lookup buggy v1 (k = 3, c = 2)] exhaustive over F_11, k = 3, 161051 assignments: FAIL: UNDER-CONSTRAINED (accepts out-of-spec inputs); NON-UNIQUE WITNESS — accepts out-of-spec [8, 9, 10]; #witnesses [(0, 2), (1, 2), (2, 2)] (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[range_lookup buggy v1 (k = 3, c = 2)] exhaustive over F_13, k = 3, 371293 assignments: FAIL: UNDER-CONSTRAINED (accepts out-of-spec inputs); NON-UNIQUE WITNESS — accepts out-of-spec [8, 9, 10, 11, 12]; #witnesses [(0, 2), (1, 2), (2, 2)] (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[range_lookup current v2 (k = 3, c = 2)] exhaustive over F_11, k = 3, 161051 assignments: PASS (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[range_lookup current v2 (k = 3, c = 2)] exhaustive over F_13, k = 3, 371293 assignments: PASS (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[range_lookup current v2 (k = 4, c = 2, divides)] exhaustive over F_17, k = 4, 1419857 assignments: PASS (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[range_bits current v2 (k = 3)] exhaustive over F_11, k = 3, 14641 assignments: PASS (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[range_bits current v2 (k = 3)] exhaustive over F_13, k = 3, 28561 assignments: PASS (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[range_bits current v2 over F_11, k = 4 (2^k > p: wrap-around)] exhaustive over F_11, k = 4, 161051 assignments: FAIL: NON-UNIQUE WITNESS — #witnesses [(0, 2), (1, 2), (2, 2)] (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[range_bits R1CS current v2 (k = 3)] exhaustive over F_11, k = 3, 14641 assignments: PASS (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[range_bits R1CS current v2 (k = 3)] exhaustive over F_13, k = 3, 28561 assignments: PASS (falsify/C1_lookup_circuit/audit.py)
+circuit-audit[constraint_count.plonk_lookup (skills/constraint-cost planning counter, k = 2, c = 2)] exhaustive over F_11, k = 2, 1331 assignments: PASS (falsify/C1_lookup_circuit/audit.py)
+# real field (Goldilocks)
+real field: v1 accepts x = 2^12 for k = 12 with limbs [16, 0]: True; current v2: False
+real field: k = 64 wrap-around — bits: witness of 5 + p satisfies the k = 64 circuit for x = 5: True; lookup: witness of 5 + p satisfies the k = 64 circuit for x = 5: True
