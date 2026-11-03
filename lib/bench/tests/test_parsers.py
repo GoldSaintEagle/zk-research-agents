@@ -40,47 +40,16 @@ class TestParsers(unittest.TestCase):
         txt = ("-----------------------------------------------------------\n"
                "Benchmark                 Time             CPU   Iterations\n"
                "-----------------------------------------------------------\n"
-               "BM_ToyEvalMult         1.50 ms         1.49 ms          466\n")
+               "BM_ToyMsm16            1.50 ms         1.49 ms          466\n")
         recs = parse_text(txt, "auto")
         self.assertAlmostEqual(values(recs, "time")[0], 1.5e-3)
         self.assertAlmostEqual(values(recs, "cpu_time")[0], 1.49e-3)
-
-    def test_helib(self):
-        txt = "  recrypt: 40.5 / 3 = 13.5   [recryption.cpp]\n  multiplyBy: 2.4 / 12 = 0.2   [Ctxt.cpp]\n"
-        recs = parse_text(txt, "auto")
-        self.assertEqual(values(recs, "time", "recrypt"), [13.5])
-        self.assertEqual(values(recs, "count", "multiplyBy"), [12.0])
-
-    def test_openfhe(self):
-        txt = "Bootstrapping time: 812.4 ms\nEvalMult time [ms]: 4.2\n"
-        recs = parse_text(txt, "openfhe")
-        self.assertAlmostEqual(values(recs, "time")[0], 0.8124)
-        self.assertAlmostEqual(values(recs, "time")[1], 0.0042)
-
-    def test_lattice_estimator(self):
-        txt = ("usvp                 :: rop: ≈2^131.2, red: ≈2^131.2, δ: 1.004000, β: 385, d: 1900, tag: usvp\n"
-               "bdd                  :: rop: ≈2^129.8, red: ≈2^129.0, svp: ≈2^128.1, β: 377, η: 400, d: 1880, tag: bdd\n"
-               "dual_hybrid          :: rop: ≈2^135.0, red: ≈2^134.9, guess: ≈2^127.3, β: 395, p: 3, zeta: 0, tag: dual_hybrid\n")
-        recs = parse_text(txt, "auto")
-        self.assertEqual(values(recs, "rop_bits", "bdd"), [129.8])
-        self.assertEqual(values(recs, "beta", "usvp"), [385.0])
-        sec = [r for r in recs if r.metric == "security_bits"][0]
-        self.assertEqual(sec.value, 129.8)
-        self.assertEqual(sec.label, "min:bdd")
 
     def test_sat(self):
         txt = "c some banner\ns UNSATISFIABLE\nc total process time since initialization:         2.41    seconds\n"
         recs = parse_text(txt, "auto")
         self.assertEqual(values(recs, "time"), [2.41])
         self.assertTrue(any(r.value == "UNSATISFIABLE" for r in recs))
-
-    def test_mpspdz(self):
-        txt = "Time = 0.512 seconds \nData sent = 1.5 MB in ~42 rounds (party 0)\nGlobal data sent = 3 MB (all parties)\n"
-        recs = parse_text(txt, "auto")
-        self.assertEqual(values(recs, "time"), [0.512])
-        self.assertEqual(values(recs, "comm"), [1.5e6])
-        self.assertEqual(values(recs, "rounds"), [42.0])
-        self.assertEqual(values(recs, "comm_global"), [3e6])
 
     def test_gnu_time(self):
         txt = "\tElapsed (wall clock) time (h:mm:ss or m:ss): 1:02.50\n\tMaximum resident set size (kbytes): 2048\n"

@@ -22,7 +22,7 @@ crbench parsers ; crbench adapters
 | `runner` | interleaved rounds (alternate / shuffle / fixed), warm-up, repeats, timeout, thread vars, `taskset` pinning, per-execution logs + `run.json`, failures kept in the ledger |
 | `envcapture` | CPU / governor / load / compilers / git commit+dirty of target / perf env vars; warnings |
 | `lock` | advisory `flock` so benches never overlap |
-| `parsers` | registry (`crbench parsers`): generic, criterion (arkworks, halo2, plonky3), gobench, gbench, shell-time, snarkjs, rapidsnark, circom, gnark, nargo-info, risc0, sp1, sat, gnu-time; upstream helib, openfhe, lattice-estimator, mpspdz kept; `register_parser`, `regex_parser` |
+| `parsers` | registry (`crbench parsers`): generic, criterion (arkworks, halo2, plonky3), gobench, gbench, shell-time, snarkjs, rapidsnark, circom, gnark, nargo-info, risc0, sp1, sat, gnu-time; `register_parser`, `regex_parser` |
 | `tables` | Markdown + LaTeX booktabs; cells carry EVIDENCE IDs (`\evid{E3}`) |
 | `evidence` | EVIDENCE.md reader/writer/validator; `audit_tex` |
 | `adapters` | per-library recipe (parser + typical command + fairness note): arkworks, gnark, gnark-log, circom, snarkjs, rapidsnark, halo2, plonky3, nargo, risc0, sp1, sat, gnu-time |

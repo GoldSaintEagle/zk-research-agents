@@ -20,9 +20,6 @@ Shipped parsers (names used by ``crbench parse --parser NAME``):
 ``sat``               CaDiCaL / CryptoMiniSat / kissat: solve time + SAT/UNSAT status
 ``gnu-time``          ``/usr/bin/time -v``: wall clock and max RSS
 
-Kept from the upstream toolkit (no ZK adapter uses them; their tests still run):
-``helib``, ``openfhe``, ``lattice-estimator``, ``mpspdz``.
-
 Format sources for the ZK parsers are listed next to each one; formats marked
 "needs verification" were reconstructed from public logs, not from the tool's
 documentation or source, and should be re-checked against a real run.
@@ -69,7 +66,7 @@ def to_bytes(value: float, unit: str) -> float:
 
 @dataclass
 class Record:
-    metric: str            # e.g. "time", "rop_bits", "max_rss", "sat_status"
+    metric: str            # e.g. "time", "constraints", "max_rss", "sat_status"
     value: float | str
     unit: str              # normalised unit: "s", "B", "bits", "" ...
     label: str = ""        # benchmark / attack / timer name if the log provides one
@@ -213,56 +210,6 @@ def parse_gbench(text: str) -> list[Record]:
         ln = _lineno(text, m.start())
         out.append(Record("time", to_seconds(float(m["wall"]), m["uw"]), "s", m["label"], ln, m.group(0).strip()))
         out.append(Record("cpu_time", to_seconds(float(m["cpu"]), m["uc"]), "s", m["label"], ln))
-    return out
-
-
-# ---------------------------------------------------------------- HElib timers
-_HELIB = re.compile(rf"^\s*(?P<label>[A-Za-z_][\w:<>~]*)\s*:\s*(?P<total>{NUM})\s*/\s*(?P<count>\d+)\s*=\s*(?P<avg>{NUM})", re.M)
-
-
-@register_parser("helib", "HElib printAllTimers: name: total / count = avg  (seconds)", sniff=r":\s*\S+\s*/\s*\d+\s*=\s*\S+\s+\[")
-def parse_helib(text: str) -> list[Record]:
-    out = []
-    for m in _HELIB.finditer(text):
-        ln = _lineno(text, m.start())
-        out.append(Record("time_total", float(m["total"]), "s", m["label"], ln, m.group(0).strip()))
-        out.append(Record("time", float(m["avg"]), "s", m["label"], ln))
-        out.append(Record("count", float(m["count"]), "", m["label"], ln))
-    return out
-
-
-# ---------------------------------------------------------------- OpenFHE example style
-_OFHE = re.compile(rf"^(?P<label>[^\n:]*?)\s*(?:time|took)\s*(?:\[\s*(?P<bunit>[a-zµμ]+)\s*\])?\s*[:=]?\s*(?P<value>{NUM})\s*(?P<unit>{TU})?\b", re.M | re.I)
-
-
-@register_parser("openfhe", "OpenFHE examples: '<Label> time: 12.3 ms', 'Bootstrapping time [ms]: 123'")
-def parse_openfhe(text: str) -> list[Record]:
-    out = []
-    for m in _OFHE.finditer(text):
-        unit = m["unit"] or m["bunit"]
-        if not unit:
-            continue
-        out.append(Record("time", to_seconds(float(m["value"]), unit), "s", m["label"].strip(" -:"), _lineno(text, m.start()), m.group(0).strip()))
-    return out
-
-
-# ---------------------------------------------------------------- lattice-estimator
-_LE = re.compile(rf"^\s*(?P<label>[\w\-]+)\s*::\s*rop:\s*[≈~]?\s*2\^(?P<value>{NUM})(?P<rest>[^\n]*)$", re.M)
-_BETA = re.compile(r"(?:β|beta):\s*(\d+)")
-
-
-@register_parser("lattice-estimator", "LWE.estimate output lines 'attack :: rop: ≈2^X, ... β: B'; value = log2(rop) bits", sniff=r"::\s*rop:")
-def parse_lattice_estimator(text: str) -> list[Record]:
-    out = []
-    for m in _LE.finditer(text):
-        ln = _lineno(text, m.start())
-        out.append(Record("rop_bits", float(m["value"]), "bits", m["label"], ln, m.group(0).strip()))
-        b = _BETA.search(m["rest"])
-        if b:
-            out.append(Record("beta", float(b.group(1)), "", m["label"], ln))
-    if out:
-        best = min((r for r in out if r.metric == "rop_bits"), key=lambda r: r.value)
-        out.append(Record("security_bits", best.value, "bits", f"min:{best.label}", best.line))
     return out
 
 
@@ -465,27 +412,6 @@ def parse_sat(text: str) -> list[Record]:
     out = [Record("time", float(m["value"]), "s", "solver", _lineno(text, m.start()), m.group(0).strip()) for m in _SAT_T.finditer(text)]
     for m in _SAT_S.finditer(text):
         out.append(Record("sat_status", m.group(1), "", "solver", _lineno(text, m.start()), m.group(0).strip()))
-    return out
-
-
-# ---------------------------------------------------------------- MP-SPDZ
-_MPS_T = re.compile(rf"^Time\s*=\s*(?P<value>{NUM})\s*seconds", re.M)
-_MPS_D = re.compile(rf"^Data sent\s*=\s*(?P<value>{NUM})\s*(?P<unit>[KMG]?B)(?:\s*in\s*~?(?P<rounds>\d+)\s*rounds)?", re.M)
-_MPS_G = re.compile(rf"^Global data sent\s*=\s*(?P<value>{NUM})\s*(?P<unit>[KMG]?B)", re.M)
-
-
-@register_parser("mpspdz", "MP-SPDZ: Time = X seconds; Data sent = X MB in ~R rounds; Global data sent", sniff=r"^Data sent\s*=")
-def parse_mpspdz(text: str) -> list[Record]:
-    out = []
-    for m in _MPS_T.finditer(text):
-        out.append(Record("time", float(m["value"]), "s", "party", _lineno(text, m.start()), m.group(0).strip()))
-    for m in _MPS_D.finditer(text):
-        ln = _lineno(text, m.start())
-        out.append(Record("comm", to_bytes(float(m["value"]), m["unit"]), "B", "party", ln, m.group(0).strip()))
-        if m["rounds"]:
-            out.append(Record("rounds", float(m["rounds"]), "", "party", ln))
-    for m in _MPS_G.finditer(text):
-        out.append(Record("comm_global", to_bytes(float(m["value"]), m["unit"]), "B", "all", _lineno(text, m.start()), m.group(0).strip()))
     return out
 
 
