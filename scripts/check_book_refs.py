@@ -47,6 +47,7 @@ TEXT_EXT = {".md", ".py", ".js", ".tex", ".txt", ".sh", ".bib", ".json", ".yml",
 CY24_RE = re.compile(r"\[CY24 §(?P<sec>[^\]\n]+?), (?P<labels>[A-Za-z-]+:[^\s,\]]+(?:, [A-Za-z-]+:[^\s,\]]+)*)\]")
 THALER_RE = re.compile(r"\[Thaler §(?P<num>\d+(?:\.\d+){0,2}), (?P<title>[^\]\n]+)\]")
 ANY_RE = re.compile(r"\[(CY24|Thaler)\b[^\]\n]*\]")
+JSON_ESC = re.compile(r"\\u([0-9a-fA-F]{4})")
 
 
 # ------------------------------------------------------------------ helpers ---
@@ -97,6 +98,8 @@ def scan(files: list[str]):
             lines = open(f, encoding="utf-8").read().splitlines()
         except (UnicodeDecodeError, OSError):
             continue
+        if f.endswith(".json"):   # json.dump without ensure_ascii=False writes § as \u00a7
+            lines = [JSON_ESC.sub(lambda m: chr(int(m.group(1), 16)), ln) for ln in lines]
         for i, line in enumerate(lines, 1):
             spans = []
             for m in CY24_RE.finditer(line):
@@ -339,6 +342,9 @@ def selftest() -> int:
             "[Thaler §5.2, The Fiat-Shamir Transformation]\n")
         kinds = [k for _, _, k, _ in scan([p])]
         expect(kinds == ["cy24", "malformed", "thaler"], "scanner finds citations, flags malformed, skips placeholders")
+        pj = os.path.join(d, "x.json")
+        open(pj, "w", encoding="utf-8").write('{"src": "[CY24 \\u00a7The random oracle model, chapter:what-is-rom]"}\n')
+        expect([k for _, _, k, _ in scan([pj])] == ["cy24"], "JSON with an escaped \\u00a7 is decoded, not malformed")
         texp = os.path.join(d, "book.tex")
         open(texp, "w").write(tex)
         sink = open(os.devnull, "w")
