@@ -2,7 +2,8 @@
 
 Each phase has an **owner**, **inputs**, **outputs** and a **gate**. The `pi-orchestrator`
 only advances `STATE.md` when every gate box is ticked. Any agent can send work *back*.
-The same gate list is in `agents/pi-orchestrator.md`; change both together.
+The same gate list is in `agents/pi-orchestrator.md` and, as checkboxes, in `skills/phase-gate/SKILL.md`;
+change all of them together.
 
 | Phase | Owner (helpers) | Output | Gate (all must hold) |
 |---|---|---|---|

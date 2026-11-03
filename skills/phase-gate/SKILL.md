@@ -24,46 +24,66 @@ from a cited paper), and a missing/stale/unclean bib-verify report at P8.
 
 ## Gate checklists (copy into STATE.md under `## Gate P<k>`)
 
-**P0 Scoping** — [ ] one-paragraph problem statement with a measurable target · [ ] target venue(s) + deadline ·
-[ ] scope: in/out list · [ ] resources (machines, libraries, time budget) · [ ] kill criteria written.
+The same items as the gate column of `workflows/PHASES.md` and the table in `agents/pi-orchestrator.md`
+(and its zh mirror); change all of them together.
 
-**P1 Literature** — [ ] related-work matrix with ≥ 15 verified works, the 2–4 true competitors in bold ·
-[ ] novelty / pre-emption check logged (≤ 14 days old, ePrint + grey literature, verdict not `taken`) ·
-[ ] refs.bib passes bib-verify · [ ] reading notes for every competitor · [ ] baseline candidates listed with
-code availability.
+**P0 Scoping** — [ ] thesis is one falsifiable sentence ·
+[ ] paper type (protocol / system / application) and the agents it needs ·
+[ ] measurable target + baseline value ·
+[ ] venue CFP read + deadline ·
+[ ] in/out-of-scope list ·
+[ ] compute/time budget ·
+[ ] kill date and kill criteria.
 
-**P2 Ideation** — [ ] ≥1 idea with pre-gate sentence (security-bearing vs substrate) · [ ] Gate A (freed parameter)
-and Gate B (anomaly) recorded, or honest negative · [ ] every idea's core claims entered in CLAIMS.md as
-falsifiable rows (status `open`) · [ ] novelty re-check for the chosen idea.
+**P1 Literature** — [ ] related-work matrix with ≥ 15 verified works incl. the 2–4 true competitors ·
+[ ] strongest baseline named ·
+[ ] novelty / pre-emption check (ePrint + grey literature) ≤ 14 days old, verdict ≠ taken ·
+[ ] refs.bib passes bib-verify ·
+[ ] reading notes per competitor ·
+[ ] baseline candidates with code status.
 
-**P3 Theory** — [ ] each theorem stated with all hypotheses (soundness notion, model, setup) · [ ] numerically
-checked (Sage/Python) on small cases · [ ] load-bearing lemmas formalised or independently re-derived ·
-[ ] soundness budget table ([soundness-budget](../soundness-budget/SKILL.md)): every term with its bits, each
-marked **proven** or **conjectured**, total reproduced by the falsifier · [ ] lower bound or explicit "no bound known".
+**P2 Ideation** — [ ] ≥ 1 idea with a cost-model gain (constraint-cost / prover-cost-model / piop-pcs-compile) and a kill criterion ·
+[ ] Gate A + Gate B recorded (or honest negative) ·
+[ ] top idea registered as falsifiable CLAIMS rows ·
+[ ] novelty re-check of the chosen idea.
 
-**P4 Baselines** — [ ] each competitor pinned (url, commit/tag, build recipe) in `baselines/MANIFEST.md` ·
-[ ] baseline reproduces its paper's headline number within tolerance, or the discrepancy is documented ·
-[ ] build flags identical between baseline and ours · [ ] every competitor signed off at the **same soundness level**
-as ours (same bits, same proven/conjectured regime), with the sign-off in DECISIONS.md.
+**P3 Theory** — [ ] every lemma numerically checked on small params (`sage-check`) ·
+[ ] main theorem proof complete (soundness notion, model and setup explicit; [zk-definitions](../zk-definitions/SKILL.md) assumption ledger) ·
+[ ] soundness budget table with every term marked proven or conjectured and the level definition named ([soundness-budget](../soundness-budget/SKILL.md)) ·
+[ ] lower bound or "none known".
 
-**P5 Experiments** — [ ] bench protocol (machine, threads, pinning, warm-up, interleaving, repeats) fixed before
-running · [ ] every result in EVIDENCE.md with command/log/commit/machine/date/runs · [ ] every timed run also
-verified its proof (verifier accepted; failures logged, not dropped) · [ ] control candidate measured ·
-[ ] component and end-to-end, absolute and relative.
+**P4 Baselines** — [ ] strongest baseline builds at a pinned commit ·
+[ ] its published numbers reproduced within tolerance or the discrepancy documented ·
+[ ] every competitor signed off at the same soundness level as ours (bits, proven/conjectured regime, level definition) ·
+[ ] build configuration identical to `impl/BUILD.md` or the differences recorded.
 
-**P6 Falsification** — [ ] falsifier ruled on every claim (no `open`) · [ ] refuted claims removed or reworded;
-weakened claims restated with their new scope · [ ] cost/price of each gain stated · [ ] Fiat–Shamir audit passed
-([fiat-shamir-audit](../fiat-shamir-audit/SKILL.md)) for every non-interactive protocol and implementation ·
-[ ] circuit audit passed ([circuit-audit](../circuit-audit/SKILL.md)) for every circuit we claim correct ·
-[ ] PI decision in DECISIONS.md.
+**P5 Experiments** — [ ] protocol fixed before running ·
+[ ] interleaved runs, ≥ 3 repeats, medians ·
+[ ] environment captured ·
+[ ] every timed run verified its proof ·
+[ ] every candidate paper number (times, sizes, constraint counts) has an EVIDENCE row ·
+[ ] prediction vs measurement compared phase by phase ([prover-cost-model](../prover-cost-model/SKILL.md)).
 
-**P7 Writing + figures** — [ ] every paper number has an EVIDENCE row · [ ] every claim in the paper maps to a
-`survived`/`weakened` CLAIMS row · [ ] figures regenerated from logged data by script · [ ] related work written from
-the matrix · [ ] notation consistent.
+**P6 Falsification gate** — [ ] no `open` claims ·
+[ ] refuted claims removed from narrative, weakened wording adopted ·
+[ ] soundness budget recomputed independently by the falsifier ·
+[ ] Fiat–Shamir audit ([fiat-shamir-audit](../fiat-shamir-audit/SKILL.md)) and circuit audit ([circuit-audit](../circuit-audit/SKILL.md)) passed in the falsifier's own re-run (the builders' self-audits do not count) ·
+[ ] price of each gain stated ·
+[ ] PI decision logged.
 
-**P8 Review → submit → rebuttal → camera-ready** — [ ] ≥1 venue-calibrated mock review, all major points answered ·
-[ ] bib-verify clean on the final bib · [ ] anonymisation and page limits checked · [ ] artifact builds from a clean
-checkout · [ ] final novelty re-check (≤7 days before submission).
+**P7 Writing + figures** — [ ] playbook sections complete ·
+[ ] every number ↔ EVIDENCE row (`crbench audit-tex` passes) ·
+[ ] every claim ↔ survived/weakened CLAIMS row ·
+[ ] 0 undefined refs ·
+[ ] figures from logged data by script in house style ·
+[ ] related work from the matrix.
+
+**P8 Review → submit → rebuttal → camera-ready** — [ ] mock-review action items closed ·
+[ ] bib-verify clean ·
+[ ] anonymisation (`anon_check`) and page limit ·
+[ ] checklist done ·
+[ ] artifact builds clean ·
+[ ] final novelty re-check ≤ 7 days old.
 
 ## Loops
 
