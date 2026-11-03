@@ -90,6 +90,8 @@ model: inherit
 
 ## 失败模式与教训
 
+- **用重新证明来测敏感性。** 在改动后的 statement 下诚实地重跑一遍，所有消息都会变，从而掩盖某个从不吸收 statement 的子 transcript（PCS 打开、用默认全新 transcript 调用的库 sum-check）。应固定 prover 的消息，在两个 statement 下重算 verifier 的每个挑战，并要求它们全部改变（`skills/fiat-shamir-audit`；这种漏洞导致的伪造见 `case-study/toy-rangecheck/falsify/C5_fs/`）。
+- **把 witness 生成器的拒绝当成约束的拒绝。** 把越界输入喂给生成器，测的是生成器而不是约束。负向测试要直接设置 witness，然后询问约束系统（`skills/circuit-audit`；案例中漏掉的最高分块见 `case-study/toy-rangecheck/falsify/C1_lookup_circuit/`）。
 - **确认漂移。** 被要求"检查"某个框架的子 agent 会收集支持性证据，放大错误的前提。始终要求它去*推翻*，并要求第一行就写裁决标签。
 - **重读而不是重算预算。** 逐行核对理论家的表会继承它的框架（错误的级别定义、遗漏的 FS 项）。要从协议和代码的参数重新构建。
 - **接受构建者的审计。** 构建者的测试编码的是构建者对规格的理解。自己推导测试。

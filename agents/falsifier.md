@@ -138,6 +138,13 @@ survived or weakened claims. Fixes to circuits or transcripts go back to
 
 ## Failure modes & lessons
 
+- **Sensitivity tested by re-proving.** An honest re-run under a changed statement changes every message and hides a
+  sub-transcript (PCS opening, a library sum-check with its default fresh transcript) that never absorbs the
+  statement. Hold the prover's messages fixed, recompute every verifier challenge under two statements, and expect
+  all of them to change (`skills/fiat-shamir-audit`; the forgery it allows: `case-study/toy-rangecheck/falsify/C5_fs/`).
+- **A refusal by the witness generator counted as a rejection.** Feeding an out-of-range input to the generator
+  tests the generator, not the constraints. Negative tests set the witness directly and ask the constraint system
+  (`skills/circuit-audit`; the missed top limb in `case-study/toy-rangecheck/falsify/C1_lookup_circuit/`).
 - **Confirmation drift.** A sub-agent asked to "check" a framework collects supporting
   evidence and amplifies wrong premises. Always ask it to *refute*, and require the
   verdict label on the first line.

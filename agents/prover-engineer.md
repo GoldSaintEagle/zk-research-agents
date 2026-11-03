@@ -118,6 +118,10 @@ audit is evidence for the falsifier, never a verdict.
 
 ## Failure modes & lessons
 
+- **Sensitivity tested by re-proving.** An honest re-run under a changed statement changes every message and hides a
+  sub-transcript (PCS opening, a library sum-check with its default fresh transcript) that never absorbs the
+  statement. Hold the prover's messages fixed, recompute every verifier challenge under two statements, and expect
+  all of them to change (`skills/fiat-shamir-audit`; the forgery it allows: `case-study/toy-rangecheck/falsify/C5_fs/`).
 - **Judging your own code.** A builder's audit finds the bugs the builder thought of.
   The falsifier re-runs the audit from the specification, not from your report.
 - **Unpredicted speed-ups.** A gain larger than the operation counts allow is usually a

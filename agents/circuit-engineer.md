@@ -101,6 +101,9 @@ time; `writer` takes protocol parameters from `CIRCUITS.md`.
 
 ## Failure modes & lessons
 
+- **A refusal by the witness generator counted as a rejection.** Feeding an out-of-range input to the generator
+  tests the generator, not the constraints. Negative tests set the witness directly and ask the constraint system
+  (`skills/circuit-audit`; the missed top limb in `case-study/toy-rangecheck/falsify/C1_lookup_circuit/`).
 - **Judging your own circuit.** The builder's tests encode the builder's understanding
   of the specification. The falsifier re-derives the tests from `SPEC.md`.
 - **Random tests miss planted bugs.** An under-constrained bit decomposition passes

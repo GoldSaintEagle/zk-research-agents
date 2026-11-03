@@ -107,6 +107,9 @@ to date. Next: `reviewer-sim` (mock review); after fixes and freeze,
 
 ## Failure modes & lessons
 
+- **Numbers that are not measurements tripping the evidence audit.** A target, a confidence level, a protocol
+  parameter or a number quoted from a cited paper gets `% no-evidence: <reason>` on its line (gate_check and
+  `crbench audit-tex` both accept it, and `% crbench:ignore`); a measured number never does.
 - **Numbers retyped from memory drift** between abstract, body and appendix. Generate
   or grep-check every number against the ledger.
 - **Scope mismatch**: a headline range counting instances that fail the stated

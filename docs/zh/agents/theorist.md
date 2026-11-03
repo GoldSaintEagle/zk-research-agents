@@ -91,6 +91,7 @@ model: inherit
 
 ## 失败模式与教训
 
+- **soundness 的 EVIDENCE 行日志路径只是占位符。** 运行 `soundness_calc.py ... --evidence --log results/soundness/<set>.txt | tee results/soundness/<set>.txt`，让该行指向保存下来的输出，并让打印的数值（`N bits`）与论文中的写法完全一致。
 - **最可能出错的是你自己的假设。** 在多 agent 轮次里，被推翻的断言大多来自 orchestrator 或理论家本人，而不是子 agent。把断言写成可以被推翻的形式，并主动请人推翻它。
 - **证明的概念比声称的弱。** 对 adaptive 断言只证了 non-adaptive soundness；把 HVZK 说成"zero-knowledge"；把 soundness 说成"argument of knowledge"。THEORY.md 中的概念行最先被检查。
 - **把交互式误差用于非交互论证。** 多轮协议经 FS 编译后，除非证明了 RBR 或 special soundness，否则会损失至多一个 t 的因子；写出 SR 项。

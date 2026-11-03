@@ -74,6 +74,7 @@ model: inherit
 
 ## 失败模式与教训
 
+- **用重新证明来测敏感性。** 在改动后的 statement 下诚实地重跑一遍，所有消息都会变，从而掩盖某个从不吸收 statement 的子 transcript（PCS 打开、用默认全新 transcript 调用的库 sum-check）。应固定 prover 的消息，在两个 statement 下重算 verifier 的每个挑战，并要求它们全部改变（`skills/fiat-shamir-audit`；这种漏洞导致的伪造见 `case-study/toy-rangecheck/falsify/C5_fs/`）。
 - **自己评判自己的代码。** 构建者的审计只能找到构建者想到的 bug。falsifier 依据规格重跑审计，而不是依据你的报告。
 - **无法预测的加速。** 收益超过运算计数所允许的范围，通常是测量或配置造成的（基线缺了某个开关、跳过了某个阶段、玩具规模完全驻留在缓存中）。要么解释，要么撤回。
 - **跳过验证的快速路径。** 不做验证的 benchmark 模式可能在不知不觉中给一个坏掉的 prover 计时。每次计时运行都要验证。

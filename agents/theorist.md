@@ -131,6 +131,9 @@ verdicts are in.
 
 ## Failure modes & lessons
 
+- **A soundness EVIDENCE row whose log path is a placeholder.** Run `soundness_calc.py ... --evidence --log
+  results/soundness/<set>.txt | tee results/soundness/<set>.txt`, so the row points at the saved output, and keep the
+  printed value (`N bits`) identical to the paper's wording.
 - **Your own hypotheses are the likeliest to be wrong.** In multi-agent rounds, most
   refuted claims came from the orchestrator or theorist, not from the sub-agents.
   Write claims so they can be killed, and ask to have them killed.
