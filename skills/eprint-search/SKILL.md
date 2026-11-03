@@ -38,6 +38,12 @@ the mirror below, DBLP, Crossref, DataCite, Wayback, URL probes) goes through on
 | answer cache (200 only, keyed by URL) | 7 days in `.cache/eprint/` (git-ignored) | `--cache-dir`, `--no-cache`, `ZKRA_HTTP_CACHE_TTL` |
 | User-Agent | `zk-research-agents/<version> (...; +<repository URL>)`, never a browser string | — |
 
+The repository URL in the User-Agent (`REPO_URL` in `polite_http.py`) is the fork's **public** GitHub URL and
+is there on purpose: an honest contact lets a site operator see who is fetching and how to complain, which is
+what the IACR asks for. It is not private content. A maintainer whose `.privacy-denylist` matches it adds an
+allow line (`!github\.com/<owner>/zk-research-agents`) instead of removing the contact; a fork changes
+`REPO_URL` to its own public URL.
+
 Do not lower the gap for ePrint, run several copies in parallel, or loop over hundreds of queries: a ban is
 long ("permanent unless you can convince us") and hits everyone behind the same address.
 

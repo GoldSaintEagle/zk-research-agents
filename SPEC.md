@@ -9,9 +9,13 @@ It is the single source of truth for names, formats and hand-off contracts.
    submission number, author name, reviewer text, real benchmark number, server address,
    e-mail, review-system transcript, or unpublished theorem from the maintainers' private
    workspaces. Distil *methods* only. Examples must use **toy / synthetic** problems.
-   Before every push run `scripts/privacy_scan.sh`, which greps the tree against a local,
+   Before every push run `scripts/privacy_scan.sh`, which greps what git would publish (tracked
+   files plus untracked, non-ignored ones, and the text and metadata of those PDFs) against a local,
    **git-ignored** deny-list `.privacy-denylist` (one regex per line; each maintainer keeps
-   their own). Referring to a *public* published paper by its public ePrint number is fine.
+   their own; `!<regex>` lines allow values that are public on purpose). Referring to a *public*
+   published paper by its public ePrint number is fine. Intentional public values: the fork's
+   GitHub URL in the literature scripts' User-Agent (`skills/eprint-search/scripts/polite_http.py`,
+   an honest contact for site operators).
 2. **No copyrighted PDFs, no harvested figure images** in git. Textbooks appear as
    bibliographic entry + table of contents + topic tags only.
 3. **No third-party source trees** in git. Baselines = MANIFEST entry (url, pinned
