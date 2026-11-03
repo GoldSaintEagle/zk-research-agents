@@ -63,11 +63,11 @@ only for the underlying coding facts.
 | — | F. J. MacWilliams, N. J. A. Sloane, *The Theory of Error-Correcting Codes* (North-Holland) — `needs verification` (year) | none | linear codes, weight enumerators, MDS and Reed–Solomon codes | PT |
 | — | V. Guruswami, *Algorithmic Results in List Decoding* (survey monograph) — `needs verification` (venue / year) | none | list decoding of RS codes, Johnson bound | PT |
 | — | V. Guruswami, M. Sudan, "Improved decoding of Reed–Solomon and algebraic-geometry codes" — `needs verification` (venue / year) | none | RS list decoding up to the Johnson radius | PT |
-| — | E. Ben-Sasson, I. Bentov, Y. Horesh, M. Riabzev, "Fast Reed–Solomon Interactive Oracle Proofs of Proximity" (FRI) — `needs verification` (venue / year) | none | FRI, RS proximity testing | PT, SY |
-| — | E. Ben-Sasson, D. Carmon, Y. Ishai, S. Kopparty, S. Saraf, "Proximity Gaps for Reed–Solomon Codes" (ePrint 2020/654) — `needs verification` | none | proximity gaps, correlated agreement, batched FRI soundness | PT |
-| — | E. Ben-Sasson, L. Goldberg, S. Kopparty, S. Saraf, "DEEP-FRI: Sampling Outside the Box Improves Soundness" — `needs verification` (venue / identifier) | none | out-of-domain sampling, FRI soundness beyond unique decoding | PT |
-| — | G. Arnon, A. Chiesa, G. Fenzi, E. Yogev, "STIR: Reed–Solomon Proximity Testing with Fewer Queries" — `needs verification` (venue / identifier) | none | rate-shifting proximity tests, query complexity | PT, SY |
-| — | G. Arnon, A. Chiesa, G. Fenzi, E. Yogev, "WHIR: Reed–Solomon Proximity Testing with Super-Fast Verification" — `needs verification` (venue / identifier) | none | constrained RS proximity, multilinear PCS from RS codes | PT, SY |
+| — | E. Ben-Sasson, I. Bentov, Y. Horesh, M. Riabzev, "Fast Reed–Solomon Interactive Oracle Proofs of Proximity" (FRI), ICALP 2018, doi:10.4230/LIPIcs.ICALP.2018.14 — verified: `references/reading-lists/pcs.md` `BBHR18fri` | none | FRI, RS proximity testing | PT, SY |
+| — | E. Ben-Sasson, D. Carmon, Y. Ishai, S. Kopparty, S. Saraf, "Proximity Gaps for Reed–Solomon Codes", FOCS 2020, doi:10.1109/focs46700.2020.00088 — verified: `references/reading-lists/pcs.md` `BCIKS20` | none | proximity gaps, correlated agreement, batched FRI soundness | PT |
+| — | E. Ben-Sasson, L. Goldberg, S. Kopparty, S. Saraf, "DEEP-FRI: Sampling Outside the Box Improves Soundness", ITCS 2020, doi:10.4230/LIPIcs.ITCS.2020.5 — verified: `references/reading-lists/fiat-shamir-soundness.md` `BGKS20` | none | out-of-domain sampling, FRI soundness beyond unique decoding | PT |
+| — | G. Arnon, A. Chiesa, G. Fenzi, E. Yogev, "STIR: Reed–Solomon Proximity Testing with Fewer Queries", CRYPTO 2024, doi:10.1007/978-3-031-68403-6_12 — verified: `references/reading-lists/pcs.md` `ACFY24` | none | rate-shifting proximity tests, query complexity | PT, SY |
+| — | G. Arnon, A. Chiesa, G. Fenzi, E. Yogev, "WHIR: Reed–Solomon Proximity Testing with Super-Fast Verification", EUROCRYPT 2025, doi:10.1007/978-3-031-91134-7_8 — verified: `references/reading-lists/pcs.md` `ACFY25` | none | constrained RS proximity, multilinear PCS from RS codes | PT, SY |
 
 ## Adding a book
 

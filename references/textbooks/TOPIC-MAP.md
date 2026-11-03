@@ -67,7 +67,7 @@ without a checked hypothesis is a hazard, not a reference.
 | Reed–Solomon codes | GRS | Roth; Merris (codes and designs chapter) | low-degree testing, FRI codewords |
 | Johnson bound, list decoding | GRS | Guruswami (list decoding survey); Guruswami–Sudan | proximity parameter regimes: unique decoding vs Johnson vs conjectured |
 | Proximity testing of RS codes | T §10.4.4; FRI paper (catalogued) | DEEP-FRI, STIR, WHIR papers | query complexity and soundness of the PCS |
-| Proximity gaps / correlated agreement | BCIKS (ePrint 2020/654, `needs verification`) | — | batching soundness, provable vs conjectured parameters |
+| Proximity gaps / correlated agreement | BCIKS (FOCS 2020, verified: `references/reading-lists/pcs.md` `BCIKS20`) | — | batching soundness, provable vs conjectured parameters |
 
 ## Gaps (topics the local corpus does not cover well)
 
