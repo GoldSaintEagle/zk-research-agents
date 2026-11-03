@@ -1,8 +1,8 @@
 {
-  "name": "crypto-research-agents",
-  "version": "0.1.0",
-  "description": "A 12-agent, blackboard-driven research system for cryptography papers: literature, ideation, theory, baselines, experiments, falsification, writing, figures, review, submission and rebuttal.",
-  "author": { "name": "crypto-research-agents contributors" },
+  "name": "zk-research-agents",
+  "version": "0.2.0",
+  "description": "A 13-agent, blackboard-driven research system for zero-knowledge proof papers (protocol, systems and circuit papers): literature, ideation, soundness budgets, PIOP+PCS theory, prover and circuit engineering, baselines, experiments, falsification (Fiat-Shamir and circuit audits), writing, figures, review, submission and rebuttal. 34 skills, 15 commands.",
+  "author": { "name": "zk-research-agents contributors" },
   "license": "MIT",
-  "keywords": ["cryptography", "research", "multi-agent", "FHE", "lattice", "symmetric", "MPC", "paper-writing"]
+  "keywords": ["zero-knowledge", "zk-snark", "proof-systems", "soundness", "circuits", "research", "multi-agent", "paper-writing"]
 }
