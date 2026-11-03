@@ -30,15 +30,27 @@ import argparse
 import math
 import os
 import sys
+import warnings
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "lib", "cryptomath"))
 from cryptomath.zk.plonkish import Plonkish, next_pow2  # noqa: E402
 from cryptomath.zk.r1cs import P_TOY, R1CS  # noqa: E402   (P_TOY = 2^31 - 1: evaluator field, k <= 30)
 
 
+MAX_EVAL_K = 30   # values below 2^30 stay below P_TOY = 2^31 - 1, so the toy evaluator does not wrap
+
+
+def _check_k(k: int) -> None:
+    """Builders work for any k (counts stay exact), but satisfiability checks over P_TOY are meaningless above 30."""
+    if k > MAX_EVAL_K:
+        warnings.warn(f"k = {k} > {MAX_EVAL_K}: counts are exact, but the toy evaluator's field P_TOY = 2^31 - 1 "
+                      "wraps, so satisfiability results for these circuits are not meaningful", stacklevel=3)
+
+
 # ----------------------------------------------------------------- R1CS ---
 
 def r1cs_bits(n: int, k: int) -> R1CS:
+    _check_k(k)
     cs = R1CS()
     for j in range(n):
         x, bits = f"x{j}", [f"b{j}_{i}" for i in range(k)]
@@ -62,6 +74,7 @@ def r1cs_bits_witness(xs: list[int], k: int) -> dict:
 def plonk_bits(xs: list[int], k: int) -> Plonkish:
     """Vanilla gate qL a + qR b + qO c + qM ab + qC = 0, written out per row as two named gate shapes:
     bool: a*b - a = 0 with a, b copies of the same bit; acc: a + 2^i b - c = 0."""
+    _check_k(k)
     gates = {"bool": (2, lambda c, _: c["a"] * c["b"] - c["a"])}
     t = Plonkish(3, gates)
     for i in range(1, k):
@@ -86,6 +99,7 @@ def plonk_bits(xs: list[int], k: int) -> Plonkish:
 def plonk_runsum(xs: list[int], k: int) -> Plonkish:
     """One row per bit plus one, MSB first: acc_0 = 0, acc_{i+1} = 2 acc_i + b; the gate on row i reads acc_i
     and acc_{i+1} (next row) and enforces d (d - 1) = 0 for d = acc_{i+1} - 2 acc_i. The last acc is copied to x."""
+    _check_k(k)
     gates = {"runsum": (2, lambda c, n: (n["acc"] - 2 * c["acc"]) * (n["acc"] - 2 * c["acc"] - 1)),
              "zero": (1, lambda c, _: c["acc"])}
     t = Plonkish(1, gates)
@@ -104,6 +118,7 @@ def plonk_lookup(xs: list[int], k: int, c: int) -> Plonkish:
     If r = k mod c != 0 the top limb has only r bits: it is looked up a second time multiplied by 2^(c-r),
     which forces limb < 2^r. Without the `zero` gate acc_0 would be free and every x would pass
     (x = 2^(cL) acc_0 + limbs); the last row holds only acc, so no witness cell is left unconstrained."""
+    _check_k(k)
     L, r = math.ceil(k / c), k % c
     gates = {"limb": (1, lambda cur, nxt: nxt["acc"] - (2 ** c) * cur["acc"] - cur["limb"]),
              "zero": (1, lambda cur, _: cur["acc"])}
@@ -233,6 +248,14 @@ def selftest() -> int:
     # Poseidon estimate through afcost (x^5 = 3 multiplications per S-box)
     pe = poseidon_r1cs(3, 8, 57)
     assert pe["sboxes"] == 3 * 8 + 57 and pe["r1cs_constraints"] == 3 * pe["sboxes"]
+    # k > 30: builders still count, but warn that the toy evaluator field wraps
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        assert count_r1cs(r1cs_bits(1, 40))["constraints"] == 41
+        assert any("P_TOY" in str(x.message) for x in w), "no warning for k > 30"
+        n_warn = len(w)
+        r1cs_bits(1, 30)
+        assert len(w) == n_warn, "warning for k <= 30"
     print("selftest: OK")
     return 0
 
