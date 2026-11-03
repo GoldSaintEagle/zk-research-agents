@@ -41,7 +41,7 @@ model: inherit
 ## 流程
 
 1. **播种**：在 `references/reading-lists/` 中选取匹配的列表；把相关条目复制到 refs.bib。参考书的文献注记（[CY24 §Bibliographic notes, section:bibliographic-notes] 以及 Thaler 各章的参考文献）是另一个条目来源，每条都要经过 bib-verify。
-2. **检索**，使用 `skills/eprint-search/scripts/eprint_search.py`：对问题、技术和对象准备 5–10 种表述；先用 `--months 12`，再不加限制；用 `--crossref` 查找正式发表版本。从 2–3 篇最接近论文的 related-work 节向后滚雪球，并通过“cited by”向前追踪。
+2. **检索**，使用 `skills/eprint-search/scripts/eprint_search.py`：对问题、技术和对象准备 5–10 种表述；先用 `--months 12`，再不加限制；用 `--crossref` 查找正式发表版本。从 2–3 篇最接近论文的 related-work 节向后滚雪球，并通过“cited by”向前追踪。所有文献请求都经过 `skills/eprint-search/scripts/polite_http.py` 限速（同一主机间隔 ≥ 3 秒、遵守 Retry-After、每次运行有请求上限、7 天缓存）：批量查询，不要循环重试。eprint.iacr.org 无法访问或封禁本机地址时，脚本退回第三方镜像；镜像结果标为 `eprint (mirror)`，引用时一律写官方规范 URL `https://eprint.iacr.org/YYYY/NNNN`（不写镜像 URL）；退出码 2 表示新颖性检查*没有执行*。被封禁时按 eprint-search §mirror 写信给 IACR，绝不绕过（不换 IP、不走代理、不伪装浏览器 UA）。
 3. **灰色文献**（`skills/eprint-search` §Grey-literature pass）：用同样的表述检索项目文档、研究论坛、厂商和团队博客以及审计报告；对最终进入矩阵的每个灰色来源都保留存档副本。
 4. **阅读**竞争者全文（断言、设定、数字、隐藏的固定参数、开放问题）并写阅读笔记。论文很多时按簇分派（由编排者派出并行实例），并准确说明每个实例读了哪些论文。
 5. **矩阵**：每个结果一行；*设定*要填写详尽（soundness 级别及其定义、域、setup、模型、硬件、线程数），以免混入不公平的比较；用 `skills/lit-matrix/scripts/lit_matrix.py LITERATURE.md --bib refs.bib` 做 lint。
@@ -49,7 +49,7 @@ model: inherit
 7. **并行工作监视**，从 P2 到投稿至少每两周一次：时间窗内的新 ePrint、`baselines/MANIFEST.md` 中竞争者仓库的发布说明和更新日志，以及该子领域发布结果的博客和论坛。记录每次扫描，包括没有新内容的扫描。
 8. **“X 在哪里被证明？”**（`skills/textbook-index`）。在参考书覆盖范围内，借助 MAP 先查 CY24（基于哈希的路线、安全定义、FS、Merkle、BCS、安全级别）和 Thaler（sum-check/GKR、PCS、前端、SNARK 组合）；超出范围则查原始论文。阅读该节，抄下陈述和**每一个**假设，按仓库格式引用（`[CY24 §<section>, <label>]`、`[Thaler §<number>, <name>]`），并对照项目参数逐一检查假设（域还是环、挑战集、adaptive 还是 non-adaptive、模型）。如果检查是一次计算，就运行它并记录命令。承重的或非形式化的陈述交给 `theorist` 做独立推导。使用 `references/books/GLOSSARY.md` 中的术语；绝不把 CY24 的界搬到代数（KZG/IPA/AGM）设定中。
 9. **维护 `references/books/`**：版本固定（pin）变化时重新运行 `references/books/fetch.sh`；任何新增书籍引用的编辑之后都运行 `python3 scripts/check_book_refs.py`（配合 PyMuPDF，这样 Thaler 的引用才会真正被检查）。缺少的书用 `skills/textbook-index/scripts/extract_toc.py` 加入教科书索引，并添加 CATALOG 行和 TOPIC-MAP 术语。
-10. **Bib-verify 门禁**：`python3 skills/bib-verify/scripts/verify_bib.py refs.bib > bib-verify-report.md`。修复每一个 MISMATCH/NOT_FOUND/WEAK/UNCHECKED 行；对每条修复过的条目，重读引用它的句子，并通知依赖它的 CLAIMS 行的负责人。
+10. **Bib-verify 门禁**：`python3 skills/bib-verify/scripts/verify_bib.py refs.bib > bib-verify-report.md`。`VERIFIED (mirror)` 行（官方站点不可用时对照第三方镜像核验的、只有 ePrint 的条目）可以通过门禁；官方站点恢复后用 `--require-official` 重新核验，并在 `bib-verify-report.md` 中记录哪些行仍然只经过镜像核验。修复每一个 MISMATCH/NOT_FOUND/WEAK/UNCHECKED 行；对每条修复过的条目，重读引用它的句子，并通知依赖它的 CLAIMS 行的负责人。
 11. **缺口报告**，交给 `idea-miner`：没有任何行覆盖的设定、尚未迁移到相邻设定的技术、所有行都固定为同一值的参数、缺失的下界；应要求附结构备忘录（一个具体章节配一个具体算法步骤，最多 3 种结构，每种都写明它放开的参数以及能推翻它的最廉价探测）。
 
 ## 使用的 skill
@@ -74,5 +74,6 @@ P1 完成的条件：矩阵 lint 无问题且包含真正的竞争者；最新�
 - **“我们是最优的”断言**只对某一个问题变体成立，对另一个不成立。检查每个被引用的下界针对的是哪个变体。
 - **不公平的数字**：不同的 soundness 级别、级别定义、线程数或硬件被复制进同一列。
 - **定理对了，假设错了**：为 non-adaptive soundness 陈述的界被用于 adaptive 断言；基于哈希（ROM）的结果被搬到 AGM 设定；域上的结果被用在环上；挑战取自基域，而界假设的是扩域。检查假设，而不是结论。
+- **把镜像当成档案本身**：引用镜像 URL，或者在没有任何 ePrint 来源应答时把新颖性检查报成 clear。镜像只是查询的后备，引用一律写 IACR 的规范 URL。
 - **章节号凭记忆而非阅读**：只引用在固定版本中实际打开过的内容；`check_book_refs.py` 会抓出过时的 label 和节名。
 - **无声抽样**：声称读过一批文献，实际只读了几篇摘要。记录读了什么。

@@ -55,6 +55,12 @@ committed).
 2. **Search** with `skills/eprint-search/scripts/eprint_search.py`: 5–10 phrasings of the problem, technique and
    object; `--months 12` first, then unrestricted; `--crossref` for published versions. Snowball from the
    related-work sections of the 2–3 closest papers and forwards via "cited by".
+   Every literature request is rate-limited by `skills/eprint-search/scripts/polite_http.py` (≥ 3 s per host,
+   Retry-After honoured, a per-run request budget, a 7-day cache): batch queries, never loop on retries. When
+   eprint.iacr.org is unreachable or blocks the address, the scripts fall back to a third-party mirror; its rows
+   are marked `eprint (mirror)`, are cited by their official canonical URL `https://eprint.iacr.org/YYYY/NNNN`
+   (never the mirror URL), and an exit status 2 means the novelty check was *not performed*. A block is answered
+   by writing to the IACR (see eprint-search §mirror), never worked around (no new IP, proxy or browser UA).
 3. **Grey literature** (`skills/eprint-search` §Grey-literature pass): the same phrasings against project
    documentation, research forums, vendor and team blogs and audit reports; keep an archived copy of every
    grey source that ends up in the matrix.
@@ -83,6 +89,9 @@ committed).
    edit that adds a book citation. A missing book goes into the textbook index with
    `skills/textbook-index/scripts/extract_toc.py`, a CATALOG row and TOPIC-MAP terms.
 10. **Bib-verify gate**: `python3 skills/bib-verify/scripts/verify_bib.py refs.bib > bib-verify-report.md`.
+    `VERIFIED (mirror)` rows (ePrint-only entries checked against the third-party mirror while the official
+    site was unusable) pass the gate; re-check them with `--require-official` once eprint.iacr.org answers, and
+    record in `bib-verify-report.md` which rows are still mirror-only.
     Fix every MISMATCH/NOT_FOUND/WEAK/UNCHECKED row; for each fixed entry re-read the sentence(s) citing it and
     notify the owner of any CLAIMS row that relied on it.
 11. **Gap report** for `idea-miner`: settings with no row, techniques not transferred to a neighbouring setting,
@@ -125,6 +134,8 @@ source with section, the hypotheses listed and a "hold in our setting?" cell tha
 - **Right theorem, wrong hypotheses**: a bound stated for non-adaptive soundness used for an adaptive claim; a
   hash-based (ROM) result moved to an AGM setting; a field result used over a ring; challenges from the base
   field while the bound assumes the extension. Check hypotheses, not conclusions.
+- **Mirror treated as the archive**: citing a mirror URL, or reporting a novelty check as clear when no ePrint
+  source answered. The mirror is a fallback for lookups; the citation is always the canonical IACR URL.
 - **Chapter numbers remembered rather than read**: cite only what was opened in the pinned version;
   `check_book_refs.py` catches stale labels and section names.
 - **Silent sampling**: claiming to have read a corpus while reading a few abstracts. Log what was read.
