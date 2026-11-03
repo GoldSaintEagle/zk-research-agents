@@ -3,7 +3,8 @@
 
 Pattern: small multiples of equal-size square panels, one per factor, filled
 cells = non-zero; each panel labelled underneath with its symbol and number of
-non-zero diagonals (the quantity that drives rotation count); an "=" / "x"
+non-zero diagonals (the structure that drives the cost, e.g. NTT butterfly
+layers or the non-zeros of R1CS / CCS matrices); an "=" / "x"
 between panels shows the factorisation.  Toy: radix-2 FFT factors for n = 16.
 """
 import sys, pathlib

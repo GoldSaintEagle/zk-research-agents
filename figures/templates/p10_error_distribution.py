@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """P10 -- empirical error distribution with Gaussian fit and failure threshold.
 
-Pattern: histogram of measured decryption noise on a LOG y-axis (so the tails
-are visible), fitted Gaussian as a thin line, the correctness bound +-B as
-vertical lines, and the extrapolated failure probability stated as 2^-k.
-Always report sample count.  SYNTHETIC SAMPLES.
+Pattern: histogram of a measured error on a LOG y-axis (so the tails are
+visible; e.g. the fixed-point error of a circuit gadget against the exact
+function), fitted Gaussian as a thin line, the tolerated bound +-B as vertical
+lines, and the extrapolated exceedance probability stated as 2^-k (with the
+fit's assumption in the caption).  Always report sample count.  SYNTHETIC
+SAMPLES.
 """
 import sys, pathlib, math
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -34,7 +36,7 @@ def make(venue="lncs", outdir=ROOT / "examples"):
             fontsize="small")
     ax.set_yscale("log")
     ax.set_ylim(1e-7, 0.2)
-    ax.set_xlabel("decryption error $e$")
+    ax.set_xlabel("gadget error $e$ (fixed-point units)")
     ax.set_ylabel("frequency")
     ax.legend(loc="upper left")
     return P.save(fig, "p10_error_distribution", outdir)

@@ -20,7 +20,7 @@ def boot_ci(a, b, rng, B=2000):
 
 def make(venue="lncs", outdir=ROOT / "examples"):
     rng = np.random.default_rng(2)
-    loads = ["KeyGen", "Encrypt", "Mult+Relin", "Bootstrap"]
+    loads = ["Setup", "Witness", "Prove", "Verify"]
     base = np.array([12.0, 3.1, 8.4, 410.0])
     gain = np.array([1.05, 1.3, 1.8, 2.3])
     fig, axs = P.figure(venue, width="full", aspect=0.36, ncols=4)

@@ -4,9 +4,12 @@ A catalog of figure patterns that recur in good cryptography papers, adapted to
 zero-knowledge papers (protocol/theory, system/implementation, application/circuit), written
 **in words only** -- no harvested image is reproduced here. Each entry gives
 when to use it, its anatomy, the usual mistakes, and the template in this
-repo that implements it. Where a source is named, it is a public IACR ePrint
-ID given as "see e.g.". It points to a paper that uses the pattern and does not
-endorse every detail of that figure.
+repo that implements it. Where a source is named ("candidates"), it is a public
+ZK paper from `references/reading-lists/` (cited there by key, with its DOI or
+ePrint ID, and checked to exist by `skills/bib-verify`). **Whether that paper
+actually contains a figure of this kind has not been checked (needs
+verification):** open it before citing it as an example, and drop it if it does
+not fit. A candidate never endorses every detail of a figure.
 
 **How this catalog was built.** `harvester/harvest.py` was run on a local
 corpus of 59 unique public ePrint/conference PDFs, mostly about FHE and
@@ -28,11 +31,12 @@ Main observations:
   number on every bar, and no run-to-run spread at all.
 * **Nobody shows run-to-run variance.** Showing it is a cheap way to look more
   rigorous than the baseline paper (see C15).
-* **The corpus was not a ZK corpus.** The "see e.g." ePrint IDs below come from
-  it and illustrate the *visual* pattern only; the ZK use cases (prover-phase
-  breakdowns, P-time vs proof-size fronts, scaling in the number of constraints,
-  protocol boxes, PIOP-to-PCS compilation) follow community practice and have not
-  been re-harvested. Re-run the harvester on a ZK corpus before citing ZK examples
+* **The corpus was not a ZK corpus.** The observations above are about visual
+  craft only. The ePrint IDs of that (FHE) corpus have been removed; the
+  candidates below are ZK papers chosen by topic, and the ZK use cases
+  (prover-phase breakdowns, P-time vs proof-size fronts, scaling in the number of
+  constraints, protocol boxes, PIOP-to-PCS compilation) follow community practice.
+  Re-run the harvester on a ZK corpus to replace candidates by observed examples
   (needs verification).
 * **Retired IDs.** C6 (noise waterfall), C7 (modulus bit layout), C8 (S-box
   heatmap), C9 (trail bounds) and D3 (cipher round function) were FHE/symmetric
@@ -69,9 +73,8 @@ in ink colours, never series colours.
 * **Anatomy:** one horizontal bar per prover. Phases appear in the same
   order and colour in every row, with a thin white gap between segments. The
   total goes at the bar end. One bracket or arrow states the headline
-  ratio. See e.g. ePrint 2025/1532 (stacked latency bars with a ratio
-  arrow) and 2025/1298 (modulus-consumption breakdown as horizontal
-  stacked bars).
+  ratio. Candidates: Jolt (`AST24`, zkvm.md), HyperPlonk (`CBBZ23`,
+  piop-arithmetization.md).
 * **Pitfalls:** side-by-side pies. Readers cannot compare angles across pies,
   and totals disappear. More than 5 segments. Using a different stage order
   in different rows. Leaving witness generation in one row and out of another;
@@ -84,8 +87,9 @@ in ink colours, never series colours.
 * **Anatomy:** log2 axes with `2^k` tick labels and markers at measured points
   only. Thin dashed grey guide lines (`O(n)`, `O(n log n)`) are anchored at
   the first data point and labelled beside the line. Series are
-  direct-labelled at their right end, so no legend is needed. See e.g. ePrint
-  2026/845 (error growth vs. depth).
+  direct-labelled at their right end, so no legend is needed. Candidates:
+  Brakedown (`GLSTW23`, pcs.md), Orion (`XZS22`, pq-and-hash-based-zk.md),
+  Libra (`XZZPS19`, piop-arithmetization.md).
 * **Pitfalls:** a linear x-axis for powers of two. Guides that are not
   anchored, which suggest a false constant. Guide labels that collide with
   series labels. Constraint counts from different arithmetizations on one x-axis
@@ -93,18 +97,24 @@ in ink colours, never series colours.
   Stopping the sweep before the size where memory runs out; mark the last
   feasible size instead.
 
-### C4 Parameter-plane feasibility region -- `p04_param_feasibility.py`
-* **Use when** parameters are the contribution: choosing (n, log q), (h,
-  log q), or (alpha, tau) under security and correctness constraints.
-* **Anatomy:** constraint curves are labelled in-line (lambda = 80/128/192).
-  A light tint covers the feasible set only. The correctness bound is a
-  coloured rule. The chosen parameter set is a single star with a text label.
-  "Insecure" and "incorrect" regions are named in muted italics. See e.g.
-  ePrint 2026/845 (regime map in a 2-D parameter plane) and 2024/115 (impact
-  of the secret-key weight and log q on security).
-* **Pitfalls:** saturated region fills. Unlabelled contour levels. Security
-  curves drawn from a toy formula without saying so. Only the
-  lattice-estimator output belongs in the final paper.
+### C4 Parameter-plane feasibility screen (soundness budget) -- `p04_param_feasibility.py`
+* **Use when** parameters are the contribution or must be justified: choosing
+  (code rate, queries), (field / extension degree, repetitions), (grinding bits,
+  queries) or (limb size, table size) under a soundness target and a cost budget
+  (proof size, prover time, constraint count).
+* **Anatomy:** the soundness constraint is the curve "t queries reach lambda bits"
+  in the **proven** regime, labelled in-line; the conjectured-regime curve may be
+  drawn dashed and labelled as such, but the chosen point never relies on it
+  unless the paper says so. Cost budgets are coloured rules. A light tint covers
+  the feasible set only. The chosen parameter set is a single star with a text
+  label. "Unsound" and "too large" regions are named in muted italics.
+  Candidates: STIR (`ACFY24`, pcs.md), WHIR (`ACFY25`, pcs.md), Proximity Gaps
+  (`BCIKS20`, fiat-shamir-soundness.md).
+* **Pitfalls:** saturated region fills. Unlabelled curves. Soundness curves from a
+  toy formula without saying so; only `skills/soundness-budget` output (with the
+  regime and the level definition named, and an EVIDENCE row) belongs in the
+  final paper. Proven and conjectured curves in the same style. A cost axis
+  measured at a different soundness level than the curve.
 
 ### C5 Prover time vs. proof size, with a Pareto front -- `p05_pareto_tradeoff.py`
 * **Use when** two costs trade off against each other (prover time vs. proof
@@ -119,26 +129,27 @@ in ink colours, never series colours.
   (or proven and conjectured soundness) on one front. Dropping verifier time
   silently; give it in the caption or a second panel.
 
-### C10 Error distribution with log-scale tails -- `p10_error_distribution.py`
-* **Use when** justifying a decryption-failure or precision claim from
-  experiments.
+### C10 Distribution with log-scale tails -- `p10_error_distribution.py`
+* **Use when** an empirical distribution backs a claim: a cheating prover's
+  success rate on small fields against the analytic bound (`skills/sage-check`),
+  fixed-point / approximation error of a circuit gadget, or per-run timing tails.
 * **Anatomy:** histogram on a LOG y-axis with the sample count in the
-  legend. The fitted Gaussian is a thin ink line. The correctness bound +-B
-  appears as coloured verticals. The extrapolated failure probability is
-  written as 2^-k, and the fit's assumption is named in the caption.
+  legend. A fitted or analytic curve is a thin ink line. The bound appears as
+  coloured verticals. Any extrapolated probability is written as 2^-k, and the
+  assumption behind it is named in the caption.
 * **Pitfalls:** a linear y-axis, where tails, the only part that matters, are
   invisible. Extrapolating 2^-128 from 2^17 samples without an analytic
-  argument.
+  argument; empirical small-field rates support a bound, they never replace it.
 
 ### C11 Approximation: target + log-scale error -- `p11_approx_error.py`
-* **Use when** presenting polynomial, Chebyshev, minimax or Fourier
-  approximations (EvalMod, sign, comparison, LUT).
+* **Use when** presenting polynomial, piecewise or fixed-point approximations
+  that a circuit computes instead of a non-arithmetic function (activations in
+  zkML circuits, division, square roots, comparisons via lookups).
 * **Anatomy:** two panels with a shared x-axis. The top panel shows the
   target function (thick grey) and the approximation (thin, dashed). The
   bottom panel shows |error| on a log scale for 2-4 degrees, direct-labelled,
-  with the precision target as a horizontal rule. See e.g. ePrint 2025/1534
-  (arcsin approximation and its difference plot), 2026/367 (Fourier extension
-  convergence) and 2026/450 (Fourier expansions of bit functions).
+  with the precision target as a horizontal rule. Candidates: none in the reading
+  lists yet (needs a zkML entry).
 * **Pitfalls:** plotting the error on a linear axis. Unreadable overlaid
   curves of near-identical colour. Omitting the interval endpoints where the
   error peaks.
@@ -148,19 +159,19 @@ in ink colours, never series colours.
   constraints, KZG vs. FRI-based PCS, schoolbook vs. NTT, MSM algorithm A vs. B).
 * **Anatomy:** analytic curves, measured points as markers (showing the model
   is calibrated), a vertical line at the crossover with its value printed,
-  and very light regime tints labelled "X wins". See e.g. ePrint 2026/213
-  (linear cost model of CKKS operations, fitted to measurements).
+  and very light regime tints labelled "X wins". Candidates: Lasso (`STW24`,
+  lookup.md), BaseFold (`ZCF24`, pcs.md).
 * **Pitfalls:** using a model without measured points. Regime tints strong
   enough to fight the data.
 
 ### C13 Sparsity patterns of structured matrices -- `p13_sparsity_pattern.py`
-* **Use when** explaining a factorisation of a linear transform (FFT/NTT
-  butterflies, CoeffToSlot and SlotToCoeff factors, packing matrices), where
-  the number of non-zero diagonals drives the rotation count.
+* **Use when** the structure of a matrix drives a cost: R1CS / CCS matrices
+  (non-zeros drive the prover's sparse work and the preprocessing size), NTT
+  butterfly factors, or the selector / copy structure of a Plonkish table.
 * **Anatomy:** small multiples of equal-size square panels on a hairline
   grid, with non-zeros filled in one dark colour. Under each panel: its
-  symbol and the number of diagonals. See e.g. ePrint 2025/696 (butterfly
-  matrices of an inverse NTT) and 2024/164 (bit-reversal butterfly structures).
+  symbol and its number of non-zeros. Candidates: Spartan (`Set20`) and CCS
+  (`STW23`), both piop-arithmetization.md.
 * **Pitfalls:** unequal panel sizes. Colouring by value when only the support
   matters.
 
@@ -170,8 +181,7 @@ in ink colours, never series colours.
 * **Anatomy:** a single-hue ramp whose colour-bar label states "lower is
   better". The value is printed in each cell with one decimal. Infeasible
   cells are hatched grey, not coloured. The optimum cell gets an accent
-  outline. See e.g. ePrint 2026/845 (runtime and ciphertext-size heatmaps
-  over two parameters).
+  outline. Candidates: none in the reading lists yet.
 * **Pitfalls:** a rainbow ramp. Colouring infeasible cells as if they had
   a value. Too many cells to print values (above ~12x12, drop the numbers).
 
@@ -214,10 +224,9 @@ in ink colours, never series colours.
   numbers go in muted text on the margin. Challenges are sampled explicitly
   (ρ ←$ 𝕂). The verifier's checks are numbered so the proof can cite them, and the
   accept condition is the last line. For ideal functionalities, use a framed box with a
-  bold title such as "Functionality F_x" and numbered steps. See e.g. ePrint
-  2025/1834 (functionality boxes for random sharings and coin tossing),
-  2026/840 (simplified client-server sequence diagrams) and 2024/109 (the
-  bootstrapping functionality as a figure).
+  bold title such as "Functionality F_x" and numbered steps. Candidates: PLONK
+  (`GWC19`, piop-arithmetization.md), logUp (`Hab22`, lookup.md), Bulletproofs
+  (`BBBPWM18`, pcs.md).
 * **Pitfalls:** diagonal message arrows, which suggest timing that is not
   modelled. Mixing algorithm names in italic and sans serif (define
   `\alg{}` once). Frames drawn with heavy rules. Mixing oracles and commitments
@@ -230,42 +239,43 @@ in ink colours, never series colours.
 * **Anatomy:** boxes left to right, joined by thin arrows. The quantity the paper
   tracks (memory held, data size, field) sits above the boxes on one baseline.
   The changed phase is tinted blue and every other box stays white. A brace
-  underneath quantifies the claim (peak memory, hashes, MSM size). See e.g. ePrint 2024/109 (previous vs. new
-  pipeline, drawn as two figures with the same layout), 2025/1594 (steps
-  that benefit are highlighted), 2025/1534 (a dotted separator per level) and
-  2023/1304 (abstract "fat vs. thin" bootstrapping).
+  underneath quantifies the claim (peak memory, hashes, MSM size). Candidates:
+  Jolt (`AST24`, zkvm.md), Fractal (`COS20`, piop-arithmetization.md), Nova
+  (`KST22`, folding-recursion.md).
 * **Pitfalls:** clip-art icons. More than ~7 boxes in a row (wrap or group
   them). "Before" and "after" pipelines drawn with different layouts.
 
 ### D4 Lattice / geometric picture -- `tikz/lattice_basis.tex`
-* **Use when** building intuition for reduction, CVP/BDD decoding, rounding
-  or fundamental domains.
+* **Use when** a lattice-based ZK construction (lattice PCS, lattice folding,
+  post-quantum arguments) needs intuition for norms, short vectors or
+  fundamental domains, e.g. why a folding step grows the witness norm.
 * **Anatomy:** small grey lattice points, a reduced basis in blue and a long
   basis in grey, with the fundamental parallelepiped lightly tinted and the
-  origin marked. The legend is text in a white box. See e.g. ePrint 2025/686
-  (a hardness-vs-approximation-factor axis diagram).
+  origin marked. The legend is text in a white box. Candidates: LaBRADOR
+  (`BS23`) and Greyhound (`NS24`), pq-and-hash-based-zk.md; LatticeFold
+  (`BC25`, folding-recursion.md).
 * **Pitfalls:** a 3-D perspective. Too many points. Non-integral coordinates
   that make the figure lie about the lattice.
 
 ### D5 Commutative diagram -- `tikz/commutative_diagram.tex`
-* **Use when** stating correctness or homomorphism (Encode, Enc, Eval, Dec
-  commute with f), or relating encodings.
+* **Use when** stating that two routes agree: a homomorphic commitment commutes
+  with the linear combination a folding step takes, a compiler preserves a
+  relation, or an encoding (e.g. Reed--Solomon) commutes with folding.
 * **Anatomy:** tikz-cd with sans-serif algorithm names via `\alg{}` and
   script letters for spaces. The one "new" arrow is in the accent colour.
-  See e.g. ePrint 2026/233 (encoding/decoding vs. homomorphic
-  encoding/decoding).
+  Candidates: Nova (`KST22`), Halo Infinite (`BDFG21`), folding-recursion.md
+  and pcs.md.
 * **Pitfalls:** labels containing commas without braces (tikz-cd parse
   error). More than 3x3 nodes.
 
 ### D6 Dependency grid / dataflow DAG (NTT, sum-check, recursion) -- adapt `tikz/pipeline.tex`
 * **Use when** a computation has a 2-D dependency structure. Examples: NTT
   butterfly networks, the variables bound per sum-check round, FRI folding
-  layers, a recursion or aggregation tree, digit-extraction grids.
+  layers, a recursion or aggregation tree, the layers of a GKR circuit.
 * **Anatomy:** a `matrix` of nodes, with arrows labelled by the polynomial
   or operation applied. The critical path is drawn in the accent colour, and
-  axes name the two indices. See e.g. ePrint 2023/1304 and 2024/115 (digit
-  extraction and removal grids), 2026/1089 (digit-extraction dataflow) and
-  2022/1364 (critical path of digit removal).
+  axes name the two indices. Candidates: GKR (`GKR15`) and Libra (`XZZPS19`),
+  piop-arithmetization.md; FRI (`BBHR18fri`, pcs.md).
 * **Pitfalls:** unlabelled arrows. Mixing dashed and solid arrows without a
   legend.
 
