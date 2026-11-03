@@ -1,4 +1,4 @@
-# crypto-research-agents — instructions for Codex / generic coding agents
+# zk-research-agents — instructions for Codex / generic coding agents
 
 This repo is a **toolkit**, not a research project. Research happens in a separate
 project directory initialised with `/cra-init <dir>` (see `docs/QUICKSTART.md`).

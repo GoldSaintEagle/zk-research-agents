@@ -1,4 +1,4 @@
-# crypto-research-agents — instructions for Claude Code
+# zk-research-agents — instructions for Claude Code
 
 This repo is a **toolkit**, not a research project. Research happens in a separate
 project directory initialised with `/cra-init <dir>` (see `docs/QUICKSTART.md`).

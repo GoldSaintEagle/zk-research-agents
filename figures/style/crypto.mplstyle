@@ -1,4 +1,4 @@
-# crypto.mplstyle -- house style base for crypto-research-agents figures.
+# crypto.mplstyle -- house style base for zk-research-agents figures.
 # Combine with a venue sheet:  plt.style.use(["crypto.mplstyle", "lncs.mplstyle"])
 # or simply call figures.style.palette.use("lncs").
 #

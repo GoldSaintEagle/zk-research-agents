@@ -1,4 +1,4 @@
-# SPEC — build contract for crypto-research-agents
+# SPEC — build contract for zk-research-agents
 
 Every contributor (human or agent) building this repo follows this file.
 It is the single source of truth for names, formats and hand-off contracts.
