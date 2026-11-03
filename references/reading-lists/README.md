@@ -13,10 +13,11 @@ challenge, so:
   no `eprint=` is recorded for these entries yet;
 - an entry that exists only on ePrint (PLONK, Plookup, cq, logUp, CCS, SuperNova, CycleFold, Halo,
   Cairo, ...) carries `eprint=` and the official `url = https://eprint.iacr.org/YYYY/NNNN`, and is
-  `VERIFIED (mirror)`: it matched the record of the **third-party** mirror https://eprint.iacr.asia
-  (not run by the IACR), which the verifier uses only when the official site is unusable and the entry
-  has no DOI. Re-check these rows against eprint.iacr.org once it answers this machine again;
-- 116 entries are `VERIFIED`, 23 `VERIFIED (mirror)`, none in any other state.
+  was first `VERIFIED (mirror)`: it matched the record of the **third-party** mirror
+  https://eprint.iacr.asia (not run by the IACR), which the verifier uses only when the official site is
+  unusable and the entry has no DOI. On 2026-11-03 eprint.iacr.org answered again and all 23 of these
+  rows were re-checked against it with `verify_bib.py --require-official`: all `VERIFIED`;
+- all 139 entries are `VERIFIED` (116 through a DOI, 23 against official ePrint), none in any other state.
 
 Papers still left out: the Chaliasos et al. SoK on SNARK vulnerabilities (USENIX Security 2024; not on
 ePrint according to the mirror, no DOI), the RISC Zero / SP1 write-ups and the TinyRAM specification
