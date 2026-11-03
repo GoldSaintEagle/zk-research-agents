@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+- OpenAI Codex support: `./install.sh <dir>|--user --codex` (via `scripts/codex_export.py`) installs the skills
+  into `.agents/skills/`, turns each slash command into a `$cra-…` skill, and generates the 13 agents as Codex
+  custom subagents in `.codex/agents/*.toml`. `AGENTS.md` maps the Claude-specific wording to Codex.
+
 ## 0.2.0 — 2026-11-03 (ZK fork)
 
 This is the first release of the ZK-only fork of

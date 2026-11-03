@@ -43,7 +43,7 @@ case-study/                  toy end-to-end example run through all phases
 docs/                        BIGMAP, quickstart, methodology; docs/zh/ Chinese mirror
 AGENTS.md                    Codex / generic-agent entry point (mirrors CLAUDE.md)
 CLAUDE.md                    Claude Code entry point
-install.sh                   installs agents/skills/commands into a target project
+install.sh                   installs agents/skills/commands into a target project (--codex: Codex layout via scripts/codex_export.py)
 ```
 
 ## 2. The 13 agents (file = `agents/<id>.md`)

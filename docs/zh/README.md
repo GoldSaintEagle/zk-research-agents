@@ -2,7 +2,7 @@
 
 一套**多 agent 协作的零知识证明（ZK）科研系统**，面向三类 ZK 论文：协议/理论、系统/实现、应用/电路。从文献调研、idea 挖掘、理论证明、baseline 复现、
 公平实验、证伪审查，到论文写作、画图、模拟审稿、投稿、rebuttal、camera-ready，
-全部打包为 Claude Code 的 agents / skills / 斜杠命令（Codex 通过 `AGENTS.md` 同样可用），
+全部打包为 Claude Code 的 agents / skills / 斜杠命令（也可以安装到 OpenAI Codex，作为 skill 和自定义子 agent 使用），
 并配有 ZK 玩具算法库、公平基准测试框架、画图模板和一个完整的玩具示例。
 
 本仓库是 [crypto-research-agents](https://github.com/acprk/crypto-research-agents) 的 ZK 专用 fork：保留流程骨架（黑板文件、先证伪、证据台账、P0–P8 阶段门禁），把 FHE、格、对称密码的领域内容替换为 ZK 内容（soundness 预算、Fiat–Shamir 与电路审计、约束数与 prover 成本模型、ZK baseline 与阅读清单）。
@@ -71,6 +71,8 @@ cd ~/papers/我的新论文 && claude
 /cra-init .
 /cra-status
 ```
+
+使用 OpenAI Codex 时加上 `--codex`：`./install.sh ~/papers/我的新论文 --codex`。skill 会装到 `.agents/skills/`，每个斜杠命令转成同名 skill（在 Codex 里输入 `$cra-init`、`$cra-phase P3` 等），13 个 agent 转成 `.codex/agents/*.toml` 自定义子 agent。`workflows/*.js` 的多 agent 重型流程依赖 Claude Code，在 Codex 里改为按名字调用相应的子 agent。详见 `AGENTS.md`。
 
 完整示例（玩具课题：Goldilocks 上的范围检查，lookup（logUp，8-bit 分块）对比按位分解；故意埋下一个欠约束的最高分块，由 falsifier 抓出）见
 `case-study/WALKTHROUGH.md`，中文版 `docs/zh/case-study-walkthrough.md`。

@@ -2,8 +2,8 @@
 
 **A multi-agent research system for zero-knowledge proof papers.** It covers three kinds of ZK paper
 (protocol / theory, systems / implementation, application / circuits) and takes a project from the literature
-search to the camera-ready version. It ships as Claude Code agents, skills and slash commands, and Codex can use it
-through `AGENTS.md`. Alongside them are a toy ZK algorithm library, a fair-benchmarking harness, a figure kit and a
+search to the camera-ready version. It ships as Claude Code agents, skills and slash commands, and installs for
+OpenAI Codex as skills and custom subagents. Alongside them are a toy ZK algorithm library, a fair-benchmarking harness, a figure kit and a
 complete worked example.
 
 This is a ZK-only fork of [crypto-research-agents](https://github.com/acprk/crypto-research-agents). It keeps the
@@ -88,6 +88,12 @@ pip install -e lib/cryptomath -e lib/bench            # Python ≥ 3.10
 `install.sh` copies the agents, skills and commands into `<project>/.claude/`, and the workflow scripts into
 `<project>/.cra/workflows/`. Pass `--link` to symlink instead of copy. To use it as a Claude Code plugin instead,
 run `claude plugin install <path-or-url>`.
+
+**Codex.** Add `--codex` (`./install.sh ~/papers/my-paper --codex`, or `--user --codex`). The skills go to
+`.agents/skills/`, and each slash command becomes a skill of the same name, so in Codex you type `$cra-init`,
+`$cra-phase P3` and so on. The 13 agents become Codex custom subagents in `.codex/agents/*.toml`. The rest of this
+README uses Claude Code's `/cra-…` spelling; under Codex read it as `$cra-…`. The heavy multi-agent rounds in
+`workflows/*.js` need Claude Code; under Codex, ask for the same subagents by name. See `AGENTS.md`.
 
 Optional tools are used when present:
 - the ZK toolchains you compare against: Rust, Go, circom / snarkjs and noir, pinned with

@@ -6,6 +6,8 @@ pip install -e lib/cryptomath -e lib/bench
 ./install.sh ~/papers/my-new-paper          # copies agents/skills/commands into .claude/
 cd ~/papers/my-new-paper && claude
 ```
+For OpenAI Codex: `./install.sh ~/papers/my-new-paper --codex`, then run `codex` there and use `$cra-init`,
+`$cra-phase P1`, ... instead of the `/cra-…` commands below (layout and mapping: `AGENTS.md`).
 Optional tools the agents use when present: the ZK toolchains you compare against, fetched and pinned with
 `references/baselines/fetch.sh` (Rust + cargo for arkworks / halo2 / plonky3 / stwo / binius / nova and the zkVMs,
 Go for gnark, circom + snarkjs / rapidsnark with Node, noir / nargo), SageMath, Lean 4 + Mathlib (lean-lsp MCP),
