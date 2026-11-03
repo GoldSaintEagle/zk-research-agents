@@ -16,14 +16,13 @@ from __future__ import annotations
 import math
 import random
 from functools import reduce
-from itertools import product
 from typing import Dict, Iterable, List, Sequence, Tuple
 
 __all__ = [
     "is_prime", "factorint", "divisors", "euler_phi", "carmichael_lambda",
     "mult_order", "primitive_root", "is_primitive_root", "inv_mod", "crt",
     "units", "subgroup_generated", "cosets", "coset_representatives",
-    "unit_group_generators", "find_ntt_prime", "find_ntt_primes",
+    "find_ntt_prime", "find_ntt_primes",
     "root_of_unity",
 ]
 
@@ -228,37 +227,6 @@ def coset_representatives(H: Iterable[int], m: int) -> List[int]:
     return [c[0] for c in cosets(H, m)]
 
 
-def unit_group_generators(m: int) -> List[Tuple[int, int]]:
-    """Generators of (Z/m)^* as a product of cyclic groups (via CRT).
-
-    Returns a list of ``(g, ord(g))``; the group is the internal direct product
-    of the cyclic groups <g>.  For each prime power p^e || m one gets one
-    generator (two for 2^e, e>=3: -1 and 5), lifted by CRT to be 1 on the
-    other prime-power components.  This is the standard decomposition used for
-    hypercube slot layouts (Halevi--Shoup, "Algorithms in HElib", CRYPTO 2014,
-    ePrint 2014/106).
-    """
-    fs = factorint(m) if m > 1 else {}
-    pps = [p ** e for p, e in fs.items()]
-    out = []
-    for p, e in fs.items():
-        q = p ** e
-        others = [x for x in pps if x != q]
-        local_gens: List[Tuple[int, int]] = []
-        if p == 2:
-            if e == 2:
-                local_gens = [(3, 2)]
-            elif e >= 3:
-                local_gens = [(q - 1, 2), (5, 2 ** (e - 2))]
-        else:
-            local_gens = [(primitive_root(q), euler_phi(q))]
-        for g, o in local_gens:
-            res = [g] + [1] * len(others)
-            G, _ = crt(res, [q] + others)
-            out.append((G, o))
-    return out
-
-
 # --------------------------------------------------------------------------
 # NTT-friendly primes
 # --------------------------------------------------------------------------
@@ -294,6 +262,3 @@ def root_of_unity(order: int, q: int) -> int:
     g = primitive_root(q)
     return pow(g, (q - 1) // order, q)
 
-
-def _all_tuples(bounds: Sequence[int]):  # small helper for hypercube enumeration
-    return product(*[range(b) for b in bounds])

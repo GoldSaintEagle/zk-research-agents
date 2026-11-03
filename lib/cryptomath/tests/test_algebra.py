@@ -10,7 +10,7 @@ from cryptomath.algebra import (  # noqa: E402
     dft_bluestein, dft_naive, euler_phi, factorint, find_ntt_prime, find_ntt_primes,
     intt_cyclic, intt_negacyclic, is_irreducible, is_prime, mult_order, negacyclic_mul_ntt,
     ntt_cyclic, ntt_negacyclic, poly_divmod, poly_eval, poly_mul, primitive_root,
-    root_of_unity, subgroup_generated, unit_group_generators, units,
+    root_of_unity, subgroup_generated, units,
 )
 
 
@@ -27,15 +27,8 @@ class TestNumberTheory(unittest.TestCase):
         x, M = crt([2, 3, 2], [3, 5, 7])
         self.assertEqual((x, M), (23, 105))
 
-    def test_unit_group(self):
-        for m in (8, 15, 16, 40, 63, 64):
-            gens = unit_group_generators(m)
-            H = subgroup_generated([g for g, _ in gens], m)
-            self.assertEqual(H, units(m))
-            prod = 1
-            for _, o in gens:
-                prod *= o
-            self.assertEqual(prod, euler_phi(m))
+    def test_cosets(self):
+        self.assertEqual(subgroup_generated([3], 7), units(7))   # 3 generates (Z/7)^*
         cs = cosets(subgroup_generated([2], 31), 31)   # <2> in (Z/31)^*, order 5
         self.assertEqual(len(cs), 6)
         self.assertTrue(all(len(c) == 5 for c in cs))
