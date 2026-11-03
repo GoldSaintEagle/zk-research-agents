@@ -8,5 +8,5 @@ b3420f9df16d0675  impl/prove.py
 3a9ae991345c6402  code/ledger.py
 d77ad9e0f1b12ed9  code/make_figures.py
 0c1806633520acce  code/run_experiments.py
-5ce775014e489b96  theory/budget.py
+42cbaf4dcef2affe  theory/budget.py
 91e16bf557b521ac  theory/check_gadgets.py
