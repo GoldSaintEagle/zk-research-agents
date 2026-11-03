@@ -1,4 +1,4 @@
-"""Render docs/bigmap/bigmap.{png,svg,pdf}: the one-page map of crypto-research-agents.
+"""Render docs/bigmap/bigmap.{png,svg,pdf}: the one-page map of zk-research-agents.
 
 Layout = six horizontal bands, one column per agent, columns grouped under phases:
 phases -> agents -> blackboard files -> skills -> library -> external tools.
@@ -11,7 +11,7 @@ from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Polygon
 
 OUT = Path(__file__).resolve().parent
 W, GAP = 1.0, 0.18           # column width, gap between columns
-COLS = 12
+COLS = 13
 X = [i * (W + GAP) for i in range(COLS)]
 XMAX = X[-1] + W
 
@@ -22,31 +22,31 @@ C = dict(phase="#3b6ea5", agent="#ffe0a3", agent_e="#c98a1a", pi="#f5b041", fal=
 # (agent, one-line capability, blackboard files, skills) — one column each
 AGENTS = [
     ("pi-orchestrator", "gates · dispatch\narbitration", "STATE.md\nDECISIONS.md", "phase-gate\nworkflows/*.js"),
-    ("lit-scout", "ePrint · DBLP\nrelated-work matrix", "LITERATURE.md\nrefs.bib", "eprint-search\nlit-matrix\nbib-verify\nreading-notes"),
-    ("math-librarian", "textbook TOC index\n'which book, which §'", "MATH-REFS.md", "textbook-index"),
-    ("idea-miner", "8-step mining loop\ncost-model screen", "IDEAS.md\n→ CLAIMS rows", "idea-mining-loop"),
-    ("theorist", "proofs · Sage\nLean4 · parameters", "THEORY.md\nlean/", "sage-check\nlean-bridge\nparam-estimation"),
-    ("baseline-engineer", "fetch · pin · build\nfairness checklist", "baselines/\nMANIFEST.md", "baseline-pin"),
-    ("experimenter", "interleaved bench\nmedians · env", "EVIDENCE.md\nresults/", "bench-protocol\nlog-to-evidence"),
-    ("falsifier", "red team\nVETO power", "CLAIMS.md\n(verdicts)", "falsify"),
+    ("lit-scout", "ePrint · grey lit.\nbooks · bib verify", "LITERATURE.md\nrefs.bib\nMATH-REFS.md", "eprint-search\nlit-matrix\nbib-verify\ntextbook-index"),
+    ("idea-miner", "8-step mining loop\nZK cost proxies", "IDEAS.md\n→ CLAIMS rows", "idea-mining-loop\nconstraint-cost\nprover-cost-model"),
+    ("theorist", "definitions · proofs\nPIOP+PCS · budget", "THEORY.md\nlean/", "zk-definitions\npiop-pcs-compile\nsoundness-budget\nsage-check"),
+    ("baseline-engineer", "fetch · pin · build\nequal-level sign-off", "baselines/\nMANIFEST.md", "baseline-pin\nsoundness-budget"),
+    ("prover-engineer", "our prover\npredict, then measure", "impl/", "prover-cost-model\nfiat-shamir-audit\nbench-protocol"),
+    ("circuit-engineer", "our circuits\nconstraint counts", "CIRCUITS.md\ncircuits/", "constraint-cost\ncircuit-audit\nlog-to-evidence"),
+    ("experimenter", "interleaved bench\nmedians · env", "EVIDENCE.md\nresults/", "bench-protocol\nlog-to-evidence\nprover-cost-model"),
+    ("falsifier", "red team · VETO\nindependent audits", "CLAIMS.md\n(verdicts)", "falsify\nfiat-shamir-audit\ncircuit-audit\nsoundness-budget"),
     ("writer", "section playbook\nonly survived claims", "paper/", "paper-playbook\nabstract-craft\ntechnique-overview\nexperiments-writing"),
     ("figure-artist", "house style\nharvest patterns", "paper/figs/", "paper-figures\nfigure-harvest"),
-    ("reviewer-sim", "venue-calibrated\n3 personas", "REVIEWS.md", "venue-calibration\nmock-review"),
+    ("reviewer-sim", "venue-calibrated\nZK personas", "REVIEWS.md", "venue-calibration\nmock-review"),
     ("submission-rebuttal", "anon · artifact\nrebuttal · camera-ready", "SUBMISSION.md", "rebuttal\nanonymize-check\ncamera-ready\nartifact-pack"),
 ]
 # phase -> column span
-PHASES = [("P0\nScoping", 0, 0), ("P1 Literature", 1, 2), ("P2\nIdeation", 3, 3), ("P3\nTheory", 4, 4),
-          ("P4\nBaselines", 5, 5), ("P5\nExperiments", 6, 6), ("P6\nFalsify gate", 7, 7),
-          ("P7 Write + Figures", 8, 9), ("P8 Review → Submit\n→ Rebuttal → CR", 10, 11)]
+PHASES = [("P0\nScoping", 0, 0), ("P1\nLiterature", 1, 1), ("P2\nIdeation", 2, 2), ("P3\nTheory", 3, 3),
+          ("P4\nBaselines", 4, 4), ("P5 Experiments\n(build, then measure)", 5, 7), ("P6\nFalsify gate", 8, 8),
+          ("P7 Write + Figures", 9, 10), ("P8 Review → Submit\n→ Rebuttal → CR", 11, 12)]
 # library boxes: (label, first col, last col)
-LIB = [("cryptomath.algebra\nGF(p^k) · Φ_m · Galois · CRT slots · NTT\nZ_{p^e} · digit extraction · characters", 0, 3),
-       ("cryptomath.lattice\nLWE/RLWE/NTRU · estimator\ncore-SVP · BKZ/GSA · LLL", 4, 5),
-       ("cryptomath.fhe (toy)\nBGV · BFV · CKKS · TFHE/PBS\nnoise · PS/BSGS · Chebyshev", 6, 7),
-       ("cryptomath.symmetric · protocols · ec\nDDT/LAT/BCT · Boolean · APN · AES/SPN\nSAT/MILP · SS/OT/PSI/GC · DLP", 8, 9),
-       ("crbench · costmodel · figures · lean\ninterleaved A/B · audit-tex · op count\nmplstyle · 12+ templates · harvester", 10, 11)]
-TOOLS = [("WebSearch / WebFetch\nePrint · DBLP · Crossref", 0, 2), ("SageMath · Mathematica MCP\nLean LSP MCP", 3, 5),
-         ("baseline libraries\nOpenFHE · HElib · SEAL · Lattigo · TFHE-rs\nMP-SPDZ · emp · APSI · CryptoSMT · liboqs", 6, 8),
-         ("LaTeX · latexmk · TikZ\npdffonts · matplotlib", 9, 11)]
+LIB = [("cryptomath.zk (toy)\nfields · MLE · sum-check · Merkle · FRI · KZG algebra\nPLONK permutation · logUp · R1CS · Plonkish", 0, 3),
+       ("cryptomath.algebra · costmodel\nGF(p^k) · NTT · roots of unity\nMSM / NTT / Merkle / sum-check / PCS counts", 4, 6),
+       ("cryptomath.symmetric · protocols · ec\nPoseidon/MiMC costs · GF(2^n)\nFS transcript · commitments · DLP", 7, 9),
+       ("crbench · figures · lean\ninterleaved A/B · ZK parsers · audit-tex\nmplstyle · templates · harvester", 10, 12)]
+TOOLS = [("WebSearch / WebFetch\nePrint · DBLP · Crossref · grey literature", 0, 2), ("SageMath · Mathematica MCP\nLean LSP MCP", 3, 4),
+         ("ZK baselines\narkworks · halo2 · plonky3 · gnark · circom/snarkjs\nnoir · binius · stwo · RISC Zero · SP1 · Jolt", 5, 9),
+         ("LaTeX · latexmk · TikZ\ncryptocode · pdffonts · matplotlib", 10, 12)]
 
 # band y-ranges (top, height)
 # band label, y-bottom, y-top
@@ -73,12 +73,12 @@ def span(a, b):
 
 
 def main():
-    fig, ax = plt.subplots(figsize=(22, 10.4))
+    fig, ax = plt.subplots(figsize=(23.8, 10.4))
     ax.set_xlim(-2.0, XMAX + 0.3)
     ax.set_ylim(2.2, 13.35)
     ax.axis("off")
-    ax.text(XMAX / 2 - 0.9, 13.05, "crypto-research-agents — BIGMAP", ha="center", fontsize=20, fontweight="bold")
-    ax.text(XMAX / 2 - 0.9, 12.62, "12 agents · shared blackboard · falsify-first gate · skills · algorithm library · tools",
+    ax.text(XMAX / 2 - 0.9, 13.05, "zk-research-agents — BIGMAP", ha="center", fontsize=20, fontweight="bold")
+    ax.text(XMAX / 2 - 0.9, 12.62, "13 agents · shared blackboard · falsify-first gate · skills · algorithm library · tools",
             ha="center", fontsize=12, color="#444444")
 
     for label, lo, hi in BANDS:
@@ -98,7 +98,7 @@ def main():
     pc = {n.split()[0]: (span(a, b)[0] + span(a, b)[1] / 2) for n, a, b in PHASES}
     yb = ytop - 0.75 + h
     arrow(ax, (pc["P6"], yb), (pc["P2"], yb), C["red"], 1.3, "--", 0.25, "core claim refuted → new idea / weaker theorem")
-    arrow(ax, (pc["P6"] - 0.15, yb), (pc["P5"] + 0.15, yb), C["red"], 1.3, "--", 0.6, "unfair baseline")
+    arrow(ax, (pc["P6"] - 0.15, yb), (pc["P5"] + 0.15, yb), C["red"], 1.3, "--", 0.35, "unfair baseline")
     arrow(ax, (pc["P8"], yb), (pc["P7"], yb), C["red"], 1.3, "--", 0.5, "mock-review items")
     arrow(ax, (pc["P1"] + 0.3, yb), (pc["P0"], yb), C["red"], 1.0, ":", 0.5, "pre-emption → pivot?", fs=7)
 
@@ -119,14 +119,14 @@ def main():
         box(ax, X[i], 4.65, W, 1.45, sk, C["sk"], C["sk_e"], fs=7.2)
         arrow(ax, (X[i] + W / 2, 8.3), (X[i] + W / 2, 8.0), "#8a8a8a", 0.9)
     # key gates into paper
-    paper_x = X[8] + W / 2
-    arrow(ax, (X[7] + W, 7.35), (X[8], 7.35), C["green"], 2.0, "-", 0.0)
-    ax.text(X[7] + W + GAP / 2, 7.95, "only survived\nclaims", ha="center", fontsize=6.8, color=C["green"], style="italic")
-    arrow(ax, (X[6] + W / 2, 7.05), (paper_x - 0.2, 7.05), C["green"], 1.8, "-", 0.28)
-    ax.text((X[6] + paper_x) / 2, 6.62, "only logged numbers (crbench audit-tex)", ha="center", fontsize=6.8,
+    paper_x = X[9] + W / 2
+    arrow(ax, (X[8] + W, 7.35), (X[9], 7.35), C["green"], 2.0, "-", 0.0)
+    ax.text(X[8] + W + GAP / 2, 7.95, "only survived\nclaims", ha="center", fontsize=6.8, color=C["green"], style="italic")
+    arrow(ax, (X[7] + W / 2, 7.05), (paper_x - 0.2, 7.05), C["green"], 1.8, "-", 0.28)
+    ax.text((X[7] + paper_x) / 2, 6.62, "only logged numbers (crbench audit-tex)", ha="center", fontsize=6.8,
             color=C["green"], style="italic")
-    arrow(ax, (X[7] + W / 2, 8.3), (X[6] + W / 2 + 0.25, 8.0), C["red"], 1.4, "-", 0.0)
-    ax.text(X[7] - 0.05, 8.12, "audit", fontsize=6.8, color=C["red"], style="italic", ha="right")
+    arrow(ax, (X[8] + W / 2, 8.3), (X[7] + W / 2 + 0.25, 8.0), C["red"], 1.4, "-", 0.0)
+    ax.text(X[8] - 0.05, 8.12, "audit", fontsize=6.8, color=C["red"], style="italic", ha="right")
 
     # library + tools
     for label, a, b in LIB:
