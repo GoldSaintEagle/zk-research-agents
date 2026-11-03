@@ -63,6 +63,7 @@ python3 skills/prover-cost-model/scripts/prover_cost_model.py --n 1048576 --fiel
 python3 skills/prover-cost-model/scripts/prover_cost_model.py --n 1048576 --field goldilocks --piop plonk --pcs fri --queries 80
 python3 skills/prover-cost-model/scripts/prover_cost_model.py --n 1048576 --piop plonk --pcs kzg --demo-log > m.log
 python3 skills/prover-cost-model/scripts/prover_cost_model.py --n 1048576 --piop plonk --pcs kzg --compare m.log
+python3 skills/prover-cost-model/scripts/prover_cost_model.py --phases spec.json --compare m.log   # your own phases
 python3 skills/prover-cost-model/scripts/prover_cost_model.py --selftest
 ```
 
@@ -71,6 +72,12 @@ Inputs: constraints n, field (bn254, bls12-381, goldilocks, babybear), PIOP (`pl
 pairing group's scalar field and NTTs beyond the field's 2-adicity. The self-test checks the formulas against
 real computations: a radix-2 NTT over F_97 (butterfly count and output), an honest sum-check prover over F_97
 (term count), and the path-pruning count against the CY24 bounds.
+
+A protocol that fits neither built-in shape (a Merkle-only toy, a lookup argument, a folding step) is described
+in a JSON spec, `{"field": ..., "n": ..., "phases": {phase: [{"op": "ntt", "N": ...}, {"op": "merkle_commit",
+"leaves": ..., "leaf_elems": ...}, {"op": "sumcheck", "v": ..., "d": ...}, {"op": "hash", "n": ...}, ...]}}`
+(ops: msm, ntt, merkle_commit, sumcheck, fmul, hash, pairing, count); the phases are counted with the same
+primitives and compared with the measured log in the same way. Name the phases as the prover's timers do.
 
 Comparison against the synthetic log (bn254, plonk + kzg, n = 2^20; toy unit costs, made-up "measurement"):
 

@@ -6,6 +6,7 @@
     python3 prover_cost_model.py --n 1048576 --field goldilocks --piop plonk --pcs fri --queries 80
     python3 prover_cost_model.py --n 1048576 --field bn254 --piop sumcheck --pcs kzg --demo-log > m.log
     python3 prover_cost_model.py --n 1048576 --field bn254 --piop sumcheck --pcs kzg --compare m.log
+    python3 prover_cost_model.py --phases spec.json --compare m.log   # your own phases (see "Custom phases")
     python3 prover_cost_model.py --selftest
 
 Model. The statement has n constraints (rows), padded to N = 2^ceil(log2 n). The PIOP is either
@@ -26,6 +27,15 @@ rounds and term evaluations, pairings, and an estimate of memory traffic. Formul
     ([CY24 §Path pruning, lemma:path-pruning-is-copaths-minus-paths, lemma:path-pruning-lower-and-upper]).
 Predicted time = sum of ops x unit cost; the unit costs below are TOY placeholders -- replace them with
 microbenchmarks of the target machine (one EVIDENCE row each) before comparing with real measurements.
+
+Custom phases. A protocol that is neither of the two built-in PIOP x PCS shapes (a Merkle-only toy, a lookup
+argument, a folding step) is described by a JSON spec instead; the same primitives are counted per phase:
+    {"field": "goldilocks", "n": 4096,
+     "phases": {"commit":   [{"op": "ntt", "N": 16384}, {"op": "merkle_commit", "leaves": 16384, "leaf_elems": 4}],
+                "zerocheck": [{"op": "sumcheck", "v": 12, "d": 3}],
+                "open":     [{"op": "hash", "n": 2400}]}}
+Ops: msm (N), ntt (N), merkle_commit (leaves, leaf_elems), sumcheck (v, d, factor), fmul (n), hash (n),
+pairing (n), and count (name, n) for any op name of costmodel.counter. "n" (optional) sets N = 2^ceil(log2 n).
 
 Comparison. A measured log has one "phase: value ms" line per phase (the convention of skills/bench-protocol).
 Phases whose measured/predicted ratio is outside [1/t, t] (default t = 1.5) are flagged: by bench-protocol rule 10
@@ -215,6 +225,36 @@ def predict(n: int, field: str, piop: str, pcs: str, rho: int = 4, queries: int 
             "prover_total": total.as_dict(), "verifier": ver.as_dict(), "proof_bytes": proof}
 
 
+def predict_from_phases(spec: dict) -> dict:
+    """Prediction for user-defined phases: {"field", "n"?, "phases": {phase: [{"op": ..., ...}, ...]}}."""
+    field = spec.get("field", "bn254")
+    if field not in FIELDS:
+        raise ValueError(f"unknown field {field!r}; choose one of {sorted(FIELDS)}")
+    ops = {
+        "msm": lambda o: msm(int(o["N"]), field),
+        "ntt": lambda o: ntt(int(o["N"]), field),
+        "merkle_commit": lambda o: merkle_commit(int(o["leaves"]), int(o.get("leaf_elems", 1)), field),
+        "sumcheck": lambda o: sumcheck_prover(int(o["v"]), int(o["d"]), field, int(o.get("factor", 1))),
+        "fmul": lambda o: count(FMUL, int(o["n"])),
+        "hash": lambda o: count(HASH, int(o["n"])),
+        "pairing": lambda o: count(PAIR, int(o["n"])),
+        "count": lambda o: count(str(o["name"]), int(o["n"])),
+    }
+    n = int(spec.get("n", 1))
+    N = 1 << max(0, (n - 1).bit_length())
+    phases: dict = {}
+    with Counter("prover") as total:
+        for ph, items in spec["phases"].items():
+            with Counter(ph) as c:
+                for o in items:
+                    if o.get("op") not in ops:
+                        raise ValueError(f"phase {ph}: unknown op {o.get('op')!r}; choose one of {sorted(ops)}")
+                    ops[o["op"]](o)
+            phases[ph] = c
+    return {"N": N, "v": N.bit_length() - 1, "prover": {k: c.as_dict() for k, c in phases.items()},
+            "prover_total": total.as_dict(), "verifier": spec.get("verifier", "not modelled"), "proof_bytes": None}
+
+
 # ---------------------------------------------------- Merkle path pruning ---
 
 def pruned_nodes(depth: int, indices: set[int]) -> int:
@@ -287,7 +327,8 @@ def render(pred: dict, field: str, rows: list[dict] | None = None) -> str:
                    f"{ops.get(BFLY, 0):.3g} | {ops.get(FMUL, 0):.3g} | {ops.get(HASH, 0):.3g} | {ops.get(SC_ROUND, 0)} | "
                    f"{ops.get(SC_TERM, 0):.3g} | {ops.get(MEM, 0) / 2**20:.1f} | {pm[ph]:.1f} |")
     out.append(f"verifier: {pred['verifier']}")
-    out.append(f"proof bytes: unpruned {pred['proof_bytes']['unpruned']}, with path pruning {pred['proof_bytes']['pruned']}")
+    if pred["proof_bytes"]:
+        out.append(f"proof bytes: unpruned {pred['proof_bytes']['unpruned']}, with path pruning {pred['proof_bytes']['pruned']}")
     if rows:
         out += ["", "| phase | predicted ms | measured ms | measured/predicted | flag |", "|---|---|---|---|---|"]
         for r in rows:
@@ -364,6 +405,22 @@ def selftest() -> int:
     rows = compare(pm, {**parse_log(synthetic_log(pm)), "witness": 5.0})
     assert any(r["flag"] == "UNMODELLED" for r in rows)
     assert parse_log("commit: 1.5 ms\njunk\nopen : 2e3 ms") == {"commit": 1.5, "open": 2000.0}
+    # 7. custom phases: the same primitives, counted per user-defined phase; unknown ops are refused
+    spec = {"field": "goldilocks", "n": 3000,
+            "phases": {"commit": [{"op": "ntt", "N": 4096}, {"op": "merkle_commit", "leaves": 4096, "leaf_elems": 4}],
+                       "zerocheck": [{"op": "sumcheck", "v": 12, "d": 3}], "open": [{"op": "hash", "n": 100}]}}
+    c = predict_from_phases(spec)
+    with Counter("ref") as r:
+        sumcheck_prover(12, 3, "goldilocks")
+    assert c["N"] == 4096 and c["prover"]["commit"][BFLY] == 2048 * 12
+    assert c["prover"]["zerocheck"][SC_TERM] == r[SC_TERM] and c["prover"]["open"][HASH] == 100
+    assert c["prover_total"][HASH] == c["prover"]["commit"][HASH] + 100
+    assert "zerocheck" in render(c, "goldilocks", compare(predicted_ms(c, "goldilocks"), {"zerocheck": 1.0}))
+    try:
+        predict_from_phases({"phases": {"x": [{"op": "fft"}]}})
+        raise AssertionError("unknown op accepted")
+    except ValueError:
+        pass
     print("selftest: OK")
     return 0
 
@@ -376,6 +433,7 @@ def main(argv=None) -> int:
     ap.add_argument("--pcs", choices=["kzg", "fri"], default="kzg")
     ap.add_argument("--rho", type=int, default=4, help="inverse FRI rate")
     ap.add_argument("--queries", type=int, default=80, help="FRI queries (take it from skills/soundness-budget)")
+    ap.add_argument("--phases", metavar="SPEC.json", help="user-defined phases instead of --piop/--pcs (see 'Custom phases')")
     ap.add_argument("--compare", metavar="LOG", help="measured log, one 'phase: value ms' line per phase")
     ap.add_argument("--threshold", type=float, default=1.5)
     ap.add_argument("--demo-log", action="store_true", help="print a synthetic 'measured' log and exit")
@@ -383,7 +441,13 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if a.selftest:
         return selftest()
-    pred = predict(a.n, a.field, a.piop, a.pcs, a.rho, a.queries)
+    if a.phases:
+        import json
+        with open(a.phases, encoding="utf-8") as fh:
+            spec = json.load(fh)
+        pred, a.field = predict_from_phases(spec), spec.get("field", "bn254")
+    else:
+        pred = predict(a.n, a.field, a.piop, a.pcs, a.rho, a.queries)
     if a.demo_log:
         print(synthetic_log(predicted_ms(pred, a.field)))
         return 0
