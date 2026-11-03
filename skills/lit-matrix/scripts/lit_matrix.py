@@ -15,7 +15,7 @@ Row rules
     (Tab./Table/Fig./Sec./§/p./Thm./"measured" + EVIDENCE id E<n>/"reported in")
   * setup: starts with trusted | universal | transparent | n/a
   * pq?: yes | no | plausible | n/a  (anything but "no"/"n/a" must name its assumption in assumptions/model)
-  * code?: yes <url> | no | unknown
+  * code?: yes <url> | no | unknown | n/a  (n/a: nothing to implement, e.g. a pure theory result)
   * our delta: non-empty (what we do that this row does not; "none" is an honest answer and a red flag)
 With --bib: every key used in the matrix must exist in refs.bib.
 
@@ -100,8 +100,8 @@ def lint(text: str, bib: set[str] | None, max_age: int, today: dt.date) -> list[
             errs.append(f"{tag}: pq? must be 'yes', 'no', 'plausible' or 'n/a'")
         elif c["pq?"].lower().startswith(("yes", "plausible")) and not c["assumptions/model"]:
             errs.append(f"{tag}: pq? claimed without an assumption in assumptions/model")
-        if not re.match(r"^(yes\b.*https?://\S+|no\b|unknown\b)", c["code?"], re.I):
-            errs.append(f"{tag}: code? must be 'yes <url>', 'no' or 'unknown'")
+        if not re.match(r"^(yes\b.*https?://\S+|no\b|unknown\b|n/a\b)", c["code?"], re.I):
+            errs.append(f"{tag}: code? must be 'yes <url>', 'no', 'unknown' or 'n/a'")
         if not c["our delta"]:
             errs.append(f"{tag}: empty 'our delta'")
         elif c["our delta"].lower().startswith("none"):
@@ -137,6 +137,7 @@ def selftest() -> int:
     bad = good.replace("| AGM + ROM, q-type | no |", "|  | plausible |")
     e = lint(bad, {"Key20"}, 30, dt.date(2000, 1, 20))
     assert any("without an assumption" in x for x in e), e
+    assert lint(good.replace("yes https://...", "n/a"), {"Key20"}, 30, dt.date(2000, 1, 20)) == []
     old = good.replace("| work | venue/year | arithmetization |", "| work | venue/year | setting |")
     assert any("header" in x for x in lint(old, {"Key20"}, 30, dt.date(2000, 1, 20)))
     print("selftest: OK")

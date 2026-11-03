@@ -38,7 +38,7 @@ Column rules (enforced by `scripts/lit_matrix.py`):
   "normalised" away.
 - **concrete numbers + source** — numbers *with* a pointer (Tab./Fig./Sec./p.) or `measured E<n>` (an EVIDENCE
   row, if we re-ran it). Numbers from a paper and numbers we measured are never mixed in one cell without saying so.
-- **code?** — `yes <url>` / `no` / `unknown`.
+- **code?** — `yes <url>` / `no` / `unknown` / `n/a` (nothing to implement, e.g. a pure theory result).
 - **our delta** — what we do that this row does not. `none` is an honest answer and triggers a PI decision.
 
 ## Procedure
