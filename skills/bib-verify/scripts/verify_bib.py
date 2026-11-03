@@ -22,7 +22,7 @@ Usage
 Resolution order per entry
 --------------------------
 1. ePrint id (from `eprint=`, `url=`, `howpublished=`, `note=`, `journal=` text
-   such as "Cryptology ePrint Archive, Paper 2018/421")  ->  ePrint OAI-PMH record.
+   such as "Cryptology ePrint Archive, Paper 2019/953")  ->  ePrint OAI-PMH record.
    If eprint.iacr.org is not usable from this client (refused, redirected to the IACR block
    notice, no answer; see eprint-search/scripts/eprint_source.py) the rest of the run skips
    it: an entry with a `doi=` is then checked through the DOI (step 2), and only an entry
@@ -792,7 +792,7 @@ def selftest(online: bool) -> int:
     assert surnames_from_bib(es[0]["fields"]["author"])[-1] == "ciobotaru"
     assert surnames_from_bib("Malika Izabach{\\`e}ne") == ["izabachene"]
     assert "placeholder author list ('X and others' only)" in lint(es[1])
-    assert title_sim("{TFHE}: Fast Fully", "TFHE: fast fully") == 1.0
+    assert title_sim("{PLONK}: Permutations over", "PLONK: permutations over") == 1.0
     assert not is_url_source(es[0])            # ePrint-backed @misc keeps the ePrint path
     # URL sources, with injected network fakes (no real requests)
     us = {e["key"]: e for e in parse_bib(SELFTEST_URL_BIB)}
