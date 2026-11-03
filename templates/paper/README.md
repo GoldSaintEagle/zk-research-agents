@@ -13,8 +13,8 @@ Skeleton whose sections match `skills/paper-playbook/sections/`. Placeholders us
 | `authors.tex` | author block, only read in non-anonymous builds (do not upload with anonymous sources) |
 | `macros.tex` | notation conventions; one concept, one macro; `\evid{E12}` evidence tags (checked by `crbench audit-tex`) |
 | `sections/*.tex` | abstract, intro (+ related work, contributions, overview), prelim, construction, security, experiments, conclusion, appendix, related_table |
-| `refs.bib` | sample entries in house style (maintained by `lit-scout`) |
-| `Makefile` | `make` (submission), `make camera`, `make full`, `make check`, `make anon`, `make clean` |
+| `refs.example.bib` | three sample entries showing the house style; **not** used by the build. `main.tex` reads the project's `../refs.bib`, which `lit-scout` owns and `skills/bib-verify` checks (`/cra-init` creates it empty) |
+| `Makefile` | `make` (submission), `make camera`, `make full`, `make check`, `make anon`, `make clean`; finds the skill scripts in `../.claude/skills` (installed project) or `$(CRA_HOME)/skills` |
 | `fetch_llncs.sh` | uses the TeX installation's `llncs.cls`/`splncs04.bst`, otherwise downloads the official package from CTAN; the class is never committed |
 
 ## Build
@@ -22,13 +22,18 @@ Skeleton whose sections match `skills/paper-playbook/sections/`. Placeholders us
 ```bash
 make            # latexmk -pdf main.tex (fetches llncs.cls if the TeX tree lacks it)
 make check      # pdf_checks.py: page map, undefined refs, overfull boxes, fonts, overlap
-make anon       # anon_check.py on sections/, refs.bib, macros.tex and the PDF
+make anon       # anon_check.py on sections/, ../refs.bib, macros.tex and the PDF
                 # (put a private deny-list in .denylist.txt; it is git-ignored)
+make check CRA_HOME=~/zk-research-agents   # if the project was not set up with install.sh
 ```
 
 Anonymity defaults in `main.tex`: empty PDF metadata via `\hypersetup`, and
 `\pdfsuppressptexinfo=-1` so included figures do not embed their absolute source
 paths (which can contain usernames).
+
+`.gitignore` ignores `*.pdf` and the logs, which suits a working project. If you commit the built
+paper (an artifact, a teaching example), un-ignore exactly those files with `!main.pdf`, `!figs/*.pdf`
+and `!<check>.log` lines, as `case-study/toy-rangecheck/paper/.gitignore` does.
 
 ## Rules
 
