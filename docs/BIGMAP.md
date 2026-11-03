@@ -65,7 +65,7 @@ flowchart LR
 |---|---|---|
 | PI → any | task row in `STATE.md` | input files, expected output file, deadline stated |
 | lit-scout → idea-miner | `LITERATURE.md` matrix | ≥ 15 verified works, strongest baseline named, pre-emption scan dated |
-| lit-scout → theorist | `MATH-REFS.md` rows | each needed fact has book + chapter/theorem number (`[CY24 §…, label]`, `[Thaler §…]`) |
+| lit-scout → theorist | `MATH-REFS.md` rows | each needed fact has book + chapter/theorem number (`[CY24 §<section>, <label>]`, `[Thaler §<number>, <name>]`) |
 | idea-miner → falsifier | `CLAIMS.md` rows (status `open`) | claim is quantified, parameter range given, kill criterion stated |
 | theorist → falsifier | `THEORY.md` + scripts | every lemma checked numerically on small params; soundness budget per parameter set, proven / conjectured apart; Lean status recorded |
 | circuit-engineer → falsifier | `CIRCUITS.md` + `circuits/` | counts from compiler output with EVIDENCE rows; builder self-audit recorded (the falsifier re-runs it) |
