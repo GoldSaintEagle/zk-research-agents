@@ -73,6 +73,10 @@ See [docs/QUICKSTART.md](docs/QUICKSTART.md).
   always read the current CFP.
 - The system never sends anything off your machine (submissions, e-mails, public repos)
   without your explicit approval.
+- Literature scripts are rate-limited and identify themselves with the fork's public URL in their
+  User-Agent (an honest contact for site operators); they never work around a block.
+- Facts not yet checked against a source are marked `needs verification`; the full list is
+  [docs/NEEDS-VERIFICATION.md](docs/NEEDS-VERIFICATION.md).
 
 ## License
 MIT. Reference books are cited and paraphrased only; see `references/books/README.md`.
