@@ -1,6 +1,6 @@
 ---
 name: falsify
-description: Red-team protocol for trying to refute a ZK research claim (soundness or zero-knowledge theorem, concrete security level, prover/verifier speed-up, proof size, circuit correctness, novelty) before anyone else does. Use at the P6 falsification gate, before any number or theorem goes into the paper, and whenever a sub-agent reports a surprisingly good result. Produces a verdict of survived, weakened or refuted, with evidence, in CLAIMS.md.
+description: Red-team protocol to refute a ZK claim (soundness/ZK theorem, security level, speed-up, proof size, circuit correctness, novelty) first. Use at the P6 gate, before any number or theorem enters the paper, and on any surprisingly good result. Verdict survived / weakened / refuted in CLAIMS.md.
 ---
 # falsify: try to break the claim before a reviewer does
 

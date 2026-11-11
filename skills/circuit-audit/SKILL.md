@@ -1,6 +1,6 @@
 ---
 name: circuit-audit
-description: Check that OUR OWN circuit encodes exactly the intended relation — under- and over-constraint, witness uniqueness by exhaustive search on a small field, differential tests of the witness generator against the constraint system, range constraints, field wrap-around (mod p), non-deterministic hints, public-input binding, lookup tables. Says what halo2 MockProver, Circomspect and Picus can and cannot show. The circuit-engineer runs it on their own circuits; the falsifier re-runs it independently at P6. Not for auditing other people's circuits.
+description: Check that OUR OWN circuit encodes exactly the intended relation: under/over-constraint, witness uniqueness by exhaustive small-field search, witness-generator differential tests, range checks, field wrap-around, hints, public inputs, lookups. Builder self-audit; falsifier re-runs it at P6.
 ---
 # circuit-audit: does the circuit prove the statement the paper claims?
 

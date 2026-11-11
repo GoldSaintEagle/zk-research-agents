@@ -1,6 +1,6 @@
 ---
 name: camera-ready
-description: Use after acceptance to produce the final version. Checklist for page limits as the CFP defines them, copyright/licence forms, author-list change policy, full-version vs proceedings builds, artifact links, and final compile checks (0 undefined references, all fonts embedded via pdffonts, no significant overfull boxes, no overprinting).
+description: Use after acceptance to produce the final version: page limits per the CFP, copyright/licence forms, author-list policy, full vs proceedings builds, artifact links, final compile checks (0 undefined refs, fonts embedded via pdffonts, no bad overfull boxes).
 ---
 
 # Camera-ready

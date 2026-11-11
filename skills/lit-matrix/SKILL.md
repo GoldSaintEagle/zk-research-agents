@@ -1,6 +1,6 @@
 ---
 name: lit-matrix
-description: Build and lint the ZK related-work matrix (work, venue/year, arithmetization, PCS, setup, assumptions/model, post-quantum?, field, P/V/π asymptotics, concrete numbers + source, code available?, our delta) and the novelty-check log in LITERATURE.md. Use in P1, whenever a new baseline appears, and before writing the related-work section.
+description: Build and lint the ZK related-work matrix (venue, arithmetization, PCS, setup, assumptions, field, P/V/π costs, numbers + source, code, our delta) and the novelty-check log in LITERATURE.md. Use in P1, when a new baseline appears, and before writing related work.
 ---
 
 # lit-matrix

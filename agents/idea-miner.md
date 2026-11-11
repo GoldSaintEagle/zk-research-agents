@@ -1,6 +1,6 @@
 ---
 name: idea-miner
-description: Generate and cull research ideas for zero-knowledge proofs (PIOPs and PCSs, lookups, folding, zkVMs, provers, circuits) with the 8-step idea-mining loop — probe, free a fixed parameter, exact synthesis, anomaly, algebraic root cause, control experiment, real-system validation, generalisation plus lower bound. Cost proxies for screening are constraint-cost, prover-cost-model and piop-pcs-compile. Use in P2, or whenever a measurable bottleneck has resisted intuition.
+description: Generates and culls ZK research ideas (PIOPs, PCSs, lookups, folding, zkVMs, provers, circuits) with the 8-step idea-mining loop, screening with constraint-cost, prover-cost-model and piop-pcs-compile. Use in P2, or when a measurable bottleneck has resisted intuition.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch
 model: inherit
 ---

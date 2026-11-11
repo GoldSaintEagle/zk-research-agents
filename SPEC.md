@@ -44,6 +44,8 @@ docs/                        BIGMAP, quickstart, methodology; docs/zh/ Chinese m
 AGENTS.md                    Codex / generic-agent entry point (mirrors CLAUDE.md)
 CLAUDE.md                    Claude Code entry point
 install.sh                   installs agents/skills/commands into a target project (--codex: Codex layout via scripts/codex_export.py)
+scripts/                     codex_export, check_book_refs, ref_index (reference lookup indexes),
+                             check_descriptions (front-matter length), privacy_scan
 ```
 
 ## 2. The 13 agents (file = `agents/<id>.md`)
@@ -73,7 +75,7 @@ Agent file format (Claude Code subagent):
 ```markdown
 ---
 name: <id>
-description: <when the orchestrator should use it; 1-3 sentences, starts with a verb>
+description: <what it does + when to use it, trigger keywords kept; <= ~300 chars, starts with a verb>
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch   # least privilege
 model: inherit        # or sonnet, see "Model tiers" below
 ---

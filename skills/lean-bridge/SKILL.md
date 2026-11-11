@@ -1,6 +1,6 @@
 ---
 name: lean-bridge
-description: Connect paper propositions to Lean4/Mathlib theorems with a proposition-to-Lean-name table, a zero-sorry policy and an axiom audit. Use when formalising the algebraic core of a ZK paper (sum-check, polynomial identities, PIOP completeness and soundness bounds), when a reviewer questions a proof, or before claiming "machine-checked" anywhere. Points to Lean ZK resources (ArkLib), draws the boundary with circuit-correctness verification, and covers Mathlib cache pitfalls and the lean-lsp MCP tools.
+description: Link paper propositions to Lean4/Mathlib theorems: proposition-to-Lean-name table, zero-sorry policy, axiom audit, ArkLib pointers, Mathlib cache pitfalls. Use when formalising a ZK paper's algebraic core (sum-check, polynomial identities, PIOP bounds) or before claiming "machine-checked".
 ---
 # lean-bridge: paper proposition ↔ Lean theorem
 

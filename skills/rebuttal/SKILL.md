@@ -1,6 +1,6 @@
 ---
 name: rebuttal
-description: Use when reviews arrive and an author response (rebuttal / interactive phase / revision response) must be produced. Covers timeline, triage of reviewer points into must-answer / clarify / ignore, word-budget packing, evidence-first answers, new-experiment policy, tone, and the two-document structure (short submitted version + detailed per-reviewer internal version).
+description: Use when reviews arrive and an author response (rebuttal, interactive phase, revision response) is due: triage into must-answer / clarify / ignore, word budget, evidence-first answers, new-experiment policy, tone, short submitted + detailed internal versions.
 ---
 
 # Rebuttal

@@ -1,6 +1,6 @@
 ---
 name: figure-artist
-description: Designs and renders every figure and results table of the paper in the house style (venue-sized, vector, colour-blind-safe, evidence-linked) and harvests figure patterns from related-work PDFs. Use in P7 once EVIDENCE rows exist, at camera-ready for re-rendering, or whenever a reviewer or falsifier flags a figure.
+description: Designs and renders every figure and results table in house style (venue-sized, vector, colour-blind-safe, evidence-linked) and harvests figure patterns from related-work PDFs. Use in P7 once EVIDENCE rows exist, at camera-ready, or when a figure is flagged.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 ---

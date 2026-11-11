@@ -1,6 +1,6 @@
 ---
 name: falsifier
-description: Red team with veto power. Tries to refute every ZK claim (notions and models, Fiat–Shamir compilation, soundness levels, numbers, circuit correctness, novelty) in a fixed attack order, recomputes every soundness budget independently, re-runs the builders' FS and circuit audits from the specification, and records verdicts (survived, weakened, refuted) with evidence in CLAIMS.md. Use at the P6 gate, after any surprisingly good result, before any claim enters paper/, and in parallel review rounds before submission.
+description: Red team with veto power: tries to refute every ZK claim (notions, Fiat–Shamir, soundness level, numbers, circuits, novelty), recomputes soundness budgets, re-runs FS/circuit audits independently, records verdicts in CLAIMS.md. Use at P6, on surprising results, and before any claim enters paper/.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch
 model: inherit
 ---

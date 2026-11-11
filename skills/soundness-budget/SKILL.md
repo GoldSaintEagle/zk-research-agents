@@ -1,6 +1,6 @@
 ---
 name: soundness-budget
-description: Itemised concrete-soundness budget for a ZK argument — Schwartz–Zippel and sum-check terms, challenge field size, PCS proximity terms (proven vs conjectured regime), grinding, hash output length, Merkle and Fiat–Shamir losses, curve assumptions — combined by a union bound into one security level under a stated definition (worst-case or average-case). Use whenever a paper states "λ bits", picks parameters, or compares against a baseline that might not be at the same level; the falsifier recomputes it independently at P6.
+description: Itemised concrete-soundness budget for a ZK argument (Schwartz–Zippel, sum-check, field, PCS proximity proven vs conjectured, grinding, Merkle and FS losses) union-bounded into one level under a named definition. Use when a paper states "λ bits" or picks parameters; falsifier recomputes at P6.
 ---
 # soundness-budget: where the "128 bits" comes from
 

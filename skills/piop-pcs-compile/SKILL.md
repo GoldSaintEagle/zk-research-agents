@@ -1,6 +1,6 @@
 ---
 name: piop-pcs-compile
-description: Build a SNARK the standard way and check every compilation precondition — write the protocol as a PIOP (oracles, degree bounds, queries, checks, round-by-round error), choose a PCS, verify binding / extractability / evaluation binding / hiding / batch-opening soundness / degree enforcement against the PIOP's needs, then derive prover time, verifier time and proof size. Hash-based route (BCS, COS) checked against CY24; algebraic PCS route (KZG, IPA, Dory) against Thaler and the original papers. Use at P2 to cost an idea and at P3 before writing the main theorem.
+description: Compile a PIOP with a PCS into a SNARK and check every precondition: oracles, degree bounds, queries, RBR error; PCS binding / extractability / evaluation binding / hiding / batching; then prover, verifier and proof-size costs. BCS/COS vs CY24, KZG/IPA vs Thaler. Use at P2 and P3.
 ---
 # piop-pcs-compile: PIOP + PCS + Fiat–Shamir, with the preconditions written down
 

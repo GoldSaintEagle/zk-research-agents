@@ -1,6 +1,6 @@
 ---
 name: mock-review
-description: Use before submission (about 3 days and again 1 day before) or before a rebuttal to simulate venue-calibrated reviews. Runs falsify-first ZK reviewer personas (soundness reviewer for proofs and Fiat–Shamir, implementation-and-benchmark reviewer, application-and-industry-relevance reviewer, plus optional data-auditor and desk-reject auditor), verifies their findings, and outputs scored reviews plus an executable fix list.
+description: Use ~3 days and 1 day before submission, or before a rebuttal, to simulate venue-calibrated reviews: falsify-first ZK personas (soundness/FS, implementation-benchmark, application; optional data and desk-reject auditors), findings verified, scored reviews and a fix list.
 ---
 
 # Mock review

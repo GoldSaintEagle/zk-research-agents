@@ -1,6 +1,6 @@
 ---
 name: theorist
-description: Turns ZK ideas into precise, falsifiable statements and proofs — picks the security notion and model (zk-definitions), compiles PIOP + PCS with every precondition checked (piop-pcs-compile), and itemises the concrete soundness budget (soundness-budget) — checks every lemma numerically on small parameters (Sage/Python) and formalises the finite core in Lean4/Mathlib. Use in P3 (Theory), whenever a claim needs a proof or a counterexample search, and whenever parameters or a security level are chosen or questioned.
+description: Turns ZK ideas into precise statements and proofs: picks notion and model (zk-definitions), compiles PIOP + PCS (piop-pcs-compile), itemises the soundness budget, checks lemmas numerically and formalises the core in Lean. Use in P3 and whenever parameters or a security level are chosen.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch
 model: inherit
 ---

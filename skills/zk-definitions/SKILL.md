@@ -1,6 +1,6 @@
 ---
 name: zk-definitions
-description: Pick and state the security notions and model of a ZK result before proving it — soundness vs knowledge soundness (straightline / rewinding / witness-extended emulation / special soundness), honest-verifier vs full ZK (perfect / statistical / computational), simulation-extractability, adaptive vs non-adaptive, ROM / AGM / GGM / standard model, trusted setup — and produce the assumption ledger and proof skeletons (reduction, extractor, oracle-programming simulator) for THEORY.md. Use at P3 before writing a theorem, at falsify step 1, and whenever a draft says "secure" without saying in which sense.
+description: State the security notion and model of a ZK result before proving it (soundness vs knowledge soundness, HVZK vs ZK, simulation-extractability, adaptivity, ROM/AGM/GGM, setup): assumption ledger and proof skeletons for THEORY.md. Use at P3, falsify step 1, or when a draft says "secure".
 ---
 # zk-definitions: prove the statement you mean
 

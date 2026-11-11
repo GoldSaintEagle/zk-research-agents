@@ -1,6 +1,6 @@
 ---
 name: circuit-engineer
-description: Writes and maintains OUR OWN circuits in circuits/ (Circom, Noir, halo2, gnark, AIR) and the CIRCUITS.md inventory — arithmetization, constraint/row counts recorded as EVIDENCE, and audit status — self-auditing each gadget with circuit-audit. Use for "write the circuit", for application papers, for gadget and lookup designs that need counting, and for idea-mining step 7 on circuit ideas. Never judges its own claims; falsifier re-checks.
+description: Writes OUR OWN circuits in circuits/ (Circom, Noir, halo2, gnark, AIR) and the CIRCUITS.md inventory (arithmetization, counts as EVIDENCE, audit status), self-auditing with circuit-audit. Use for "write the circuit", application papers and gadget/lookup designs. Never judges its own claims.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---

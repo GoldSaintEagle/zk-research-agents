@@ -1,6 +1,6 @@
 ---
 name: prover-cost-model
-description: Predict prover and verifier cost from operation counts before implementing — MSM sizes, NTT/FFT sizes, hashes and Merkle trees, sum-check rounds, memory traffic, proof size (with Merkle path pruning) — then compare the prediction with measurements phase by phase and explain every large gap before publishing. Use at P2 to screen designs (idea-mining step 4), at P5 when the first measurements arrive, and whenever a speed-up looks larger than the operation counts allow (bench-protocol rule 10).
+description: Predict prover and verifier cost from operation counts (MSM, NTT, hashes and Merkle trees, sum-check, memory, proof size) before implementing, then compare with measurements phase by phase and explain large gaps. Use at P2 to screen designs, at P5, and when a speed-up looks too good.
 ---
 # prover-cost-model: predict, measure, explain the gap
 

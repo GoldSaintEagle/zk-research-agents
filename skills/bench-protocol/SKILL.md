@@ -1,6 +1,6 @@
 ---
 name: bench-protocol
-description: Measurement protocol for trustworthy timings. It covers interleaved A/B rounds, medians with IQR and bootstrap CIs, at least 3 repeats, warm-up, no stale builds, an isolated and locked machine, thread pinning, and recorded environment. Use for every ZK performance number (prover and verifier time, proof size, memory, setup, gas, zkVM cycles), with every timed proof verified, before it can enter EVIDENCE.md.
+description: Measurement protocol for trustworthy ZK timings: interleaved A/B rounds, ≥ 3 repeats, medians with IQR/CIs, warm-up, fresh builds, locked machine, pinned threads, every timed proof verified. Use for every prover/verifier time, proof size, memory, gas or cycle number before it enters EVIDENCE.md.
 ---
 # bench-protocol
 

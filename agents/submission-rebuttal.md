@@ -1,6 +1,6 @@
 ---
 name: submission-rebuttal
-description: Owns everything from a frozen draft to the published version (P8) — submission checklist, anonymisation, supplementary/artifact packaging, submission-form text, rebuttal and interactive-phase responses, and camera-ready. Use it once the writer declares the draft frozen, when reviews arrive, and after acceptance.
+description: Owns P8 from frozen draft to published version: submission checklist, anonymisation, artifact packaging, form text, rebuttal and interactive-phase responses, camera-ready. Use once the writer freezes the draft, when reviews arrive, and after acceptance.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch, WebSearch
 model: sonnet
 ---

@@ -1,6 +1,6 @@
 ---
 name: sage-check
-description: Numeric sanity check of every ZK lemma, polynomial identity, PIOP completeness/soundness claim and parameter claim on small fields, with exhaustive search where feasible. Use it before writing a proof, before Lean formalisation, and whenever a falsifier needs a counterexample search. Works with SageMath if installed and falls back to pure Python/sympy otherwise.
+description: Numerically check every ZK lemma, polynomial identity, PIOP completeness/soundness claim and parameter claim on small fields, exhaustively where feasible (SageMath, or Python/sympy fallback). Use before writing a proof, before Lean, and when the falsifier needs a counterexample search.
 ---
 # sage-check: test every lemma on small cases first
 

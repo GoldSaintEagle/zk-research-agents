@@ -1,6 +1,6 @@
 ---
 name: paper-playbook
-description: Use when drafting or restructuring a ZK paper (protocol/theory, system/implementation, or application/circuit) in IACR LNCS, IACR journal or security-conference format. Gives the overall skeleton, page budget per paper type, and the rhetorical moves of every section from title to appendix (relation/PIOP/PCS/FS preliminaries, protocol boxes, completeness/knowledge soundness/ZK/concrete soundness), with good/bad toy examples.
+description: Use when drafting or restructuring a ZK paper (protocol, system or application) for IACR or security venues: skeleton, page budget per paper type, and the moves of every section (preliminaries, protocol boxes, completeness / knowledge soundness / ZK / concrete soundness), with toy examples.
 ---
 
 # Paper Playbook — structure and rhetorical moves for ZK papers

@@ -1,6 +1,6 @@
 ---
 name: baseline-pin
-description: Identify the real strongest baseline proof system, prover library or zkVM, fetch it, pin an exact commit, build it with a recorded recipe, verify that its proofs verify, and record everything in baselines/MANIFEST.md with a ZK fairness checklist (equal security bits and regime, same statement, same timing scope, same hardware features, P/V/proof size together). Use at P4 before any comparison is measured, and again whenever a reviewer or falsifier questions a baseline.
+description: Find the strongest baseline proof system, prover library or zkVM; pin a commit, build it by a recorded recipe, check its proofs verify, and record it in baselines/MANIFEST.md with a ZK fairness checklist (same security bits, statement, timing scope). Use at P4 and when a baseline is questioned.
 ---
 # baseline-pin
 

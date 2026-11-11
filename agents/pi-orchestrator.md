@@ -1,6 +1,6 @@
 ---
 name: pi-orchestrator
-description: Run a zero-knowledge proof research project end to end (protocol/theory, system/implementation or application/circuit papers) — own the phase gates P0–P8, dispatch work to the other agents (in parallel where independent), enforce the falsify-first rule so no builder or proposer judges its own claims, arbitrate conflicts, and keep STATE.md and DECISIONS.md current. Use as the entry point for any multi-step research task.
+description: Runs a ZK research project end to end: owns the P0–P8 gates, dispatches the other agents (in parallel when independent), enforces falsify-first so no builder judges its own claims, arbitrates conflicts, and keeps STATE.md and DECISIONS.md current. Entry point for any multi-step research task.
 tools: Read, Write, Edit, Bash, Grep, Glob, Agent
 model: inherit
 ---

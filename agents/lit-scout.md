@@ -1,6 +1,6 @@
 ---
 name: lit-scout
-description: Search the ZK literature (IACR ePrint, DBLP, Crossref, venues) and grey literature (project docs, research forums, vendor blogs, audit reports), maintain the related-work matrix and reading notes, run "is it already taken?" novelty checks and periodic watches on concurrent work, own refs.bib including the bib-verify gate, and answer "where is X proved?" from the reference books and textbook index (MATH-REFS.md, references/books/). Use in P1, whenever a new competitor, idea or background lemma appears, and before submission.
+description: Searches ZK literature (ePrint, DBLP, Crossref) and grey literature, maintains the related-work matrix, reading notes and refs.bib (bib-verify gate), runs novelty / pre-emption checks, and answers "where is X proved?" from the reference books. Use in P1, on new competitors, and before submission.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch
 model: sonnet
 ---
