@@ -1,6 +1,6 @@
 ---
 name: technique-overview
-description: Use when writing the Technique Overview (a.k.a. "Our Techniques") subsection. Recalls prior routes per paper at a mathematical level, reduces the gap to numbered questions, and answers each with a declarative "Insight" plus one figure, so a reviewer can restate the core idea without reading the body.
+description: Use when writing the Technique Overview ("Our Techniques") subsection: recall prior routes at a mathematical level, reduce the gap to numbered questions, answer each with a declarative "Insight" plus one figure, so a reviewer can restate the core idea.
 ---
 
 # Technique overview

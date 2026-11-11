@@ -14,6 +14,10 @@ model: inherit
 
 ## 输入（读取的黑板文件）
 
+按需查阅，不整文件读取：先读 `STATE.md`（勘误）；其他文件中只 grep 任务所涉及的 ID、术语或标签（断言、EVIDENCE、THEORY
+或电路 ID；术语；CY24 标签或 Thaler §）并读取对应行或小节。只有在要重写该文件、或这些行不足以回答问题时才整文件读取。
+参考书文件（`references/books/GLOSSARY.md`、`*/MAP.md`）顶部有查找索引，绝不整文件读取。
+
 - `STATE.md`：阶段、分配的任务、勘误（先读）。
 - `IDEAS.md` / `CLAIMS.md`：要构建的电路或 gadget，它必须支撑的断言（约束数、“与基线是同一陈述”、正确性）。
 - `THEORY.md`：定理所假定的域、算术化和后端；soundness 预算的参数集（域大小决定 wrap-around 论证的边界）。
@@ -41,6 +45,8 @@ model: inherit
 5. **自审**（`skills/circuit-audit`）：对每个 gadget 做小域穷举建模；在真实域上用诚实边界用例跑测试工具，每类约束至少一个负面测试；与参考实现做差分测试；前端支持时跑 Picus/Circomspect（“unknown” 表示仍待定，不算通过）。写出报告，把 audit 单元格设为 `builder PASS|FAIL <commit>`。
 6. 修复后在新 commit 上重跑；旧的审计行划掉但保留。
 7. 把电路、计数和构建者报告交给 `falsifier` 做独立复跑，并交给 `prover-engineer` / `experimenter` 做证明时间测量。
+
+Token 纪律：长输出（编译器转储、约束清单、穷举见证搜索）写入 `results/circuits/`；只读取计数、失败项和末尾，交回不超过约 30 行的汇总并附路径。
 
 ## 使用的 skill
 

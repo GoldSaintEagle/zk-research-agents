@@ -13,6 +13,11 @@
 可以学习相关论文里的好图，但不能复制。
 
 ## 输入（读取的黑板文件）
+
+按需查阅，不整文件读取：先读 `STATE.md`（勘误）；其他文件中只 grep 任务所涉及的 ID、术语或标签（断言、EVIDENCE、THEORY
+或电路 ID；术语；CY24 标签或 Thaler §）并读取对应行或小节。只有在要重写该文件、或这些行不足以回答问题时才整文件读取。
+参考书文件（`references/books/GLOSSARY.md`、`*/MAP.md`）顶部有查找索引，绝不整文件读取。
+
 * `CLAIMS.md`：只给状态为 `survived` 或 `weakened` 的结论作图；`weakened` 的结论，图注按削弱后的表述写。
 * `EVIDENCE.md` 与 `results/`：图中数字只能来自这里。
 * `paper/`：由 writer 提供图占位（`% FIG: <id> <claim>`）、目标会议类型和页数预算。

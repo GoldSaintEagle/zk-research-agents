@@ -1,6 +1,6 @@
 ---
 name: paper-figures
-description: Produce publication-quality figures for a ZK paper (prover-phase breakdowns, prover time vs proof size fronts, scaling in the number of constraints, protocol boxes, PIOP-to-PCS compilation diagrams) in the house style (LNCS/ACM/IEEE sizes, Computer Modern or Times fonts, vector PDF, colour-blind-safe palette), starting from the pattern catalog and templates in figures/. Use when a paper needs a plot, a results table or a TikZ diagram, or when auditing existing figures before submission.
+description: Produce publication-quality ZK paper figures (prover-phase breakdowns, time vs proof-size fronts, scaling plots, protocol boxes, PIOP-to-PCS diagrams) in house style (venue sizes, vector PDF, colour-blind-safe) from figures/ templates. Use for any plot, results table, TikZ diagram or figure audit.
 ---
 # paper-figures
 

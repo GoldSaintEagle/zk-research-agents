@@ -1,6 +1,6 @@
 ---
 name: idea-mining-loop
-description: Run the 8-step idea-mining loop (probe, free a fixed parameter, exact/SAT synthesis, spot an anomaly, algebraic root cause, control experiment, real-system validation, generalise + lower bound) with a pre-gate and two gates. Use when a direction has a measurable bottleneck and intuition-driven attempts have stalled.
+description: Run the 8-step idea-mining loop (probe, free a fixed parameter, exact/SAT synthesis, anomaly, algebraic root cause, control experiment, real-system validation, generalise + lower bound) with a pre-gate and two gates. Use when a measurable bottleneck has resisted intuition.
 ---
 
 # idea-mining-loop

@@ -4,6 +4,18 @@
 - OpenAI Codex support: `./install.sh <dir>|--user --codex` (via `scripts/codex_export.py`) installs the skills
   into `.agents/skills/`, turns each slash command into a `$cra-…` skill, and generates the 13 agents as Codex
   custom subagents in `.codex/agents/*.toml`. `AGENTS.md` maps the Claude-specific wording to Codex.
+- Lower token cost, same process rules and gates:
+  - model tiers: lit-scout, experimenter, baseline-engineer, figure-artist, submission-rebuttal and reviewer-sim
+    use `model: sonnet`; the agents that reason, judge or write audited code keep `inherit`;
+  - workflows: lit-sweep verifies all candidates in one batched `verify_bib.py` run; mock-review-panel uses one
+    verifier per persona and verifies only high/med findings (low ones listed as unverified, never routed);
+    idea-tournament has one judge for all three criteria; falsify-round lenses grep the claim's
+    EVIDENCE/THEORY/CIRCUITS rows; mechanical steps use a cheaper model at low effort;
+  - `references/books/GLOSSARY.md` and both `MAP.md` files carry a generated lookup index
+    (`scripts/ref_index.py`, checked by `check_book_refs.py`); agents read by section, pi-orchestrator reads
+    `STATE.md` first and the other blackboard files only by section;
+  - "Token discipline" rules in CLAUDE.md, AGENTS.md and SPEC (long output to files, bounded summaries);
+  - every skill/agent description ≤ 300 characters, enforced at 350 by `scripts/check_descriptions.py`.
 
 ## 0.2.0 — 2026-11-03 (ZK fork)
 

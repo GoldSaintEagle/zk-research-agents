@@ -1,6 +1,6 @@
 ---
 name: constraint-cost
-description: Choose an arithmetization (R1CS, Plonkish, AIR, CCS) and count what it costs — constraints, rows, columns, degree, nonzeros, lookups and table sizes — for our circuits; compare lookups with native constraints, estimate non-native field arithmetic, pick an in-circuit hash (Poseidon2/Rescue-type AO primitives vs Keccak/SHA via lookups), and account for recursion and curve cycles. Planning numbers come from a toy counter; paper numbers come only from the real compiler's output, recorded in EVIDENCE. Use at P2 (screening a design) and P5 (reporting circuit sizes).
+description: Choose an arithmetization (R1CS, Plonkish, AIR, CCS) and count its cost: constraints, rows, columns, degree, lookups, non-native arithmetic, in-circuit hash, recursion. Toy counter for planning; paper numbers only from compiler output. Use at P2 (screening) and P5 (circuit sizes).
 ---
 # constraint-cost: the second currency of a ZK paper
 
@@ -15,7 +15,7 @@ arithmetization, and where the number comes from. Costs of the *prover* on those
 
 Background: front ends (programs to circuits, memory checking, non-arithmetic operations) are in
 [Thaler §6.5, Turning Computer Programs Into Circuit Satisfiability Instances] and
-[Thaler §6.6, Alternative Transformations and Optimizations]; navigation in the [map of Thaler](../../references/books/thaler/MAP.md).
+[Thaler §6.6, Alternative Transformations and Optimizations]; navigation in the [map of Thaler](../../references/books/thaler/MAP.md) (grep the § you need).
 Lookup arguments, CCS, folding and binary-field systems are mostly not in either book: cite the original
 papers ("source: other").
 

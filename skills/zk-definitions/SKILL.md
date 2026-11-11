@@ -1,6 +1,6 @@
 ---
 name: zk-definitions
-description: Pick and state the security notions and model of a ZK result before proving it — soundness vs knowledge soundness (straightline / rewinding / witness-extended emulation / special soundness), honest-verifier vs full ZK (perfect / statistical / computational), simulation-extractability, adaptive vs non-adaptive, ROM / AGM / GGM / standard model, trusted setup — and produce the assumption ledger and proof skeletons (reduction, extractor, oracle-programming simulator) for THEORY.md. Use at P3 before writing a theorem, at falsify step 1, and whenever a draft says "secure" without saying in which sense.
+description: State the security notion and model of a ZK result before proving it (soundness vs knowledge soundness, HVZK vs ZK, simulation-extractability, adaptivity, ROM/AGM/GGM, setup): assumption ledger and proof skeletons for THEORY.md. Use at P3, falsify step 1, or when a draft says "secure".
 ---
 # zk-definitions: prove the statement you mean
 
@@ -13,7 +13,7 @@ as a standard-model one; a trusted setup that appears in the construction but no
 fixes the notion, the model and the assumptions **before** the proof, and gives proof skeletons that make the
 error terms explicit.
 
-The canonical meanings are in [GLOSSARY](../../references/books/GLOSSARY.md) (it records where CY24 and
+The canonical meanings are in [GLOSSARY](../../references/books/GLOSSARY.md) (grep the term; index at the top, never read it whole) (it records where CY24 and
 Thaler differ and which one we use). CY24 is the source for the definitions and for hash-based proofs (pure
 ROM); Thaler for algebraic constructions; AGM, GGM, pairing and knowledge assumptions are **outside CY24** and
 are cited from Thaler or the original papers.

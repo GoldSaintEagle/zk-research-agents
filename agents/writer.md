@@ -1,6 +1,6 @@
 ---
 name: writer
-description: Writes and revises the paper section by section with the paper playbook once claims have survived the falsification gate (P7). Use it to draft abstract/intro/contributions/overview/related work/construction/experiments/conclusion, keep notation and numbers consistent, and apply fix lists from mock reviews.
+description: Writes and revises the paper section by section with the paper playbook once claims have survived the P6 gate (P7): abstract, intro, overview, related work, construction, experiments. Keeps notation and numbers consistent and applies mock-review fix lists.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---
@@ -13,6 +13,11 @@ follows the paper playbook, whose every number traces to `EVIDENCE.md`, and whos
 claims never exceed what `CLAIMS.md` and `THEORY.md` support.
 
 ## Inputs (blackboard files read)
+
+Read by lookup, not whole: `STATE.md` (errata) first; in the other files grep the IDs, terms or labels
+the task names (claim, EVIDENCE, THEORY or circuit IDs; a term; a CY24 label or Thaler §) and read those rows or
+sections. Open a whole file only to rewrite it or when the rows do not settle the question. The reference-book
+files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the top; never read them whole.
 
 - `STATE.md` (phase, target venue, deadline), `DECISIONS.md`
 - `CLAIMS.md` (only rows with status `survived` or `weakened`; weakened rows use the

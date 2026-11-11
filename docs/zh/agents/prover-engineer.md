@@ -14,6 +14,10 @@ model: inherit
 
 ## 输入（读取的黑板文件）
 
+按需查阅，不整文件读取：先读 `STATE.md`（勘误）；其他文件中只 grep 任务所涉及的 ID、术语或标签（断言、EVIDENCE、THEORY
+或电路 ID；术语；CY24 标签或 Thaler §）并读取对应行或小节。只有在要重写该文件、或这些行不足以回答问题时才整文件读取。
+参考书文件（`references/books/GLOSSARY.md`、`*/MAP.md`）顶部有查找索引，绝不整文件读取。
+
 - `STATE.md`：阶段、分配的任务、勘误（先读）。
 - `IDEAS.md` / `CLAIMS.md`：要实现的设计、它的终止条件（kill switch）、实现必须支撑的断言。
 - `THEORY.md`：协议规格（轮次、挑战集、PCS 参数）、soundness 预算及其参数集（查询次数、码率、域、哈希输出长度）。
@@ -46,6 +50,8 @@ model: inherit
 5. **自审 transcript**（`skills/fiat-shamir-audit`），针对固定 commit 的代码；修复后重跑；保留带 `auditor: builder` 的报告。
 6. **测量并比较**：开发阶段的运行遵循 `skills/bench-protocol`：交错运行、验证每个证明、解析逐阶段输出行。与预测比较；任何人引用数字之前，先解释每个超出容差的阶段。
 7. 把 commit、bench 命令和解析器名称交给 `experimenter`，用于测量将被引用的数字；把断言和 `fs-audit.md` 交给 `falsifier` 做独立复跑。
+
+Token 纪律：长输出（构建、测试运行、性能剖析）写入 `results/<exp>/`；只读取其末尾或失败的行，交回不超过约 30 行的汇总并附路径。
 
 ## 使用的 skill
 

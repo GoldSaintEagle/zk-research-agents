@@ -1,8 +1,8 @@
 ---
 name: figure-artist
-description: Designs and renders every figure and results table of the paper in the house style (venue-sized, vector, colour-blind-safe, evidence-linked) and harvests figure patterns from related-work PDFs. Use in P7 once EVIDENCE rows exist, at camera-ready for re-rendering, or whenever a reviewer or falsifier flags a figure.
+description: Designs and renders every figure and results table in house style (venue-sized, vector, colour-blind-safe, evidence-linked) and harvests figure patterns from related-work PDFs. Use in P7 once EVIDENCE rows exist, at camera-ready, or when a figure is flagged.
 tools: Read, Write, Edit, Bash, Grep, Glob
-model: inherit
+model: sonnet
 ---
 # Figure Artist
 
@@ -14,6 +14,12 @@ from the logged data with one command. Learn from the best figures in
 related work without copying any of them.
 
 ## Inputs (blackboard files read)
+
+Read by lookup, not whole: `STATE.md` (errata) first; in the other files grep the IDs, terms or labels
+the task names (claim, EVIDENCE, THEORY or circuit IDs; a term; a CY24 label or Thaler §) and read those rows or
+sections. Open a whole file only to rewrite it or when the rows do not settle the question. The reference-book
+files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the top; never read them whole.
+
 * `CLAIMS.md`: only claims with status `survived` or `weakened` get figures.
   For weakened claims, the caption uses the weakened wording.
 * `EVIDENCE.md` and `results/`: the only allowed source of numbers.

@@ -14,6 +14,13 @@ When working *in a research project* that uses this system:
 4. Prefer `lib/cryptomath` + `lib/bench` over ad-hoc scripts; put throw-away scripts under `falsify/<claim-id>/` or `results/<exp>/`.
 5. Toy implementations in `lib/cryptomath/zk|protocols|ec` (sum-check, Merkle, FRI, KZG algebra, permutation/lookup checks, R1CS/Plonkish) are **insecure** and only for reasoning / small experiments.
 
+6. Token discipline (cost, not process: the rules above are unchanged):
+   - Command output longer than ~50 lines (builds, benchmarks, test runs, solver and prover logs, verify_bib reports)
+     goes to a file under `results/<exp>/` or `falsify/<claim-id>/`; only its tail or a summary enters the context.
+   - A subagent returns a bounded summary (about 30 lines at most: verdict, IDs, paths) and puts details in files.
+   - Read files by section, not whole, when a row or section is all you need: `grep -n` the ID or term, then `sed -n`
+     the range. `STATE.md` is read first; the reference books' GLOSSARY and MAP files have a lookup index at the top.
+
 When working *on this repo*: follow `SPEC.md` (names, formats, the no-private-content rule).
 
 ## Using this toolkit from Codex

@@ -1,6 +1,6 @@
 ---
 name: fiat-shamir-audit
-description: Audit the Fiat–Shamir compilation of OUR OWN protocol, both as written in the paper and as implemented — statement and public inputs in the first hash, every commitment absorbed before its challenge, parameters and domain separation, multi-round loss (state-restoration via RBR or special soundness), hash-chain conditions, salts for ZK, uniform challenge sampling. Each check is tied to a CY24 result. Use for every non-interactive claim at P3 (paper) and P6 (code), and whenever the transcript code changes. Not for auditing other people's systems.
+description: Audit the Fiat–Shamir compilation of OUR OWN protocol, on paper and in code: statement and public inputs hashed, commitments absorbed before challenges, domain separation, multi-round loss (RBR / state restoration), salts, challenge sampling. Use at P3 and P6 and when transcript code changes.
 ---
 # fiat-shamir-audit: is the non-interactive argument the one the theorem is about?
 
@@ -18,7 +18,7 @@ judge their own claim).
 Fiat–Shamir is where a correct interactive proof most often turns into an incorrect non-interactive one. The
 theorems that make it safe have **preconditions on what is hashed and on what the interactive protocol
 satisfies**; every check below is one such precondition, with the result it comes from. Background: definitions
-in [GLOSSARY](../../references/books/GLOSSARY.md); chapters in the [map of CY24](../../references/books/hash-snargs/MAP.md).
+in [GLOSSARY](../../references/books/GLOSSARY.md); chapters in the [map of CY24](../../references/books/hash-snargs/MAP.md) (grep the term or label; never read either file whole).
 
 ## Checklist
 

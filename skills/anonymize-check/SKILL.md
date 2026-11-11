@@ -1,6 +1,6 @@
 ---
 name: anonymize-check
-description: Use before every double-blind submission, supplementary upload, anonymous artifact mirror or rebuttal attachment. Scans .tex/.bib/code/zip/PDF (text, metadata, embedded paths, compressed object streams) for author names, first-person self-citations, personal code-host URLs, e-mails, local paths, acknowledgements and funding lines, on-chain identifiers (Ethereum addresses, ENS names) and package-manifest author fields, using a configurable deny-list and a third-party URL allow-list.
+description: Use before every double-blind submission, supplementary upload, anonymous artifact or rebuttal attachment. Scans .tex/.bib/code/zip/PDF (incl. metadata) for author names, self-citations, personal URLs, e-mails, local paths, funding lines, on-chain IDs and package-manifest authors.
 ---
 
 # Anonymize check

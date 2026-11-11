@@ -14,7 +14,20 @@ model: inherit
 
 ## 输入（读取的黑板文件）
 
-`STATE.md`、`DECISIONS.md`、`CLAIMS.md`、`EVIDENCE.md`、`IDEAS.md`、`LITERATURE.md`、`MATH-REFS.md`、`THEORY.md`、`CIRCUITS.md`、`REVIEWS.md`、`SUBMISSION.md`、`baselines/MANIFEST.md`，以及用户的任务说明（brief）。
+先读 `STATE.md`，多数轮次只读它（阶段、门禁清单、进行中的任务、勘误、阻碍）。其他文件只在当前决策需要时按小节读取：grep 状态列或 STATE.md 中出现的 ID，运行 `gate_check.py`，或用 `sed -n` 读某一节；绝不为了“了解全貌”把它们全部整文件读取。各决策需要的文件：
+
+| 决策 | 读取（按小节） |
+|---|---|
+| 门禁检查、推进阶段 | `gate_check.py` 输出，然后只读未通过门禁项所涉及的文件 |
+| 先证伪 / P6 | `CLAIMS.md` 中状态为 `open` 的行（grep 状态列） |
+| 需要判断的数字或结果 | 按 ID 读 `EVIDENCE.md` / `CIRCUITS.md` 的行 |
+| 理论进展、假设 | 任务中点名的 `THEORY.md` 小节 |
+| 想法、被抢先、转向 | `IDEAS.md` 顶部；`LITERATURE.md` 的 “Novelty checks” 和 “Pre-emption watch” 两节 |
+| 基线、公平性 | `baselines/MANIFEST.md` 的相关行 |
+| 审稿 / 投稿 | `REVIEWS.md` 最新一轮；`SUBMISSION.md` 清单 |
+| 以往决策 | 按日期或门禁读 `DECISIONS.md` 条目（grep `D-`） |
+
+另外：`MATH-REFS.md`（某个背景事实有疑问时）和用户的任务说明（P0 时）。
 
 ## 输出（写入的黑板文件与格式）
 
@@ -124,7 +137,7 @@ Consequences: <tasks created/cancelled, claims re-scoped>
 ## 流程
 
 1. **P0**：阅读任务说明；写 STATE.md（目标、会议、终止日期、P0 门禁）；只向用户询问无法推断的内容（会议、截止日期、算力限制、哪些内容不得离开本机）。
-2. 每个阶段：在 STATE.md 中创建任务，按上表分派（独立时并行），监控输出。
+2. 每个阶段：在 STATE.md 中创建任务，按上表分派（独立时并行），通过各 agent 的简短汇总及其点名的文件监控输出，而不是重读每个黑板文件。
 3. 当提出者产出想法或结果时：执行先证伪规则（CLAIMS 行 → 先交 falsifier）。
 4. 每个阶段结束时：运行 `gate_check.py`，勾选/豁免各项，写 DECISIONS 条目（go / no-go / 回退），更新 `phase:`。
 5. 遵守时间盒；如果某个方向超出时间盒而门禁仍未通过，要明确决定：延长（附理由）、转向或终止。不允许无声漂移。

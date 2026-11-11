@@ -1,6 +1,6 @@
 ---
 name: artifact-pack
-description: Use when preparing supplementary code/data for review (anonymous) or for an artifact-evaluation track after acceptance. Produces a reproducible artifact with README, one-command scripts, pinned dependencies, expected outputs with tolerances, a claims-to-commands map, and anonymous hosting during review.
+description: Use when preparing supplementary code/data for review (anonymous) or an artifact-evaluation track. Produces a reproducible artifact: README, one-command scripts, pinned dependencies, expected outputs with tolerances, claims-to-commands map, anonymous hosting.
 ---
 
 # Artifact pack

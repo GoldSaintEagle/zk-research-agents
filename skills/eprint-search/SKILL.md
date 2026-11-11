@@ -1,6 +1,6 @@
 ---
 name: eprint-search
-description: Search IACR ePrint (with a submission-date window; rate-limited, with a fallback to a third-party mirror when eprint.iacr.org is unreachable) plus Crossref/DBLP from the command line, and run the grey-literature pass (project docs, HackMD, ethresear.ch, vendor blogs, audit reports). Use for novelty checks ("is this idea already taken?"), for building the related-work matrix, and for finding the public ePrint id of a paper before citing it.
+description: Search IACR ePrint (date window, rate-limited, mirror fallback), Crossref and DBLP from the command line, plus a grey-literature pass (project docs, HackMD, ethresear.ch, vendor blogs, audits). Use for novelty / pre-emption checks, the related-work matrix, and finding a paper's ePrint id.
 ---
 
 # eprint-search

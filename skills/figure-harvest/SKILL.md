@@ -1,6 +1,6 @@
 ---
 name: figure-harvest
-description: Harvest figures from a local corpus of public crypto papers (PDF), classify them by type, score their quality, and browse them in a local HTML contact sheet to learn which figure patterns work for a topic. Use before designing figures for a new paper or when extending figures/PATTERNS.md. Output is local-only (copyright).
+description: Harvest figures from a local corpus of public crypto paper PDFs, classify and score them, and browse a local HTML contact sheet to learn which figure patterns work. Use before designing a new paper's figures or extending figures/PATTERNS.md. Output stays local (copyright).
 ---
 # figure-harvest
 

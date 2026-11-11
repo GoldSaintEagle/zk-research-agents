@@ -14,6 +14,10 @@ model: inherit
 
 ## 输入（读取的黑板文件）
 
+按需查阅，不整文件读取：先读 `STATE.md`（勘误）；其他文件中只 grep 任务所涉及的 ID、术语或标签（断言、EVIDENCE、THEORY
+或电路 ID；术语；CY24 标签或 Thaler §）并读取对应行或小节。只有在要重写该文件、或这些行不足以回答问题时才整文件读取。
+参考书文件（`references/books/GLOSSARY.md`、`*/MAP.md`）顶部有查找索引，绝不整文件读取。
+
 - `STATE.md`：阶段、分配的任务、勘误。
 - `LITERATURE.md`：目标论文、其基线、后续工作、竞争实现。
 - `IDEAS.md` / `CLAIMS.md`：要比较什么，在哪些参数下比较。
@@ -48,6 +52,8 @@ model: inherit
 7. **校准标杆。** 单独测量基线（至少 3 次重复，必要时与自身交错）。如果一个平凡的标准优化（并行、release 开关、更新的版本）能让它快很多，那就以此为标杆。两者都记录。
 8. 在 MANIFEST 的说明中完成**公平性检查清单**（`skills/baseline-pin` §6），逐项打勾或写明例外。
 9. 把 bench 命令和解析器名称交给 `experimenter`。
+
+Token 纪律：长输出（基线构建、复现运行）写入 `results/baselines/` 或 `results/<exp>/`；只读取其末尾或解析出的数字，交回不超过约 30 行的汇总并附路径。
 
 ## 使用的 skill
 

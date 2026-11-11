@@ -118,6 +118,9 @@ test('falsify-round end to end: the five required cases', async () => {
   assert.deepEqual(lensCalls('C5'), K4)
   assert.ok(calls.every(c => !c.opts.label || c.opts.label === 'write-ledger' || c.opts.agentType === 'falsifier'))
   assert.deepEqual(phases, meta.phases.map(p => p.title))
+  const attack = calls.find(c => c.opts.label === 'C4:definitions-model').prompt
+  assert.ok(attack.includes("grep -n 'C4'") && !attack.includes('Read EVIDENCE.md, THEORY.md and CIRCUITS.md for context'))
+  assert.equal(calls.find(c => c.opts.label === 'write-ledger').opts.model, 'sonnet')
   const ledger = calls.find(c => c.opts.label === 'write-ledger').prompt
   assert.ok(ledger.includes('"status": "open"') && ledger.includes('no valid votes'))
   // contrast for the report: the rule before this change
@@ -152,7 +155,8 @@ test('idea-tournament runs under mocks: 5 ZK axes, constraint-cost / prover-cost
     if (o.label.startsWith('angle')) return { ideas: [{ name: `idea-${o.label}`, mechanism: 'toy', kill_criterion: 'gain < 1.2x' }] }
     if (o.label.startsWith('screen:')) return { alive: !o.label.endsWith('angle5'), cost_tool: 'both', reason: 'toy' }
     if (o.label === 'write-ideas') return 'ok'
-    return { ranking: ['idea-angle2', 'idea-angle1', 'idea-angle3', 'idea-angle4'] }
+    const r = ['idea-angle2', 'idea-angle1', 'idea-angle3', 'idea-angle4']
+    return { novelty: r, feasibility: r, gain: r }
   }
   const { result, calls } = await runWorkflow('idea-tournament.js', { project: '/tmp/toy', problem: 'toy bottleneck' }, respond)
   assert.equal(calls.filter(c => c.opts.label.startsWith('angle')).length, 5)
@@ -162,20 +166,68 @@ test('idea-tournament runs under mocks: 5 ZK axes, constraint-cost / prover-cost
   assert.ok(screen.includes('constraint-cost') && screen.includes('prover-cost-model') && screen.includes('soundness'))
   assert.equal(result.order[0], 'idea-angle2')
   assert.equal(result.alive.length, 4)
+  const judges = calls.filter(c => c.opts.phase === 'Judge')
+  assert.equal(judges.length, 1, 'one judge for all three criteria')
+  for (const k of ['novelty', 'feasibility', 'gain']) assert.ok(judges[0].prompt.includes(k + ':'), k)
+  assert.equal(calls.find(c => c.opts.label === 'write-ideas').opts.model, 'sonnet')
 })
 
-test('lit-sweep runs under mocks: grey literature mode, no ToSC/FSE', async () => {
+test('idea-tournament bordaOrder (pure): combines criteria, ignores unknown names, stable on ties', () => {
+  const I = loadPure('idea-tournament.js', ['bordaOrder'])
+  assert.deepEqual(I.bordaOrder(['a', 'b', 'c'], [['c', 'b', 'a'], ['b', 'c', 'a'], ['b', 'a', 'c']]), ['b', 'c', 'a'])
+  assert.deepEqual(I.bordaOrder(['a', 'b'], [['zzz', 'b']]), ['b', 'a'])
+  assert.deepEqual(I.bordaOrder(['a', 'b', 'c'], []), ['a', 'b', 'c'])
+  assert.deepEqual(I.bordaOrder(['toString', 'b'], [['b', 'toString']]), ['b', 'toString'])
+})
+
+test('idea-tournament: judge failure keeps screening order', async () => {
+  const respond = (p, o) => {
+    if (o.label.startsWith('angle')) return { ideas: [{ name: `idea-${o.label}`, mechanism: 'toy', kill_criterion: 'k' }] }
+    if (o.label.startsWith('screen:')) return { alive: true, cost_tool: 'both', reason: 'toy' }
+    if (o.label === 'judge') return null
+    return 'ok'
+  }
+  const { result, logs } = await runWorkflow('idea-tournament.js', { project: '/tmp/toy' }, respond)
+  assert.deepEqual(result.order, ['idea-angle1', 'idea-angle2', 'idea-angle3', 'idea-angle4', 'idea-angle5'])
+  assert.ok(logs.some(l => l.includes('judge failed')))
+})
+
+test('lit-sweep runs under mocks: grey literature mode, one batched verifier, no ToSC/FSE', async () => {
   const respond = (p, o) => {
     if (o.label.startsWith('mode')) return { works: [{ id: `2026/${o.label.slice(4)}`, title: 'Toy', relevance: 'toy' }, { id: '2026/1', title: 'Toy', relevance: 'dup' }] }
-    if (o.label.startsWith('verify:')) return { exists: o.label !== 'verify:2026/3' }
+    // 2026/3 fails, 2026/5 is missing from the report (counts as unverified)
+    if (o.label === 'verify-batch') return { results: ['2026/1', '2026/2', '2026/3', '2026/4'].map(id => ({ id, exists: id !== '2026/3' })) }
     return 'synthesized'
   }
   const { result, calls, logs } = await runWorkflow('lit-sweep.js', { project: '/tmp/toy', topic: 'toy lookups' }, respond)
   const modes = calls.filter(c => c.opts.label.startsWith('mode')).map(c => c.prompt).join('\n')
   assert.ok(/grey literature/i.test(modes) && modes.includes('HackMD') && modes.includes('ethresear.ch'))
   assert.equal(calls.filter(c => c.opts.label.startsWith('mode')).length, 5)
-  assert.ok(logs.some(l => l.includes('4/5 verified')), logs.join('|'))
+  assert.ok(logs.some(l => l.includes('3/5 verified')), logs.join('|'))
+  const ver = calls.filter(c => c.opts.phase === 'Verify')
+  assert.equal(ver.length, 1, 'one verifier agent for all candidates')
+  assert.ok(ver[0].prompt.includes('verify_bib.py') && ver[0].prompt.includes('ONCE'))
+  assert.equal(ver[0].opts.model, 'sonnet')
+  assert.ok(calls.find(c => c.opts.label === 'synthesize').prompt.includes('"2026/4"'))
+  assert.ok(!calls.find(c => c.opts.label === 'synthesize').prompt.includes('"2026/5"'))
   assert.equal(result, 'synthesized')
+})
+
+test('lit-sweep dedupe / mergeVerified (pure)', () => {
+  const L = loadPure('lit-sweep.js', ['dedupe', 'mergeVerified'])
+  assert.deepEqual(L.dedupe([{ id: 'A' }, { id: 'a', x: 1 }, null, { id: 'b' }]).map(w => w.id), ['A', 'b'])
+  const m = L.mergeVerified([{ id: '2026/1' }, { id: 'X' }], [{ id: '2026/1', exists: true, bibtex: '@misc{}' }])
+  assert.equal(m[0].exists, true)
+  assert.equal(m[1].exists, false)
+  assert.equal(L.mergeVerified([{ id: 'A' }], null)[0].exists, false)
+})
+
+test('lit-sweep: verifier failure drops every candidate and logs an error', async () => {
+  const respond = (p, o) => o.label.startsWith('mode') ? { works: [{ id: 'X', title: 't', relevance: 'r' }] } :
+    o.label === 'verify-batch' ? null : 'synthesized'
+  const { logs } = await runWorkflow('lit-sweep.js', { project: '/tmp/toy', topic: 't' }, respond)
+  assert.ok(logs.some(l => l.startsWith('ERROR: batch verifier failed')))
+  assert.ok(logs.some(l => l.includes('0/1 verified')))
 })
 
 test('mock-review-panel: persona selection and routing (pure)', () => {
@@ -191,21 +243,42 @@ test('mock-review-panel: persona selection and routing (pure)', () => {
   assert.ok(M.PERSONAS.soundness.includes('soundness-budget') && M.PERSONAS.soundness.includes('Frequent catches'))
 })
 
-test('mock-review-panel runs under mocks: verify step filters findings before routing', async () => {
+test('mock-review-panel splitForVerify / attachChecks (pure)', () => {
+  const M = loadPure('mock-review-panel.js', ['splitForVerify', 'attachChecks'])
+  const { toVerify, passThrough } = M.splitForVerify([{ id: 'a', severity: 'high' }, { id: 'b', severity: 'low' }, { id: 'c', severity: 'med' }])
+  assert.deepEqual(toVerify.map(w => w.id), ['a', 'c'])
+  assert.deepEqual(passThrough.map(w => [w.id, w.check.status]), [['b', 'unverified']])
+  const att = M.attachChecks(toVerify, [{ id: 'a', status: 'confirmed', evidence: 'e' }])
+  assert.equal(att[0].check.status, 'confirmed')
+  assert.equal(att[1].check.status, 'unverifiable')
+  assert.equal(M.attachChecks(toVerify, null)[0].check.status, 'unverifiable')
+})
+
+test('mock-review-panel runs under mocks: one verifier per persona, high/med only, filters before routing', async () => {
   const respond = (p, o) => {
     if (o.label === 'brief') return 'ok'
-    if (o.label.startsWith('verify:')) return { status: o.label.endsWith(':W2') ? 'false-positive' : 'confirmed', evidence: 'toy' }
+    if (o.label.startsWith('verify:')) {
+      const ws = JSON.parse(p.slice(p.lastIndexOf('\n') + 1))
+      return { checks: ws.map(w => ({ id: w.id, status: w.id === 'W3' ? 'false-positive' : 'confirmed', evidence: 'toy' })) }
+    }
     if (o.label === 'meta-review') return p
     return { score: 3, confidence: 3, weaknesses: [
       { id: 'W1', category: o.label === 'soundness' ? 'fiat-shamir' : 'benchmark', severity: 'high', location: 'p.3', finding: 'toy' },
-      { id: 'W2', category: 'writing', severity: 'low', location: 'p.1', finding: 'toy' }] }
+      { id: 'W2', category: 'writing', severity: 'low', location: 'p.1', finding: 'toy' },
+      { id: 'W3', category: 'data', severity: 'med', location: 'Tab. 2', finding: 'toy' }] }
   }
   const { result, calls } = await runWorkflow('mock-review-panel.js',
     { project: '/tmp/toy', venue: 'TOYCRYPT', paper_type: 'system', extra: ['desk-reject'] }, respond)
   assert.deepEqual(calls.filter(c => c.opts.phase === 'Review').map(c => c.opts.label), ['implementation', 'soundness', 'application', 'desk-reject'])
-  assert.equal(calls.filter(c => c.opts.phase === 'Verify').length, 8)
+  const ver = calls.filter(c => c.opts.phase === 'Verify')
+  assert.equal(ver.length, 4, 'one verifier call per persona')
+  assert.ok(ver.every(c => c.prompt.includes('"W1"') && c.prompt.includes('"W3"') && !c.prompt.includes('"W2"')))
   const routed = JSON.parse(result.split('Routed confirmed findings: ')[1])
   assert.equal(routed.length, 4)
+  const reviews = JSON.parse(result.split('Reviews: ')[1].split('\nRouted confirmed findings: ')[0])
+  const w2 = reviews.flatMap(r => r.weaknesses).filter(w => w.id === 'W2')
+  assert.equal(w2.length, 4)
+  assert.ok(w2.every(w => w.check.status === 'unverified'))
   assert.ok(routed.some(r => r.owner === 'theorist' && r.recheck === 'falsifier'))
   assert.ok(routed.every(r => r.check.status === 'confirmed'))
 })

@@ -1,8 +1,8 @@
 ---
 name: submission-rebuttal
-description: Owns everything from a frozen draft to the published version (P8) — submission checklist, anonymisation, supplementary/artifact packaging, submission-form text, rebuttal and interactive-phase responses, and camera-ready. Use it once the writer declares the draft frozen, when reviews arrive, and after acceptance.
+description: Owns P8 from frozen draft to published version: submission checklist, anonymisation, artifact packaging, form text, rebuttal and interactive-phase responses, camera-ready. Use once the writer freezes the draft, when reviews arrive, and after acceptance.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch, WebSearch
-model: inherit
+model: sonnet
 ---
 # Submission, rebuttal and camera-ready
 
@@ -13,6 +13,11 @@ within the word budget, and deliver a camera-ready and artifact that match what 
 reviewers were promised.
 
 ## Inputs (blackboard files read)
+
+Read by lookup, not whole: `STATE.md` (errata) first; in the other files grep the IDs, terms or labels
+the task names (claim, EVIDENCE, THEORY or circuit IDs; a term; a CY24 label or Thaler §) and read those rows or
+sections. Open a whole file only to rewrite it or when the rows do not settle the question. The reference-book
+files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the top; never read them whole.
 
 - `paper/` (frozen draft, `CHANGELOG.md`, `abstract_plain.txt`)
 - `SUBMISSION.md` (venue rules quoted from the CFP), `STATE.md`, `DECISIONS.md`

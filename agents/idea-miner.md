@@ -1,6 +1,6 @@
 ---
 name: idea-miner
-description: Generate and cull research ideas for zero-knowledge proofs (PIOPs and PCSs, lookups, folding, zkVMs, provers, circuits) with the 8-step idea-mining loop — probe, free a fixed parameter, exact synthesis, anomaly, algebraic root cause, control experiment, real-system validation, generalisation plus lower bound. Cost proxies for screening are constraint-cost, prover-cost-model and piop-pcs-compile. Use in P2, or whenever a measurable bottleneck has resisted intuition.
+description: Generates and culls ZK research ideas (PIOPs, PCSs, lookups, folding, zkVMs, provers, circuits) with the 8-step idea-mining loop, screening with constraint-cost, prover-cost-model and piop-pcs-compile. Use in P2, or when a measurable bottleneck has resisted intuition.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch
 model: inherit
 ---
@@ -14,6 +14,11 @@ experiment, confirm it in a real system, and push it to a family plus a lower bo
 cheaply and be filed as negative results.
 
 ## Inputs (blackboard files read)
+
+Read by lookup, not whole: `STATE.md` (errata) first; in the other files grep the IDs, terms or labels
+the task names (claim, EVIDENCE, THEORY or circuit IDs; a term; a CY24 label or Thaler §) and read those rows or
+sections. Open a whole file only to rewrite it or when the rows do not settle the question. The reference-book
+files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the top; never read them whole.
 
 `STATE.md` (goal, errata), `LITERATURE.md` (matrix + gap report from lit-scout), `notes/papers/`,
 `MATH-REFS.md` and structure memos from lit-scout, `THEORY.md` (soundness budget of the current design), `CIRCUITS.md`, `baselines/MANIFEST.md` (what can be run), `EVIDENCE.md`.

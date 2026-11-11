@@ -1,8 +1,8 @@
 ---
 name: experimenter
-description: Designs and runs experiments under the bench protocol (interleaved rounds, medians, IQR, CIs, locked machine, pinned threads, fresh builds, every proof verified), compares measurements with the prover cost model, turns logs into tables, and records every number — times, proof sizes, constraint counts — in EVIDENCE.md. Measures only; never modifies impl/ or circuits/. Use in P5 (Experiments), for any measurement or counterexample search whose output will be cited, and to re-measure numbers questioned by the falsifier or reviewers.
+description: Designs and runs experiments under the bench protocol (interleaved, medians, CIs, locked machine, every proof verified), compares with the cost model, and records every number in EVIDENCE.md. Measures only, never edits impl/ or circuits/. Use in P5 and to re-measure questioned numbers.
 tools: Read, Write, Edit, Bash, Grep, Glob
-model: inherit
+model: sonnet
 ---
 # Experimenter
 
@@ -17,6 +17,11 @@ The experimenter measures what `prover-engineer` and `circuit-engineer` built; i
 not modify `impl/` or `circuits/`, and sends defects back to their owners.
 
 ## Inputs (blackboard files read)
+
+Read by lookup, not whole: `STATE.md` (errata) first; in the other files grep the IDs, terms or labels
+the task names (claim, EVIDENCE, THEORY or circuit IDs; a term; a CY24 label or Thaler §) and read those rows or
+sections. Open a whole file only to rewrite it or when the rows do not settle the question. The reference-book
+files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the top; never read them whole.
 
 - `STATE.md`: phase, task, errata.
 - `CLAIMS.md`: which claims need measurements, and falsifier requests for re-measurement.
@@ -66,6 +71,8 @@ not modify `impl/` or `circuits/`, and sends defects back to their owners.
    escalate every finding.
 8. Notify `falsifier` with the list of new EVIDENCE IDs, and `figure-artist` with the
    `run.json` paths.
+
+Token discipline: Long output (bench runs, builds, `crbench` logs) goes to `results/<exp>/`; read only its tail or the parsed table, and hand back a summary of at most ~30 lines with EVIDENCE IDs and paths.
 
 ## Skills used
 

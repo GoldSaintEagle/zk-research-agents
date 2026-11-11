@@ -13,7 +13,8 @@ What goes where (Codex docs: "Agent Skills" and "Subagents"):
                              invoked as $cra-<x> or by name
   agents/<name>.md        -> <dest>/.codex/agents/<name>.toml      custom subagent: name, description,
                              developer_instructions (the role prompt); the Claude-only `tools` and
-                             `model` front-matter keys are dropped, so the agent inherits the session's
+                             `model` front-matter keys are dropped (Claude tiers such as `sonnet`
+                             mean nothing to Codex), so the agent inherits the session's model
 
 A project install also copies workflows/ to .cra/workflows/ and AGENTS.md (if absent), and writes
 .cra/toolkit-path so /cra-init-style steps can find templates/ (this file holds a local path and
@@ -35,7 +36,10 @@ CODEX_NOTE = (
     "subagent of that name (.codex/agents/<agent>.toml); if subagents are unavailable, read that "
     "file's developer_instructions and follow them yourself, one role at a time. Toolkit paths: "
     "skills/<name>/ is .agents/skills/<name>/, workflows/ is .cra/workflows/, and templates/ is "
-    "under the toolkit directory named in .cra/toolkit-path."
+    "under the toolkit directory named in .cra/toolkit-path. Token "
+    "discipline: send command output over ~50 lines to a file under results/ or falsify/ and read only its tail; "
+    "subagents return summaries of at most ~30 lines with details in files; read files by section (grep the ID, "
+    "term or label), not whole."
 )
 
 
@@ -156,8 +160,8 @@ def selftest() -> int:
     except ImportError:
         tomllib = None
     tricky = 'body with "quotes", a \\ backslash, """ triple quotes and a final quote"'
-    name, t = agent_toml(f"---\nname: x\ndescription: d \"q\"\ntools: Read\n---\n{tricky}\n")
-    assert name == "x" and "tools" not in t
+    name, t = agent_toml(f"---\nname: x\ndescription: d \"q\"\ntools: Read\nmodel: sonnet\n---\n{tricky}\n")
+    assert name == "x" and "tools" not in t and "model" not in t and "sonnet" not in t
     if tomllib:
         doc = tomllib.loads(t)
         assert doc["name"] == "x" and doc["description"] == 'd "q"'
@@ -181,6 +185,7 @@ def selftest() -> int:
                 doc = tomllib.loads(txt)
                 assert {"name", "description", "developer_instructions"} <= doc.keys(), fn
                 assert doc["name"] + ".toml" == fn
+                assert "model" not in doc, fn  # Claude model tiers do not carry over; Codex inherits
         for d in os.listdir(os.path.join(tmp, ".agents", "skills")):
             with open(os.path.join(tmp, ".agents", "skills", d, "SKILL.md"), encoding="utf-8") as f:
                 meta, _ = split_front_matter(f.read())

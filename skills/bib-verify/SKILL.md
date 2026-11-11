@@ -1,6 +1,6 @@
 ---
 name: bib-verify
-description: Verify every BibTeX entry, rate-limited, against IACR ePrint (or its third-party mirror when ePrint is unreachable), Crossref/DataCite and DBLP (and @misc URL sources, or URL-only @book entries such as open books, against the live URL + Wayback Machine) and flag fabricated, garbled or placeholder references. Use before any draft leaves the machine, after any agent adds citations, and as the P1 and P8 gate item.
+description: Verify every BibTeX entry (rate-limited) against IACR ePrint (or its mirror), Crossref/DataCite, DBLP, and @misc URLs against the live page + Wayback; flags fabricated, garbled or placeholder references. Use before any draft leaves the machine, after citations are added, and at the P1/P8 gates.
 ---
 
 # bib-verify

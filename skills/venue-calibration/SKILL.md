@@ -1,6 +1,6 @@
 ---
 name: venue-calibration
-description: Use when choosing a target venue for a ZK paper (protocol/theory, system/implementation, or application/circuit), adapting a draft to a venue's format, or calibrating a mock review. Summarises per-venue formats, what reviewers of ZK papers weigh, typical ZK rejection reasons with their pre-emptive fixes, and scoring rubrics for IACR venues (CRYPTO, EUROCRYPT, ASIACRYPT, TCC, PKC, TCHES), security venues (CCS, S&P, USENIX Security, NDSS, PoPETs) and blockchain venues (FC, AFT).
+description: Use to choose a venue for a ZK paper, adapt a draft to a venue's format, or calibrate a mock review: per-venue formats, what ZK reviewers weigh, typical rejection reasons and fixes, scoring rubrics for IACR (CRYPTO, EUROCRYPT, TCC, …), security (CCS, S&P, USENIX) and FC/AFT venues.
 ---
 
 # Venue calibration

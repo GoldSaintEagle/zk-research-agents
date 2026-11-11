@@ -44,6 +44,8 @@ docs/                        BIGMAP, quickstart, methodology; docs/zh/ Chinese m
 AGENTS.md                    Codex / generic-agent entry point (mirrors CLAUDE.md)
 CLAUDE.md                    Claude Code entry point
 install.sh                   installs agents/skills/commands into a target project (--codex: Codex layout via scripts/codex_export.py)
+scripts/                     codex_export, check_book_refs, ref_index (reference lookup indexes),
+                             check_descriptions (front-matter length), privacy_scan
 ```
 
 ## 2. The 13 agents (file = `agents/<id>.md`)
@@ -73,9 +75,9 @@ Agent file format (Claude Code subagent):
 ```markdown
 ---
 name: <id>
-description: <when the orchestrator should use it; 1-3 sentences, starts with a verb>
+description: <what it does + when to use it, trigger keywords kept; <= ~300 chars, starts with a verb>
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch   # least privilege
-model: inherit
+model: inherit        # or sonnet, see "Model tiers" below
 ---
 # <Title>
 ## Mission
@@ -87,6 +89,13 @@ model: inherit
 ## Hand-off contract (what "done" means; which agent is next)
 ## Failure modes & lessons (distilled, generic)
 ```
+
+Model tiers (token cost): agents that reason about soundness, judge claims, mine ideas, write the paper or write
+the code under audit keep `model: inherit` (pi-orchestrator, theorist, falsifier, idea-miner, writer,
+prover-engineer, circuit-engineer). Agents whose work is search, measurement, formatting or checklists use
+`model: sonnet` (lit-scout, experimenter, baseline-engineer, figure-artist, submission-rebuttal, reviewer-sim);
+reviewer-sim's findings are verified separately and the falsifier re-checks soundness findings. Use the alias
+form (`inherit`, `sonnet`, `opus`, `haiku`). `scripts/codex_export.py` drops the key: Codex agents inherit.
 
 ## 3. Blackboard (shared state in the *user's research project*, templates in `templates/blackboard/`)
 
@@ -154,6 +163,18 @@ halo2, plonky3, nargo, RISC Zero, SP1, SAT/SMT solvers (solver-based circuit aud
 gallery (`figures/gallery/` is **gitignored**; only `gallery_index.template.md` and
 a *pattern catalog* describing good figure patterns in words are committed).
 
-## 8. Naming
+## 8. Token discipline
+
+Agents, skills, commands and workflow prompts are written so that a run stays cheap without weakening any rule:
+- long command output (> ~50 lines) is redirected to a file under `results/` or `falsify/`; only tail/summary is read;
+- subagents and workflow agents return bounded summaries (≤ ~30 lines, or a schema) with details in files;
+- files are read by section (grep the ID / term / label, then the range), `STATE.md` first; the big reference files
+  (`references/books/GLOSSARY.md`, `*/MAP.md`) carry a generated lookup index (`scripts/ref_index.py`);
+- mechanical steps (loading rows, ledger writes, bib runs, briefs, merges) use a cheaper model tier
+  (`model: sonnet` in front matter or the Workflow `agent()` option), never the steps that judge claims;
+- `description` front matter (always loaded) is ≤ ~300 characters, checked at 350 by
+  `scripts/check_descriptions.py --selftest`.
+
+## 9. Naming
 
 kebab-case for agents/skills/commands; snake_case for Python modules.
