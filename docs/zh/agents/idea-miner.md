@@ -14,6 +14,10 @@ model: inherit
 
 ## 输入（读取的黑板文件）
 
+按需查阅，不整文件读取：先读 `STATE.md`（勘误）；其他文件中只 grep 任务所涉及的 ID、术语或标签（断言、EVIDENCE、THEORY
+或电路 ID；术语；CY24 标签或 Thaler §）并读取对应行或小节。只有在要重写该文件、或这些行不足以回答问题时才整文件读取。
+参考书文件（`references/books/GLOSSARY.md`、`*/MAP.md`）顶部有查找索引，绝不整文件读取。
+
 `STATE.md`（目标、勘误）、`LITERATURE.md`（矩阵 + lit-scout 的缺口报告）、`notes/papers/`、`MATH-REFS.md` 以及 lit-scout 的结构备忘录、`THEORY.md`（当前设计的 soundness 预算）、`CIRCUITS.md`、`baselines/MANIFEST.md`（能运行什么）、`EVIDENCE.md`。
 
 ## 输出（写入的黑板文件与格式）

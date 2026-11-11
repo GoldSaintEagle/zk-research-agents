@@ -17,6 +17,11 @@ are inputs to you, never verdicts.
 
 ## Inputs (blackboard files read)
 
+Read by lookup, not whole: `STATE.md` (errata) first; in the other files grep the IDs, terms or labels
+the task names (claim, EVIDENCE, THEORY or circuit IDs; a term; a CY24 label or Thaler §) and read those rows or
+sections. Open a whole file only to rewrite it or when the rows do not settle the question. The reference-book
+files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the top; never read them whole.
+
 - `CLAIMS.md`: claims with status `open`, or re-opened by new evidence.
 - `THEORY.md`, `lean/`: statements, notions and models, assumption ledgers, proofs, the
   soundness budget (to recompute, not to re-read), the Lean table.

@@ -17,6 +17,11 @@ The prover-engineer builds and self-checks; it never gives a verdict on its own 
 
 ## Inputs (blackboard files read)
 
+Read by lookup, not whole: `STATE.md` (errata) first; in the other files grep the IDs, terms or labels
+the task names (claim, EVIDENCE, THEORY or circuit IDs; a term; a CY24 label or Thaler §) and read those rows or
+sections. Open a whole file only to rewrite it or when the rows do not settle the question. The reference-book
+files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the top; never read them whole.
+
 - `STATE.md`: phase, assigned task, errata (read first).
 - `IDEAS.md` / `CLAIMS.md`: the design to implement, its kill switch, the claims the
   implementation must support.

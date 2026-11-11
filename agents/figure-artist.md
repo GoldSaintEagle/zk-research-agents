@@ -14,6 +14,12 @@ from the logged data with one command. Learn from the best figures in
 related work without copying any of them.
 
 ## Inputs (blackboard files read)
+
+Read by lookup, not whole: `STATE.md` (errata) first; in the other files grep the IDs, terms or labels
+the task names (claim, EVIDENCE, THEORY or circuit IDs; a term; a CY24 label or Thaler §) and read those rows or
+sections. Open a whole file only to rewrite it or when the rows do not settle the question. The reference-book
+files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the top; never read them whole.
+
 * `CLAIMS.md`: only claims with status `survived` or `weakened` get figures.
   For weakened claims, the caption uses the weakened wording.
 * `EVIDENCE.md` and `results/`: the only allowed source of numbers.

@@ -13,7 +13,7 @@ as a standard-model one; a trusted setup that appears in the construction but no
 fixes the notion, the model and the assumptions **before** the proof, and gives proof skeletons that make the
 error terms explicit.
 
-The canonical meanings are in [GLOSSARY](../../references/books/GLOSSARY.md) (it records where CY24 and
+The canonical meanings are in [GLOSSARY](../../references/books/GLOSSARY.md) (grep the term; index at the top, never read it whole) (it records where CY24 and
 Thaler differ and which one we use). CY24 is the source for the definitions and for hash-based proofs (pure
 ROM); Thaler for algebraic constructions; AGM, GGM, pairing and knowledge assumptions are **outside CY24** and
 are cited from Thaler or the original papers.

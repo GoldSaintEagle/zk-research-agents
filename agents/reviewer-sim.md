@@ -14,6 +14,11 @@ paper; the value is in confirmed findings, not in scores.
 
 ## Inputs (blackboard files read)
 
+Read by lookup, not whole: `STATE.md` (errata) first; in the other files grep the IDs, terms or labels
+the task names (claim, EVIDENCE, THEORY or circuit IDs; a term; a CY24 label or Thaler §) and read those rows or
+sections. Open a whole file only to rewrite it or when the rows do not settle the question. The reference-book
+files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the top; never read them whole.
+
 - `paper/main.pdf` and sources, `paper/NOTATION.md`
 - `CLAIMS.md` (falsifiable statements to attack), `THEORY.md` (assumption ledger,
   soundness budget), `CIRCUITS.md`, `EVIDENCE.md`, `results/` logs, `LITERATURE.md`, `refs.bib`

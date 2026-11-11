@@ -15,7 +15,7 @@ arithmetization, and where the number comes from. Costs of the *prover* on those
 
 Background: front ends (programs to circuits, memory checking, non-arithmetic operations) are in
 [Thaler §6.5, Turning Computer Programs Into Circuit Satisfiability Instances] and
-[Thaler §6.6, Alternative Transformations and Optimizations]; navigation in the [map of Thaler](../../references/books/thaler/MAP.md).
+[Thaler §6.6, Alternative Transformations and Optimizations]; navigation in the [map of Thaler](../../references/books/thaler/MAP.md) (grep the § you need).
 Lookup arguments, CCS, folding and binary-field systems are mostly not in either book: cite the original
 papers ("source: other").
 

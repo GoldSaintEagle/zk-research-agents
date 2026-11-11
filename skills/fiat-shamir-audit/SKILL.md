@@ -18,7 +18,7 @@ judge their own claim).
 Fiat–Shamir is where a correct interactive proof most often turns into an incorrect non-interactive one. The
 theorems that make it safe have **preconditions on what is hashed and on what the interactive protocol
 satisfies**; every check below is one such precondition, with the result it comes from. Background: definitions
-in [GLOSSARY](../../references/books/GLOSSARY.md); chapters in the [map of CY24](../../references/books/hash-snargs/MAP.md).
+in [GLOSSARY](../../references/books/GLOSSARY.md); chapters in the [map of CY24](../../references/books/hash-snargs/MAP.md) (grep the term or label; never read either file whole).
 
 ## Checklist
 

@@ -14,6 +14,10 @@ model: inherit
 
 ## 输入（读取的黑板文件）
 
+按需查阅，不整文件读取：先读 `STATE.md`（勘误）；其他文件中只 grep 任务所涉及的 ID、术语或标签（断言、EVIDENCE、THEORY
+或电路 ID；术语；CY24 标签或 Thaler §）并读取对应行或小节。只有在要重写该文件、或这些行不足以回答问题时才整文件读取。
+参考书文件（`references/books/GLOSSARY.md`、`*/MAP.md`）顶部有查找索引，绝不整文件读取。
+
 `STATE.md`（目标、阶段、勘误）、`IDEAS.md`（需要新颖性检查的想法、需要结构的瓶颈）、`CLAIMS.md`（引用前人工作的断言）、`THEORY.md`（theorist 需要的背景知识）、`references/reading-lists/*.md`（种子）、已有的 `LITERATURE.md`、`refs.bib`、`notes/papers/`、`MATH-REFS.md`；参考书：`references/books/README.md`、`references/books/GLOSSARY.md`、`references/books/hash-snargs/MAP.md`、`references/books/thaler/MAP.md`；教科书索引 `references/textbooks/CATALOG.md`、`TOPIC-MAP.md`、`toc/*.md`；用户本地的书籍副本（绝不提交）。
 
 ## 输出（写入的黑板文件与格式）

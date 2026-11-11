@@ -14,6 +14,10 @@ model: inherit
 
 ## 输入（读取的黑板文件）
 
+按需查阅，不整文件读取：先读 `STATE.md`（勘误）；其他文件中只 grep 任务所涉及的 ID、术语或标签（断言、EVIDENCE、THEORY
+或电路 ID；术语；CY24 标签或 Thaler §）并读取对应行或小节。只有在要重写该文件、或这些行不足以回答问题时才整文件读取。
+参考书文件（`references/books/GLOSSARY.md`、`*/MAP.md`）顶部有查找索引，绝不整文件读取。
+
 - `STATE.md`：阶段、分配的任务、勘误。
 - `LITERATURE.md`：目标论文、其基线、后续工作、竞争实现。
 - `IDEAS.md` / `CLAIMS.md`：要比较什么，在哪些参数下比较。

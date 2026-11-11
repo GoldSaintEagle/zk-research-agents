@@ -15,7 +15,7 @@ the cost formulas that `idea-mining-loop` and `bench-protocol` compare against.
 
 Sources: hash route (IOP + Merkle trees) from CY24, which proves BCS and COS for IOPs in general, not for PIOPs
 specifically; PIOPs and algebraic PCS from Thaler; compiler theorems for "PIOP + algebraic PCS" from the papers
-that state them (source: other). Terms: [GLOSSARY](../../references/books/GLOSSARY.md).
+that state them (source: other). Terms: [GLOSSARY](../../references/books/GLOSSARY.md) (grep the term you need).
 
 ## 1. Write the protocol as a PIOP
 

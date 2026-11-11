@@ -16,7 +16,7 @@ recomputable.
 Sources: hash-based terms and the definition of a security level from CY24 (pure ROM); algebraic terms from
 Thaler; Reed–Solomon proximity and anything newer from the original papers ("source: other"). Never move a
 CY24 bound into a KZG/IPA/AGM setting. Navigation: [map of CY24](../../references/books/hash-snargs/MAP.md),
-[map of Thaler](../../references/books/thaler/MAP.md), terms: [GLOSSARY](../../references/books/GLOSSARY.md).
+[map of Thaler](../../references/books/thaler/MAP.md), terms: [GLOSSARY](../../references/books/GLOSSARY.md); grep the label or term you need (each file has a lookup index at the top), never read them whole.
 
 ## Inputs
 

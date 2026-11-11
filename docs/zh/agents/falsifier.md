@@ -14,6 +14,10 @@ model: inherit
 
 ## 输入（读取的黑板文件）
 
+按需查阅，不整文件读取：先读 `STATE.md`（勘误）；其他文件中只 grep 任务所涉及的 ID、术语或标签（断言、EVIDENCE、THEORY
+或电路 ID；术语；CY24 标签或 Thaler §）并读取对应行或小节。只有在要重写该文件、或这些行不足以回答问题时才整文件读取。
+参考书文件（`references/books/GLOSSARY.md`、`*/MAP.md`）顶部有查找索引，绝不整文件读取。
+
 - `CLAIMS.md`：状态为 `open` 的断言，或因新证据重新打开的断言。
 - `THEORY.md`、`lean/`：陈述、概念与模型、假设台账、证明、soundness 预算（用来重算，而不是重读）、Lean 对照表。
 - `CIRCUITS.md`、`circuits/`（规格、测试框架）、`impl/`：circuit-engineer 和 prover-engineer 构建的东西，以及他们的构建者审计报告（`results/circuits/*-audit.md`、`results/<exp>/fs-audit.md`）。

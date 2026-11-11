@@ -20,6 +20,9 @@ Citation formats (references/books/README.md):
       that unit's title (a word-level prefix of it is accepted). The TOC is extracted from the
       PDF: chapters and sections from the bookmarks, subsections from the numbered headings.
 
+A whole-repository scan also checks that the lookup indexes at the top of GLOSSARY.md and the two MAP.md
+files are fresh (scripts/ref_index.py --check).
+
 Without the cache (references/books/.cache/, filled by references/books/fetch.sh) the
 corresponding checks are skipped with a notice. Thaler checks also need PyMuPDF.
 Exit status: 0 clean (or skipped), 1 at least one bad citation.
@@ -376,7 +379,12 @@ def main(argv=None) -> int:
         for kind, title in cy24_outline(open(a.dump_cy24_toc, encoding="utf-8").read()):
             print({"part": "", "chapter": "- ", "section": "  - "}[kind] + (f"**{title}**" if kind == "part" else title))
         return 0
-    return run(a.paths)
+    rc = run(a.paths)
+    if not a.paths:  # whole-repository scan: the lookup indexes of GLOSSARY / MAP files must be fresh too
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import ref_index
+        rc |= ref_index.run(check=True)
+    return rc
 
 
 if __name__ == "__main__":
