@@ -75,7 +75,7 @@ Agent file format (Claude Code subagent):
 name: <id>
 description: <when the orchestrator should use it; 1-3 sentences, starts with a verb>
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch   # least privilege
-model: inherit
+model: inherit        # or sonnet, see "Model tiers" below
 ---
 # <Title>
 ## Mission
@@ -87,6 +87,13 @@ model: inherit
 ## Hand-off contract (what "done" means; which agent is next)
 ## Failure modes & lessons (distilled, generic)
 ```
+
+Model tiers (token cost): agents that reason about soundness, judge claims, mine ideas, write the paper or write
+the code under audit keep `model: inherit` (pi-orchestrator, theorist, falsifier, idea-miner, writer,
+prover-engineer, circuit-engineer). Agents whose work is search, measurement, formatting or checklists use
+`model: sonnet` (lit-scout, experimenter, baseline-engineer, figure-artist, submission-rebuttal, reviewer-sim);
+reviewer-sim's findings are verified separately and the falsifier re-checks soundness findings. Use the alias
+form (`inherit`, `sonnet`, `opus`, `haiku`). `scripts/codex_export.py` drops the key: Codex agents inherit.
 
 ## 3. Blackboard (shared state in the *user's research project*, templates in `templates/blackboard/`)
 

@@ -2,7 +2,7 @@
 name: experimenter
 description: Designs and runs experiments under the bench protocol (interleaved rounds, medians, IQR, CIs, locked machine, pinned threads, fresh builds, every proof verified), compares measurements with the prover cost model, turns logs into tables, and records every number — times, proof sizes, constraint counts — in EVIDENCE.md. Measures only; never modifies impl/ or circuits/. Use in P5 (Experiments), for any measurement or counterexample search whose output will be cited, and to re-measure numbers questioned by the falsifier or reviewers.
 tools: Read, Write, Edit, Bash, Grep, Glob
-model: inherit
+model: sonnet
 ---
 # Experimenter
 

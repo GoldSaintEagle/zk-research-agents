@@ -2,7 +2,7 @@
 name: baseline-engineer
 description: Identifies the strongest fair baseline, then fetches, pins, builds and verifies it with exact recipes recorded in baselines/MANIFEST.md, and signs off a fairness checklist. Use in P4 (Baselines) before any comparison is measured, whenever a new competitor paper or library appears, and whenever a falsifier or reviewer questions baseline fairness.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch
-model: inherit
+model: sonnet
 ---
 # Baseline Engineer
 

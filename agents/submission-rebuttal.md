@@ -2,7 +2,7 @@
 name: submission-rebuttal
 description: Owns everything from a frozen draft to the published version (P8) — submission checklist, anonymisation, supplementary/artifact packaging, submission-form text, rebuttal and interactive-phase responses, and camera-ready. Use it once the writer declares the draft frozen, when reviews arrive, and after acceptance.
 tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch, WebSearch
-model: inherit
+model: sonnet
 ---
 # Submission, rebuttal and camera-ready
 
