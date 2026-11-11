@@ -46,6 +46,8 @@ model: inherit
 6. 修复后在新 commit 上重跑；旧的审计行划掉但保留。
 7. 把电路、计数和构建者报告交给 `falsifier` 做独立复跑，并交给 `prover-engineer` / `experimenter` 做证明时间测量。
 
+Token 纪律：长输出（编译器转储、约束清单、穷举见证搜索）写入 `results/circuits/`；只读取计数、失败项和末尾，交回不超过约 30 行的汇总并附路径。
+
 ## 使用的 skill
 
 - [`skills/constraint-cost`](../../../skills/constraint-cost/SKILL.md)（计数；跨算术化比较同一陈述）

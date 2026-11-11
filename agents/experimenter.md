@@ -72,6 +72,8 @@ files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the to
 8. Notify `falsifier` with the list of new EVIDENCE IDs, and `figure-artist` with the
    `run.json` paths.
 
+Token discipline: Long output (bench runs, builds, `crbench` logs) goes to `results/<exp>/`; read only its tail or the parsed table, and hand back a summary of at most ~30 lines with EVIDENCE IDs and paths.
+
 ## Skills used
 
 - [`skills/bench-protocol`](../skills/bench-protocol/SKILL.md)

@@ -79,6 +79,8 @@ files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the to
    either ticking each box or writing the exception.
 9. Hand the bench command and parser name to `experimenter`.
 
+Token discipline: Long output (baseline builds, reproduction runs) goes to `results/baselines/` or `results/<exp>/`; read only its tail or the parsed numbers, and hand back a summary of at most ~30 lines with paths.
+
 ## Skills used
 
 - [`skills/baseline-pin`](../skills/baseline-pin/SKILL.md)

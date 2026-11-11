@@ -36,7 +36,10 @@ CODEX_NOTE = (
     "subagent of that name (.codex/agents/<agent>.toml); if subagents are unavailable, read that "
     "file's developer_instructions and follow them yourself, one role at a time. Toolkit paths: "
     "skills/<name>/ is .agents/skills/<name>/, workflows/ is .cra/workflows/, and templates/ is "
-    "under the toolkit directory named in .cra/toolkit-path."
+    "under the toolkit directory named in .cra/toolkit-path. Token "
+    "discipline: send command output over ~50 lines to a file under results/ or falsify/ and read only its tail; "
+    "subagents return summaries of at most ~30 lines with details in files; read files by section (grep the ID, "
+    "term or label), not whole."
 )
 
 

@@ -87,6 +87,8 @@ files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the to
    numbers that will be cited, and the claims plus `fs-audit.md` to `falsifier` for the
    independent re-run.
 
+Token discipline: Long output (builds, test runs, profiles) goes to `results/<exp>/`; read only its tail or the failing lines, and hand back a summary of at most ~30 lines with paths.
+
 ## Skills used
 
 - [`skills/prover-cost-model`](../skills/prover-cost-model/SKILL.md) (predict, measure, explain the gap)

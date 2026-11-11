@@ -51,6 +51,8 @@ model: inherit
 6. **测量并比较**：开发阶段的运行遵循 `skills/bench-protocol`：交错运行、验证每个证明、解析逐阶段输出行。与预测比较；任何人引用数字之前，先解释每个超出容差的阶段。
 7. 把 commit、bench 命令和解析器名称交给 `experimenter`，用于测量将被引用的数字；把断言和 `fs-audit.md` 交给 `falsifier` 做独立复跑。
 
+Token 纪律：长输出（构建、测试运行、性能剖析）写入 `results/<exp>/`；只读取其末尾或失败的行，交回不超过约 30 行的汇总并附路径。
+
 ## 使用的 skill
 
 - [`skills/prover-cost-model`](../../../skills/prover-cost-model/SKILL.md)（预测、测量、解释差距）

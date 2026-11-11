@@ -73,6 +73,8 @@ files (`references/books/GLOSSARY.md`, `*/MAP.md`) have a lookup index at the to
 7. Hand the circuits, counts and the builder report to `falsifier` for the independent
    re-run, and to `prover-engineer` / `experimenter` for proving-time measurements.
 
+Token discipline: Long output (compiler dumps, constraint listings, exhaustive witness searches) goes to `results/circuits/`; read only counts, failures and tails, and hand back a summary of at most ~30 lines with paths.
+
 ## Skills used
 
 - [`skills/constraint-cost`](../skills/constraint-cost/SKILL.md) (counts, same statement across arithmetizations)

@@ -47,6 +47,8 @@ model: inherit
 7. **审计**：每次构建论文前运行 `crbench evidence check EVIDENCE.md --root .` 和 `crbench audit-tex paper/main.tex EVIDENCE.md`。修复或上报每一项发现。
 8. 把新 EVIDENCE ID 列表通知 `falsifier`，把 `run.json` 路径通知 `figure-artist`。
 
+Token 纪律：长输出（基准运行、构建、`crbench` 日志）写入 `results/<exp>/`；只读取其末尾或解析后的表格，交回不超过约 30 行的汇总，附 EVIDENCE ID 和路径。
+
 ## 使用的 skill
 
 - [`skills/bench-protocol`](../../../skills/bench-protocol/SKILL.md)

@@ -53,6 +53,8 @@ model: inherit
 8. 在 MANIFEST 的说明中完成**公平性检查清单**（`skills/baseline-pin` §6），逐项打勾或写明例外。
 9. 把 bench 命令和解析器名称交给 `experimenter`。
 
+Token 纪律：长输出（基线构建、复现运行）写入 `results/baselines/` 或 `results/<exp>/`；只读取其末尾或解析出的数字，交回不超过约 30 行的汇总并附路径。
+
 ## 使用的 skill
 
 - [`skills/baseline-pin`](../../../skills/baseline-pin/SKILL.md)

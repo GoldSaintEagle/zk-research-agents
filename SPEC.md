@@ -161,6 +161,18 @@ halo2, plonky3, nargo, RISC Zero, SP1, SAT/SMT solvers (solver-based circuit aud
 gallery (`figures/gallery/` is **gitignored**; only `gallery_index.template.md` and
 a *pattern catalog* describing good figure patterns in words are committed).
 
-## 8. Naming
+## 8. Token discipline
+
+Agents, skills, commands and workflow prompts are written so that a run stays cheap without weakening any rule:
+- long command output (> ~50 lines) is redirected to a file under `results/` or `falsify/`; only tail/summary is read;
+- subagents and workflow agents return bounded summaries (≤ ~30 lines, or a schema) with details in files;
+- files are read by section (grep the ID / term / label, then the range), `STATE.md` first; the big reference files
+  (`references/books/GLOSSARY.md`, `*/MAP.md`) carry a generated lookup index (`scripts/ref_index.py`);
+- mechanical steps (loading rows, ledger writes, bib runs, briefs, merges) use a cheaper model tier
+  (`model: sonnet` in front matter or the Workflow `agent()` option), never the steps that judge claims;
+- `description` front matter (always loaded) is ≤ ~300 characters, checked at 350 by
+  `scripts/check_descriptions.py --selftest`.
+
+## 9. Naming
 
 kebab-case for agents/skills/commands; snake_case for Python modules.
