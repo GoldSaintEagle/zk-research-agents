@@ -1,6 +1,6 @@
 export const meta = {
   name: 'cra-mock-review',
-  description: 'Falsify-first ZK mock review (skills/mock-review): personas by paper type, findings verified, meta-review with fixes routed to agents',
+  description: 'Falsify-first ZK mock review (skills/mock-review): personas by paper type, high/med findings verified (one call per persona), meta-review with fixes routed to agents',
   whenToUse: 'Phase P8 before submission (about 3 days and again 1 day before), and after each major revision',
   phases: [{ title: 'Brief' }, { title: 'Review' }, { title: 'Verify' }, { title: 'Meta' }],
 }
@@ -66,6 +66,25 @@ function route(category) {
   const owner = ROUTES[category] || 'writer'
   return { owner, recheck: RECHECK_BY_FALSIFIER.includes(category) ? 'falsifier' : null }
 }
+
+// Only high / med findings are verified (one verifier call per persona); low ones pass through marked unverified
+// and are never routed as confirmed.
+const VERIFY_SEVERITIES = ['high', 'med']
+function splitForVerify(weaknesses) {
+  const ws = weaknesses || []
+  return { toVerify: ws.filter(w => VERIFY_SEVERITIES.includes(w.severity)),
+    passThrough: ws.filter(w => !VERIFY_SEVERITIES.includes(w.severity))
+      .map(w => ({ ...w, check: { status: 'unverified', evidence: 'low severity: not verified' } })) }
+}
+
+// Attach the persona verifier's per-finding checks (by finding id); a finding it did not report on is unverifiable.
+function attachChecks(toVerify, checks) {
+  const byId = new Map((checks || []).filter(c => c && c.id).map(c => [c.id, c]))
+  return toVerify.map(w => {
+    const c = byId.get(w.id)
+    return { ...w, check: c ? { status: c.status, evidence: c.evidence } : { status: 'unverifiable', evidence: 'verifier gave no result' } }
+  })
+}
 // END PURE
 
 const ptype = args.paper_type || 'protocol'
@@ -78,13 +97,16 @@ const REVIEW = { type: 'object', properties: { score: { type: 'number', descript
   confidence: { type: 'number', description: '1-4' }, dimensions: { type: 'object' },
   strengths: { type: 'array', items: { type: 'string' } }, weaknesses: { type: 'array', items: FINDING },
   questions: { type: 'array', items: { type: 'string' } } }, required: ['score', 'confidence', 'weaknesses'] }
-const CHECK = { type: 'object', properties: { status: { type: 'string', enum: ['confirmed', 'false-positive', 'unverifiable'] },
-  evidence: { type: 'string', description: 'script / log / recomputed cell that settles it' } }, required: ['status', 'evidence'] }
+const CHECKS = { type: 'object', properties: { checks: { type: 'array', items: { type: 'object', properties: {
+  id: { type: 'string', description: 'finding id exactly as given' },
+  status: { type: 'string', enum: ['confirmed', 'false-positive', 'unverifiable'] },
+  evidence: { type: 'string', description: 'script / log / recomputed cell that settles it (one line)' } },
+  required: ['id', 'status', 'evidence'] } } }, required: ['checks'] }
 
 phase('Brief')
 await agent(`Write ${P}/reviews/REVIEW-BRIEF.md per skills/mock-review step 1: venue ${V}, paper ${P}/${PDF} and its sha256, ` +
   `the falsifiable statement list (from CLAIMS.md and the contribution list), persona assignments ${JSON.stringify(chosen)} ` +
-  `(paper type: ${ptype}), and what is out of scope.`, { agentType: 'reviewer-sim', label: 'brief', effort: 'low' })
+  `(paper type: ${ptype}), and what is out of scope.`, { agentType: 'reviewer-sim', label: 'brief', model: 'sonnet', effort: 'low' })
 
 phase('Review')
 const reviews = await pipeline(chosen,
@@ -92,13 +114,19 @@ const reviews = await pipeline(chosen,
     `REFUTE its statements first. Use skills/venue-calibration for the scale. Check claims against ${P}/CLAIMS.md, numbers ` +
     `against ${P}/EVIDENCE.md. Every weakness cites a page/section/equation and proposes a fix. Read-only: never edit the paper.`,
     { agentType: 'reviewer-sim', phase: 'Review', label: key, schema: REVIEW }),
-  // Verify each finding as soon as its review is in (skills/mock-review step 3)
-  (rev, key) => rev && parallel((rev.weaknesses || []).map(w => () =>
-    agent(`Verify this mock-review finding against the source, data or a script (reproduce the counterexample, open the log, ` +
-      `recompute the cell); write any script under ${P}/reviews/verify/. Finding (${key}): ${JSON.stringify(w)}`,
-      { phase: 'Verify', label: `verify:${key}:${w.id}`, schema: CHECK, effort: 'low' })
-      .then(c => ({ ...w, persona: key, check: c || { status: 'unverifiable', evidence: 'verifier failed' } }))))
-    .then(ws => ({ persona: key, ...rev, weaknesses: ws.filter(Boolean) })))
+  // Verify this persona's high/med findings in one call as soon as its review is in (skills/mock-review step 3)
+  (rev, key) => {
+    if (!rev) return null
+    const { toVerify, passThrough } = splitForVerify(rev.weaknesses)
+    const checked = !toVerify.length ? Promise.resolve([]) : agent(
+      `Verify each of these ${toVerify.length} mock-review findings (persona ${key}) against the source, data or a ` +
+      `script (reproduce the counterexample, open the log, recompute the cell); write scripts and long output under ` +
+      `${P}/reviews/verify/ and return one check per finding id with a one-line evidence pointer.\n${JSON.stringify(toVerify)}`,
+      { phase: 'Verify', label: `verify:${key}`, schema: CHECKS, effort: 'low' })
+      .then(r => attachChecks(toVerify, r && r.checks))
+    return checked.then(ws => ({ persona: key, ...rev,
+      weaknesses: ws.concat(passThrough).map(w => ({ ...w, persona: key })) }))
+  })
 const done = reviews.filter(Boolean)
 const missing = chosen.filter(k => !done.some(r => r.persona === k))
 if (missing.length) log(`WARNING: no review from ${missing.join(', ')}; the meta-review says so`)
@@ -111,6 +139,7 @@ return await agent(`Write round k of ${P}/REVIEWS.md in the output format of ski
   `reviews, meta-review as a simulated discussion, verified-findings table; personas are views of one analysis, not ` +
   `independent experts; missing personas: ${JSON.stringify(missing)}). Then write ${P}/reviews/SUBMIT-FIXES.md: confirmed ` +
   `findings graded must-fix / should-fix / won't-fix (with reason), each with its owner agent and, where given, the ` +
-  `falsifier re-check; include "good news" items and the 3-6 likeliest rebuttal questions.\n` +
+  `falsifier re-check; list low-severity findings (status unverified) in a separate "unverified, low" table for ` +
+  `the authors to triage, never as confirmed; include "good news" items and the 3-6 likeliest rebuttal questions.\n` +
   `Reviews: ${JSON.stringify(done)}\nRouted confirmed findings: ${JSON.stringify(items)}`,
   { agentType: 'reviewer-sim', label: 'meta-review' })

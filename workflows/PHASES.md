@@ -26,10 +26,10 @@ change all of them together.
 ## Multi-agent workflows (run with Claude Code's Workflow tool, `scriptPath`)
 | script | phase | pattern |
 |---|---|---|
-| `lit-sweep.js` | P1 | 5 search modes (ePrint, DBLP venues, citation graph, grey literature, code-first) → per-item existence verification (grey sources: URL + Wayback + access date) → synthesis |
-| `idea-tournament.js` | P2 | 5 ZK design axes from `skills/idea-mining-loop` (LDT/PCS, field, arithmetization shape, lookup vs native, recursion vs folding) → falsifier screening with `constraint-cost` / `prover-cost-model` at equal soundness + pre-emption check → 3-criterion judge panel |
-| `falsify-round.js` | P6 | per claim: 3 lenses (definitions & model; Fiat–Shamir & soundness budget; fairness & precedent), plus a circuit-audit lens for circuit claims → pure tally (below) → ledger |
-| `mock-review-panel.js` | P8 | brief → personas by paper type (mandatory one first, optional data / desk-reject auditors) → every finding verified → meta-review + `SUBMIT-FIXES.md`, confirmed findings routed to the owning agent (soundness / FS / circuit fixes re-checked by the falsifier) |
+| `lit-sweep.js` | P1 | 5 search modes (ePrint, DBLP venues, citation graph, grey literature, code-first) → one batched existence check (all candidates in one .bib, one `verify_bib.py` run; grey sources: URL + Wayback + access date) → synthesis |
+| `idea-tournament.js` | P2 | 5 ZK design axes from `skills/idea-mining-loop` (LDT/PCS, field, arithmetization shape, lookup vs native, recursion vs folding) → falsifier screening with `constraint-cost` / `prover-cost-model` at equal soundness + pre-emption check → one judge ranks on 3 criteria (novelty, feasibility, gain), Borda-combined |
+| `falsify-round.js` | P6 | per claim: 3 lenses (definitions & model; Fiat–Shamir & soundness budget; fairness & precedent), plus a circuit-audit lens for circuit claims, each reading only the EVIDENCE / THEORY / CIRCUITS rows the claim references → pure tally (below) → ledger |
+| `mock-review-panel.js` | P8 | brief → personas by paper type (mandatory one first, optional data / desk-reject auditors) → high/med findings verified, one verifier call per persona (low ones marked unverified) → meta-review + `SUBMIT-FIXES.md`, confirmed findings routed to the owning agent (soundness / FS / circuit fixes re-checked by the falsifier) |
 
 `falsify-round.js` tally (function `tally`, tested in `workflows/tests/`):
 

@@ -1,10 +1,22 @@
 export const meta = {
   name: 'cra-idea-tournament',
-  description: 'Generate ZK ideas along 5 design axes, cost-model them with constraint-cost / prover-cost-model at equal soundness, pre-emption check, judge panel ranks survivors',
+  description: 'Generate ZK ideas along 5 design axes, cost-model them with constraint-cost / prover-cost-model at equal soundness, pre-emption check, one judge ranks survivors on 3 criteria',
   whenToUse: 'Phase P2 ideation',
   phases: [{ title: 'Generate' }, { title: 'Screen' }, { title: 'Judge' }],
 }
 // args: { project: "/abs/path", problem: "the bottleneck / open problem" }
+
+// ---- pure functions (workflows/tests/ loads the block between the markers) ----
+// BEGIN PURE
+// Borda count over per-criterion rankings (best-first name lists). Unknown names are ignored; ties keep the
+// input order (stable sort), so with no rankings the screening order is kept.
+function bordaOrder(names, rankings) {
+  const n = names.length, score = Object.create(null)
+  names.forEach(x => { score[x] = 0 })
+  ;(rankings || []).forEach(r => (r || []).forEach((x, i) => { if (x in score) score[x] += n - i }))
+  return names.slice().sort((a, b) => score[b] - score[a])
+}
+// END PURE
 const P = (args && args.project) || '.', Q = (args && args.problem) || 'the bottleneck named in STATE.md'
 const IDEAS = { type: 'object', properties: { ideas: { type: 'array', items: { type: 'object', properties: {
   name: { type: 'string' }, mechanism: { type: 'string' }, expected_gain: { type: 'string' }, kill_criterion: { type: 'string' } },
@@ -39,11 +51,17 @@ const alive = screened.filter(Boolean).filter(s => s.alive)
 log(`${alive.length}/${ideas.length} survived screening`)
 if (!alive.length) return { alive: [], note: 'nothing survived; broaden problem or revisit literature' }
 phase('Judge')
-const RANK = { type: 'object', properties: { ranking: { type: 'array', items: { type: 'string' } }, rationale: { type: 'string' } }, required: ['ranking'] }
-const ranks = (await parallel(['novelty for a top ZK venue (IACR conferences, CCS, S&P, USENIX Security), counting grey literature as prior art', 'feasibility within 8 weeks with our prover / circuit stack', 'size of the end-to-end gain (prover time, verifier time, proof size) at equal soundness'].map(c => () =>
-  agent(`Rank these ideas by ${c}. Return names best-first.\n${JSON.stringify(alive)}`, { phase: 'Judge', label: c, schema: RANK })))).filter(Boolean)
-const score = {}
-ranks.forEach(r => r.ranking.forEach((n, i) => { score[n] = (score[n] || 0) + (alive.length - i) }))
-const order = alive.map(a => a.name).sort((a, b) => (score[b] || 0) - (score[a] || 0))
-await agent(`Append these ideas to ${P}/IDEAS.md in its template format, ordered: ${order.join(', ')}. Data:\n${JSON.stringify(alive)}`, { label: 'write-ideas', effort: 'low' })
-return { order, alive }
+// One judge ranks on all three criteria in a single call; the Borda count below (pure, tested) combines them.
+const CRITERIA = { novelty: 'novelty for a top ZK venue (IACR conferences, CCS, S&P, USENIX Security), counting grey literature as prior art',
+  feasibility: 'feasibility within 8 weeks with our prover / circuit stack',
+  gain: 'size of the end-to-end gain (prover time, verifier time, proof size) at equal soundness' }
+const rankArr = { type: 'array', items: { type: 'string' } }
+const RANK = { type: 'object', properties: { novelty: rankArr, feasibility: rankArr, gain: rankArr, rationale: { type: 'string', description: '<= 10 lines' } },
+  required: ['novelty', 'feasibility', 'gain'] }
+const judged = await agent(`Rank these ideas separately on each of three criteria; for each criterion return all names ` +
+  `best-first, judging that criterion alone. ${Object.entries(CRITERIA).map(([k, c]) => `${k}: ${c}.`).join(' ')}\n${JSON.stringify(alive)}`,
+  { phase: 'Judge', label: 'judge', schema: RANK })
+if (!judged) log('WARNING: judge failed; ideas kept in screening order')
+const order = bordaOrder(alive.map(a => a.name), judged ? Object.keys(CRITERIA).map(k => judged[k] || []) : [])
+await agent(`Append these ideas to ${P}/IDEAS.md in its template format, ordered: ${order.join(', ')}. Data:\n${JSON.stringify(alive)}`, { label: 'write-ideas', model: 'sonnet', effort: 'low' })
+return { order, alive, rationale: judged && judged.rationale }

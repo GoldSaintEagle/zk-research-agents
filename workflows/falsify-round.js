@@ -98,7 +98,8 @@ function tally(votes, lensKeys) {
 
 const CLAIMS = { type: 'object', properties: { claims: { type: 'array', items: { type: 'object',
   properties: { id: { type: 'string' }, text: { type: 'string' },
-    circuit: { type: 'boolean', description: 'true if the row is tagged [circuit] or the claim is about a circuit, its constraints or witness' } },
+    circuit: { type: 'boolean', description: 'true if the row is tagged [circuit] or the claim is about a circuit, its constraints or witness' },
+    refs: { type: 'array', items: { type: 'string' }, description: 'EVIDENCE / THEORY / CIRCUITS ids named in the row (e.g. E12, T3, the circuit name)' } },
   required: ['id', 'text'] } } }, required: ['claims'] }
 const VERDICT = { type: 'object', properties: {
   verdict: { type: 'string', enum: VERDICTS },
@@ -107,7 +108,8 @@ const VERDICT = { type: 'object', properties: {
   required: ['verdict', 'evidence'] }
 
 phase('Load')
-const { claims } = await agent(`Read ${P}/CLAIMS.md and return every row whose status is "open".`, { schema: CLAIMS, effort: 'low' })
+const { claims } = await agent(`Read ${P}/CLAIMS.md and return every row whose status is "open", with the ids it ` +
+  `references in its EVIDENCE-refs and text cells.`, { schema: CLAIMS, model: 'sonnet', effort: 'low' })
 log(`${claims.length} open claims`)
 
 phase('Attack')
@@ -115,7 +117,10 @@ const results = await pipeline(claims, c => {
   const lenses = lensesFor(c)
   return parallel(lenses.map(lens => () =>
     agent(`Project: ${P}. Try hard to REFUTE claim ${c.id}: "${c.text}". Lens: ${lens.text}. ` +
-          `Read EVIDENCE.md, THEORY.md and CIRCUITS.md for context. Write any script you run under ${P}/falsify/${c.id}/. ` +
+          `Context, read by target not whole: grep -n '${c.id}' and the ids ${JSON.stringify(c.refs || [])} in ` +
+          `${P}/EVIDENCE.md, ${P}/THEORY.md and ${P}/CIRCUITS.md and read those rows / sections; open a whole file only ` +
+          `if the rows do not settle it. Write any script you run under ${P}/falsify/${c.id}/ and send long output to ` +
+          `a log there (only its tail enters your answer). ` +
           `If uncertain, answer weakened with a precise weaker wording that you CAN defend.`,
           { agentType: 'falsifier', phase: 'Attack', label: `${c.id}:${lens.key}`, schema: VERDICT })))
     .then(vs => {
@@ -132,7 +137,7 @@ await agent(`Update ${P}/CLAIMS.md: for each claim below set status and append f
   `For weakened claims write exactly the given weakened_wording (chosen from the vote with the most specific evidence; ` +
   `list the other proposed wordings in the evidence cell). For status open, keep the row open and note the errors. ` +
   `Do not delete rows.\n${JSON.stringify(done, null, 1)}`,
-  { label: 'write-ledger', effort: 'low' })
+  { label: 'write-ledger', model: 'sonnet', effort: 'low' })
 const errors = done.filter(r => r.errors.length).map(r => ({ id: r.id, errors: r.errors }))
 if (errors.length) log(`ERROR: ${errors.length} claim(s) with failed or insufficient votes; see the returned errors`)
 return { claims: done.map(r => ({ id: r.id, status: r.status, lenses: r.lenses, weakened_wording: r.weakened_wording })), errors }

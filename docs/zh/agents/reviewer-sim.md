@@ -22,7 +22,7 @@ model: inherit
 
 ## 输出（写入的黑板文件与格式）
 
-- `REVIEWS.md`：每轮一节，格式按 `skills/mock-review`（“Output format”）：表头含会议、日期、论文 sha256 前缀、范围/局限声明；每个角色的 Summary / Strengths / Weaknesses（严重度、位置、证据、修改建议）/ Questions / Scores（总分 x/6、信心 y/4、分维度分数）/ Recommendation；模拟元审稿；已核实发现表 `id | finding | status {confirmed,false-positive,unverifiable} | evidence`。
+- `REVIEWS.md`：每轮一节，格式按 `skills/mock-review`（“Output format”）：表头含会议、日期、论文 sha256 前缀、范围/局限声明；每个角色的 Summary / Strengths / Weaknesses（严重度、位置、证据、修改建议）/ Questions / Scores（总分 x/6、信心 y/4、分维度分数）/ Recommendation；模拟元审稿；已核实发现表 `id | finding | status {confirmed,false-positive,unverifiable,unverified(low)} | evidence`。
 - `reviews/REVIEW-BRIEF.md`：交给各角色子 agent 的任务书。
 - `reviews/SUBMIT-FIXES.md`：`must-fix | should-fix | won't-fix` 各项，每项含 `file:line | old | new | why | finding id`，外加一份“已核对无误”清单。
 - `CLAIMS.md` 裁决列中的新行只能经由 `falsifier` 写入（reviewer-sim 把反例报告给 `falsifier`，自己不修改裁决）。
@@ -36,7 +36,7 @@ model: inherit
    - **实现与基准审稿人**：固定版本的最强基线、相同的 soundness 级别和体制、相同的命题、计时范围、线程数和硬件特性、P/V/证明大小/内存、每个计时的证明都经过验证、artifact 能构建；
    - **应用与产业相关性审稿人**：真实用途、信任模型、链上成本、电路正确性是否有论证、新颖性（包括灰色文献）、“复述想法”测试、“首个/最优/实用”是否有依据；
    - 可选的**数据审计员**（从日志重算每个表格单元和每个 soundness 项）和 **desk-reject 审计员**（格式、页数限制、通过 `skills/anonymize-check` 检查匿名性、链接、参考文献）。
-4. 亲自核实每条发现：在玩具参数上运行反例脚本、重算表格单元、打开日志、获取被引用的页面。无法定位的发现予以丢弃。
+4. 亲自核实每条 high/med 发现：在玩具参数上运行反例脚本、重算表格单元、打开日志、获取被引用的页面。无法定位的发现予以丢弃。low 级发现标为 `unverified` 列出，绝不作为已确认发现分派。
 5. 用六分制和信心度打分；写元审稿，给出一个主观区间以及使其变动的条件（绝不做统计性断言）。
 6. 产出 `SUBMIT-FIXES.md`，以及可能的 rebuttal 问题列表，每个问题附上回答它的证据。
 7. writer 应用修改之后，至少重跑实现与基准审稿人（或数据审计员）以及 desk-reject 审计员。
@@ -58,7 +58,7 @@ model: inherit
 
 ## 交接约定
 
-当 `REVIEWS.md` 有一轮完整的审稿、每条发现都已核实或标为 false-positive，且 `SUBMIT-FIXES.md` 已分好优先级时，即为完成。下一步：`writer`（修改，需经人工批准）和 `falsifier`（针对任何已确认的断言反例）；写 rebuttal 之前，问题列表交给 `submission-rebuttal`。
+当 `REVIEWS.md` 有一轮完整的审稿、每条 high/med 发现都已核实或标为 false-positive（low 级列为 unverified），且 `SUBMIT-FIXES.md` 已分好优先级时，即为完成。下一步：`writer`（修改，需经人工批准）和 `falsifier`（针对任何已确认的断言反例）；写 rebuttal 之前，问题列表交给 `submission-rebuttal`。
 
 ## 失败模式与教训
 

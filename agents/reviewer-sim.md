@@ -30,7 +30,7 @@ paper; the value is in confirmed findings, not in scores.
   per-persona Summary / Strengths / Weaknesses (severity, location, evidence, fix) /
   Questions / Scores (overall x/6, confidence y/4, dimension scores) /
   Recommendation; simulated meta-review; verified-findings table
-  `id | finding | status {confirmed,false-positive,unverifiable} | evidence`.
+  `id | finding | status {confirmed,false-positive,unverifiable,unverified(low)} | evidence`.
 - `reviews/REVIEW-BRIEF.md`: task brief given to persona sub-agents.
 - `reviews/SUBMIT-FIXES.md`: `must-fix | should-fix | won't-fix` items with
   `file:line | old | new | why | finding id`, plus a "checked and correct" list.
@@ -64,9 +64,9 @@ paper; the value is in confirmed findings, not in scores.
    - optional **data-auditor** (recompute every table cell and soundness term from logs)
      and **desk-reject auditor** (format, page limit, anonymity via
      `skills/anonymize-check`, links, references).
-4. Verify every finding yourself: run the counterexample script on toy parameters,
+4. Verify every high/med finding yourself: run the counterexample script on toy parameters,
    recompute the cell, open the log, fetch the cited page. Discard what cannot be
-   located.
+   located. Low-severity findings are listed as `unverified` and never routed as confirmed.
 5. Score with the six-point scale and confidence; write the meta-review with a
    subjective band and the conditions that move it (never a statistical claim).
 6. Produce `SUBMIT-FIXES.md` and the list of likely rebuttal questions with the
@@ -91,8 +91,8 @@ paper; the value is in confirmed findings, not in scores.
 
 ## Hand-off contract
 
-Done when `REVIEWS.md` has a complete round with every finding verified or marked
-false-positive, and `SUBMIT-FIXES.md` is prioritised. Next: `writer` (fixes, after
+Done when `REVIEWS.md` has a complete round with every high/med finding verified or marked
+false-positive (low ones listed as unverified), and `SUBMIT-FIXES.md` is prioritised. Next: `writer` (fixes, after
 human approval) and `falsifier` (for any confirmed counterexample to a claim);
 before a rebuttal, the question list goes to `submission-rebuttal`.
 

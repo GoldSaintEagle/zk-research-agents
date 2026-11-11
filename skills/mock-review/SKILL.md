@@ -16,7 +16,8 @@ description: Use before submission (about 3 days and again 1 day before) or befo
    output. Do not present simulated scores as a prediction of the real outcome.
 3. **Only findings that can be located in the source, data or a script are accepted.**
    Reviewer agents produce false positives; the coordinating agent verifies each
-   finding (reproduce the counterexample, open the log, recompute the cell).
+   high/med finding (reproduce the counterexample, open the log, recompute the cell).
+   Low-severity findings are listed as `unverified` and are never routed as confirmed.
 4. **Read-only.** Mock reviewers never edit the paper; they write `REVIEWS.md`.
 5. **Evidence-based and constructive.** Each weakness cites a page/section/equation
    and proposes a fix.
@@ -44,8 +45,10 @@ argument). Weights and venue anchors from
    full benchmark; historical logs are not presented as fresh reproduction").
 2. **Dispatch** persona agents in parallel, each with the brief and instructions to
    try to refute first.
-3. **Verify** each finding: reproduce counterexamples with a script, recompute numbers,
-   open cited logs. Mark each finding `confirmed | false-positive | unverifiable`.
+3. **Verify** each high/med finding (one verifier pass per persona covering all of its
+   findings): reproduce counterexamples with a script, recompute numbers, open cited logs.
+   Mark each `confirmed | false-positive | unverifiable`; low-severity findings are marked
+   `unverified` and only triaged by the authors.
 4. **Score** with the six-point scale + confidence 1–4 per persona, plus dimension
    scores (problem value, novelty, technical soundness, experimental persuasiveness,
    precision of statements, reproducibility). Dimension scores are not averaged into
@@ -84,7 +87,7 @@ Score table | consensus points | disagreements | decisive issues |
 subjective band with conditions (not a statistic) | top preparation items for rebuttal
 
 ## Verified findings
-| id | finding | status confirmed/false-positive | evidence (script/log) |
+| id | finding | status confirmed/false-positive/unverifiable/unverified (low) | evidence (script/log) |
 ```
 
 ## Frequent catches
