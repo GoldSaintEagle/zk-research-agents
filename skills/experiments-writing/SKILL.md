@@ -1,105 +1,108 @@
 ---
 name: experiments-writing
-description: Use when turning benchmark results into the evaluation section. Enforces that every printed number traces to an EVIDENCE.md row, prescribes table designs (parameters, main results, ablation, comparison), fair-comparison statements, and boundary/limitation statements.
+description: Write or revise a ZK evaluation section from recorded evidence. Plans results by the question each experiment answers, separates measured and theoretical costs, and checks provenance, comparison scope, attribution and limitations.
 ---
 
 # Experiments writing
 
-## Iron rule
+Use [clear exposition and contribution emphasis](../paper-playbook/references/clear-exposition.md):
+connect the question to the measured object, observation and supported conclusion.
+Split unrelated explanations and retain a bridge when changing the cost or scope.
+Charge routine protocol work even when it is not emphasized as a contribution.
 
-**Every number printed in the paper (text, table, figure, caption, footnote,
-abstract) has an `EVIDENCE.md` row**: `ID | number as printed | command | log path |
-commit | machine | date | runs/median`. Tables are generated from the data files
-behind those rows (e.g. with the `crbench` table generator), not typed. Put
-`% EV:<ID>` comments next to hand-placed numbers so a script can cross-check.
+## Inputs and planning
 
-## Procedure
+Read the accepted contribution/evaluation claims, frozen logs and EVIDENCE rows,
+implementation scope, baseline manifest, and parameter/security records. Use
+[section planning](../paper-playbook/references/section-planning.md) and the
+[evaluation outline](../paper-playbook/sections/10_experiments.md). For structural
+examples, consult [the source analysis](../paper-playbook/references/formal-section-patterns.md).
+Reference papers illustrate exposition; they do not validate our comparisons or
+require us to reproduce their claims. Use the
+[shared terminology rules](../paper-playbook/references/terminology.md).
 
-1. **Freeze the data.** Ask `experimenter` for the final json/csv and the EVIDENCE
-   rows. Anything measured after the freeze requires a new row and a note in
-   `DECISIONS.md`.
-2. **Decide the scope sentence** for every range ("on the 9 circuits at 128-bit proven
-   soundness"). Scope comes from the parameter/soundness table, generated.
-   State the **timing scope** once and keep it everywhere: whether prover time includes
-   witness generation, preprocessing (key generation, circuit compilation) and setup.
-3. **Write the section** following `paper-playbook/sections/10_experiments.md`.
-4. **Generate tables** (below). Mark the best cell per column (bold, optional light
-   colour); two-level headers with `\multicolumn`; captions define every abbreviation
-   and symbol.
-5. **Write the fairness statements** (below) that apply.
-6. **Write boundary/limitation remarks** (below).
-7. **Cross-check script**: `crbench audit-tex paper/main.tex EVIDENCE.md` (lib/bench),
-   or extract every number from the PDF text (`pdftotext -layout`) and match it to
-   EVIDENCE rows; unmatched numbers are errors unless they are parameters or
-   citations. Record the result in `SUBMISSION.md`.
+Before drafting, map each intended result to
+`question | object/configuration | metric and included work | evidence | conclusion | limit`.
+An existing section plan can hold this map. Select tables and paragraphs that
+answer these questions; no fixed table set, nine-part structure or positive result
+is required. A cost-only paper may need analysis rather than experiments.
 
-## Table set
+## Workflow
 
-| table | contents | notes |
+1. Obtain the final data and provenance from the experimenter. Report missing
+   evidence rather than filling cells or launching an unrequested benchmark.
+2. Identify the implemented and measured object: component, recursive circuit,
+   prover, final verifier or full system. Separate symbolic counts, measured
+   counts, capacity upper bounds, predictions and runtime measurements.
+3. State comparison conditions before results: same computation, each system's
+   own sizes, parameter/security status, trust assumptions, platform, versions and
+   timing boundaries. Give the concrete parameter choices here, using the symbols
+   defined in the Preliminaries Notation subsection. A compact configuration table
+   can map symbol, selected value, role, provenance and measured/count-only status;
+   check the applicable mathematical conditions. Follow the
+   [parameter-placement rule](../paper-playbook/sections/07_preliminaries.md#general-setting-and-the-notation-subsection).
+   Clearly mark contextual or reported-only numbers.
+4. Draft result paragraphs as question/context → scoped observation → evidence →
+   interpretation and relevant limit. Use a phase breakdown or controlled ablation
+   for a mechanism claim only if the evidence supports it; a failed prediction is
+   a legitimate result. Do not assume components must be combined or one is necessary.
+5. Generate tables and figures from the data underlying EVIDENCE. Captions identify
+   units, configurations, error bars/statistics, timing exclusions and ratio direction.
+   Use readable venue-compliant layout rather than automatically shrinking tables.
+6. Run `crbench audit-tex paper/main.tex EVIDENCE.md`, inspect the actual output and
+   fix unexplained mismatches. Check abstract/intro/conclusion reuse the same scoped
+   results. Record the audit and change in the project's existing logs.
+
+## Number and comparison discipline
+
+- Every own printed numerical result has an EVIDENCE row, including counts,
+  estimates and parameter-derived bounds. Hand-placed results use `% EV:<ID>`.
+  Follow the evidence tool's explicit convention for cited values, mathematical
+  constants or other non-result numbers; never use an exemption to hide a result.
+- Freeze the actual data version. Measurements added later need new provenance;
+  do not relabel an earlier run as checking changed inputs.
+- For measured performance, report hardware, library/toolchain commits, threads,
+  repetitions, statistic and uncertainty, and the actual correctness check. Follow
+  [bench-protocol](../bench-protocol/SKILL.md): interleaved comparable arms, warm-up,
+  isolation/lock, thread control and proof verification for each timed proof run.
+  For a component that emits no proof, state its relevant validation instead.
+- Time includes or excludes witness generation, compilation, setup, preprocessing,
+  wrapping and final verification as explicitly stated. Report excluded costs
+  separately when relevant. State amortisation assumptions; do not silently divide
+  setup cost over hypothetical future use.
+- Equal-security comparisons require compatible security notions, level definitions,
+  models and proven/conjectured regimes. A nominal security parameter is not a
+  measured or proved security level. If unquantified, label that limitation and
+  restrict comparisons to what remains meaningful.
+- A runtime ratio needs compatible workloads, hardware and pipeline boundaries.
+  A theoretical operation-count ratio needs compatible counted operations and
+  scope; keep distinct trust interfaces distinct. Mark incomparable rows rather
+  than computing a speedup. Use [baseline-pin](../baseline-pin/SKILL.md) for baseline
+  fairness, and explain material differences or missing strongest comparators.
+- Counts from different arithmetisations are not a common unit. A component saving
+  does not establish a total-runtime saving; fewer group calls do not automatically
+  outweigh added field, hashing, memory or setup work.
+- State controlled changes before attributing improvement. A breakdown locates
+  cost; it does not alone establish causality. Parallelisation may benefit methods
+  differently; do not claim that single-threaded runs make hardware irrelevant.
+- Keep timeouts, failed verification, exclusions and regimes where the method loses
+  visible. Do not discard failed runs silently or generalise beyond tested inputs.
+
+## Table choices (use only applicable rows)
+
+| Reader need | Useful fields | Interpretation boundary |
 |---|---|---|
-| Parameters | one row per configuration: field/curve, PCS parameters (rate, queries, folding factor), grinding bits, soundness per term and total, proven/conjectured | `\resizebox{\linewidth}{!}` if wide; soundness column mandatory |
-| Main results | **one row per circuit or workload**: constraints (or rows × columns), P time, V time, proof size, peak memory, ratio | ratio column states "vs <baseline>" in the header; header says whether P time includes witness generation |
-| Preprocessing / setup | per circuit: setup or SRS generation, key generation / circuit compilation, proving- and verification-key sizes | **separate from P time**, never folded into it silently |
-| Prover breakdown | per phase: witness, commit, sum-check / quotient, open (and recursion/wrapping if used) | shows where the gain comes from |
-| Ablation | each component alone vs composed; failure counts/timeouts for variants that do not work | strongest evidence that the combination is necessary |
-| Mechanism check | model-predicted vs measured operation counts (MSM size, NTT size, hashes) | supports a cost model claim |
-| Comparison with published work | System, Ref, same statement, constraints, P/V time, proof size, setup, soundness (bits, p/c); "measured by us" vs "as reported" marker; threads/GPU | incomparable rows (different statement or soundness level): symbol + "—" in ratio column + caption explanation |
-| On-chain verification | verifier gas, calldata bytes, proof wrapping cost (e.g. to a pairing-based SNARK) | only when on-chain verification is part of the claim |
-
-Constraint counts from different arithmetizations are not comparable; compare the same computation and report
-each system's own count, with the compiler version in EVIDENCE.
-
-Layout: `\scriptsize`, `\arraystretch` ≈ 0.92, `\tabcolsep` ≈ 2.6pt; tables at `[t]`;
-table captions above tables, figure captions below figures.
-
-## Fair-comparison statements (use the ones that apply)
-
-- **Same pipeline:** "All ratios are against <baseline> run in our pipeline with the
-  same <radix/parameters/library commit>; only <stage> differs."
-- **Measured vs claimed:** "Rerunning the artifact of [X] on our machine reproduces
-  their claimed a–b× as c–d×; we report both."
-- **General caution before cross-paper tables:** "Such comparisons must be read with
-  care because of differences in libraries, hardware and failure probabilities; we
-  mark numbers taken from the original papers with ◇."
-- **Metric orientation remark:** "Our goal is throughput; for latency-critical
-  applications <other scheme> remains preferable."
-- **Parallelism remark:** "All our numbers are single-threaded. Evaluating
-  independent instances in parallel helps every scheme equally, so single-thread
-  numbers compare designs, not hardware."
-- **Security-level parity:** "Both our parameters and the baseline's give λ bits of
-  soundness under the same regime (proven / conjectured), computed with
-  <soundness calculator commit>; where the baseline's default parameters target a
-  different level, we re-parameterise it and report both."
-- **Timing scope:** "Prover times include witness generation and exclude
-  preprocessing and setup, for every system in the table; preprocessing is reported in
-  Table <n>." State it even if it seems obvious.
-- **Baseline strength:** "We use the fastest configuration of <library> for the
-  baseline (<flags>), not the default one." (Reviewers and shepherds check this.)
-
-## Boundary / limitation statements
-
-- Exclusions: "The k configurations below the claimed soundness level (or relying on a
-  conjecture where we claim proven soundness) are excluded from the headline ranges and
-  flagged in Table <n>."
-- Overheads: "Our prover uses 1.2–1.5× [ill.] the baseline's peak memory, and proofs
-  are 0.4 kB [ill.] larger."
-- Regime where we lose: "For t ≥ 7 [ill.], [X] is faster because ...; the regimes do
-  not overlap." Say it before a reviewer does.
-- Not applicable: "Our method requires <condition>; for instances violating it the
-  implementation falls back to the baseline (log shows '<message>')."
-- Measurement noise: "Absolute times vary with machine load across sessions; all
-  ratios come from interleaved back-to-back runs in one session."
-
-## Measurement hygiene to report (and to follow)
-
-- Interleave A/B runs (ABAB...) in the same session; report median and IQR/CI.
-- No concurrent heavy jobs; use a bench lock; pin threads.
-- Never mix numbers from different sessions in one ratio; if an earlier number is not
-  reproducible, retract it explicitly (and say so in the rebuttal if already quoted).
-- Proof verification for every timed run (the verifier must accept; a run whose proof
-  fails is reported, not dropped).
+| Know the configuration | Workload, field/curve, backend, algorithm parameters, security status | A security claim must trace to an actual bound; unknown is not a nominal bit count |
+| Compare outcomes | Metric, scope, baseline, uncertainty, ratio direction | Mark measured versus reported; no unsupported ratio |
+| Understand costs | Prover/verifier time, proof size, memory, setup/preprocessing as relevant | Do not hide a material adverse metric |
+| Test the mechanism | Phase work, controlled ablation, prediction versus observation | Report which factors were actually controlled |
+| Inspect scaling | Size/arity/degree or other varied factor with fixed factors specified | Avoid extrapolating past tested or defined regimes |
+| Reproduce results | Versions, commands, artifact/data locations and verification | Instructions and actual executed runs remain distinguishable |
 
 ## Output
 
-`paper/sections/experiments.tex`, generated tables in `paper/tables/`, the
-cross-check report in `SUBMISSION.md`.
+The requested evaluation text, generated tables/figures as needed, a compact
+question-to-evidence plan and the actual audit result in existing project records.
+Normally the text is `paper/sections/experiments.tex`; respect the manuscript's
+existing organisation. Missing evidence is a research task, not an invitation to
+invent prose, a theorem or an experiment.

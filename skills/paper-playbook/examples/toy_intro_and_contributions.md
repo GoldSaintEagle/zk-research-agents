@@ -1,77 +1,61 @@
-# Toy introduction and contribution list — good vs bad
+# Synthetic introduction and contribution examples
 
-Invented paper T1 ("ToyLookup", a lookup argument with table-independent prover
-cost). Numbers are **illustrative** `[ill.]`; citations like [A23] are placeholders.
+These examples illustrate writing decisions, not established lookup constructions,
+empirical results or literature claims. Placeholder references A and B are
+fictional. In an actual paper, accepted claims and source-checked evidence must
+replace the hypothetical inputs before prose enters the manuscript.
 
-## Contribution list
+## Hypothetical inputs
 
-### Bad
+Suppose a paper proves an operation-count bound for a specified class of lookup
+tables and implements only its commitment-construction component. It has no
+complete-system timing result and no new zero-knowledge theorem. Its theorem
+requires a table representation with a stated evaluation property.
 
-```latex
-\subsection{Our Contributions}
-\begin{itemize}
-\item We study lookup arguments and prove Lemma 3 and Theorem 5.
-\item Our argument is 3.4x faster, although proofs are larger than in [A23].
-\item We investigate how to make lookups secure and zero-knowledge.
-\item We implement everything.
-\end{itemize}
-```
+## Introduction: diagnose the missing information
 
-Problems: lemma numbers; concession inside contributions; "study/investigate";
-"secure" names no notion or model; numbers in the wrong bullet and without security
-level or timing scope; no section pointers; no deliverable in the last bullet.
+Bad:
 
-### Good
+> We introduce a universal folding-aware lookup accelerator that resolves the
+> inefficiency of existing proof systems. Our framework opens a new dimension.
 
-```latex
-\subsection{Our Contributions}
-Inspired by the observation that only the support of the multiplicity vector enters
-the prover's work, we determine when a lookup argument can avoid committing to
-anything of table size. Building on it, we propose ToyLookup, a lookup argument in
-which the logarithmic-derivative lookup of [A23] is the special case $k=1$. Our main
-contributions are:
+The reader does not know what is computed, what “universal” means, which cost is
+reduced or which assumption is needed. New labels hide these missing facts.
 
-\begin{itemize}
-\item \textbf{From the multiplicity support to table-independent provers.} We show
-  that the prover only needs to commit to the restriction of the multiplicities to
-  their support, of size at most $m$, and that the table enters solely through one
-  multilinear evaluation. This covers every table with a succinctly evaluable
-  multilinear extension, including the range and XOR tables used by 90\% [ill.] of
-  the lookups in the benchmark circuits of \Cref{tab:coverage}.
-\item \textbf{A unified view of logarithmic-derivative lookups.} The lookup of [A23]
-  is the case $k=1$ and the preprocessed variant of [B24] the case of an unstructured
-  table; interior points, reachable by neither, are optimal for large structured
-  tables. For any table the best $k$ is selected by a closed-form rule
-  (\Cref{sec:select}).
-\item \textbf{A knowledge-sound, zero-knowledge argument.} We compile the PIOP with
-  any extractable, hiding multilinear PCS and prove knowledge soundness and
-  (full) zero knowledge in the ROM, with a universal setup (\Cref{sec:security}).
-\item \textbf{Faster provers for large tables.} For $m=2^{20}$ [ill.] lookups into a
-  $2^{32}$-entry [ill.] table at 128-bit proven soundness, proving is 2.1--3.4$\times$
-  [ill.] faster than the strongest baseline on the same machine, every proof verified
-  (\Cref{tab:main}).
-\end{itemize}
-```
+Better, conditional on the hypothetical inputs above:
 
-## Opening funnel
+> A lookup argument checks that witness values belong to a specified table. In
+> the construction considered here, committing to the table-dependent vectors
+> contributes to prover work. We study tables whose representation permits the
+> evaluations required by our construction to be computed succinctly. For that
+> class, we give a different representation of the committed data and bound its
+> commitment work. We also measure the commitment-construction component; these
+> measurements do not establish a speedup for a complete lookup argument.
 
-### Bad
+Function map: task → particular cost → required table property → deliverable →
+evidence boundary. A real draft supplies the exact property and the theorem/cost
+references. No global open problem, numbered objective or new acronym is needed.
 
-> ZK is a hot topic. Many papers have been written about lookups. Lookups are slow.
-> In this paper we make them faster.
+## Contributions: match the available results
 
-### Good (structure only; wording illustrative)
+Bad:
 
-> Succinct arguments let a prover convince a verifier that a computation is correct,
-> with verification far cheaper than the computation [..]. Among arithmetizations,
-> Plonkish constraint systems with lookups are the ones of choice for circuits with
-> many range checks and non-native operations, because a lookup replaces a bit
-> decomposition by a single table membership [..]. This line of work [.., .., .., ..]
-> has steadily reduced the cost per lookup, yet provers still pay for the table.
-> Concretely, a logarithmic-derivative lookup factors into three stages:
-> (i) multiplicity computation ..., cost O(m + N); (ii) commitments to the inverse
-> vectors ..., an MSM of size m + N; (iii) a sum-check over the two sums ..., O(m + N)
-> field operations. Every previous construction can be cast as
-> \[ \min_{\Pi}\ \mathrm{cost}_{\mathcal{P}}(\Pi) \quad \text{s.t. } \Pi \text{ is a knowledge-sound argument for } \mathcal{R}_{\mathrm{lkp}}. \tag{1}\]
-> Whether a lookup argument can make cost_𝒫 independent of N without per-table
-> preprocessing has remained open.
+> We prove Theorem 3, unify prior approaches, implement everything, and obtain
+> practical zero-knowledge proofs.
+
+This hides the actual result and promises unsupported scope. The theorem pointer
+itself is not the problem; the missing description and unsupported properties are.
+
+Better, still hypothetical:
+
+- **Representation and operation count.** We give a representation for tables
+  satisfying the stated evaluation property and prove the commitment-work bound
+  in the main theorem. The bound includes the representation's preprocessing cost.
+- **Component evaluation.** We implement the commitment-construction stage and
+  compare it with the direct construction under matched inputs. The evaluation
+  reports both its runtime and storage requirements; it does not cover the rest
+  of the argument.
+
+Two contributions suffice for these inputs. A theorem pointer, a necessary
+qualification and the cost of the gain can all appear in a contribution. Do not
+add security, compiler or experiment bullets merely to fit a preferred count.

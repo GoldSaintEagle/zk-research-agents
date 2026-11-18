@@ -1,63 +1,52 @@
-# 06 Related Work
+# 06 Related work
 
-Full procedure: [related-work-writing](../../related-work-writing/SKILL.md).
+## Reader's question and inputs
 
-## Organise by axis, not by time
+Which prior results address the relevant task, how do their definitions and
+guarantees differ, and what is the precise contribution here? Use the checked
+`LITERATURE.md` matrix, verified bibliography, original passages and our accepted
+results. Read [section planning](../references/section-planning.md),
+[reference positioning patterns](../references/front-section-patterns.md), and
+[related-work-writing](../../related-work-writing/SKILL.md).
 
-Place all prior work on one or two **axes** (e.g. "reduce prover work" vs "reduce
-proof size"; "transparent" vs "trusted setup"; "table-size dependent" vs
-"preprocessed"). A comparison table places
-each work at a coordinate; the "Ours" row occupies the region no one else does. The
-section itself then argues "prior work sits on the boundary, we are in the interior".
+## Functional outline
 
-## Structure (≈ 2 LNCS pages)
+| Function | Content and dependency |
+|---|---|
+| Establish comparison scope | Identify the task, object, model or cost being compared before grouping papers. |
+| Explain relevant approaches | Summarise the mechanism and supported result of each necessary work or family. Give actual sources and avoid unsupported claims about all prior work. |
+| State the relationship | Explain a precise difference, restriction, shared technique or complementary role, under the relevant assumptions. |
+| Compare when valid | Use common definitions and cost units; provide a table when it clarifies several comparable properties. Label mismatches and unavailable entries. |
+| Position this paper | State the supported delta and retained limitations. Point to the full contribution or proof instead of repeating it. |
+| Handle timing when relevant | Distinguish prior, concurrent and subsequent work using the actual versions and dates. |
 
-```
-[lead-in, 3 sentences]  We overview prior optimisations for <task>, focusing on
-                        <bottleneck>. Accelerating (1) follows two paths: <axis 1> and
-                        <axis 2>. Table 1 summarises the asymptotic comparison.
-[Table 1]               columns: Technique | Method | <cost measure 1> | <cost 2> | <coordinate>
-                        rows grouped by technique; last row \textbf{Ours}; caption defines
-                        every symbol; † ‡ footnotes mark scope restrictions.
-[¶ axis 1, classic]     one sentence per work: authors + what + cost; last sentence states
-                        what all of them still share ("... at a cost that still grows
-                        with <parameter>").
-[¶ recent, both axes]   "Recently, two independent lines of work exploit <structure>
-                        rather than <old measure>:" then two bullets, each built on a pair
-                        of contrasting verbs (e.g. "restricts *where* ..." vs "restricts
-                        *how* ...").
-[¶ bridge]              \textbf{Insight from <structure>.} Why the two lines are compatible
-                        (one algebraic/structural reason), where each prior work sits in
-                        our framework, back-reference to Table 1.
-[¶ Our work]            five sentences: framework + three technical points joined by
-                        colons/commas + one results sentence. This is the elevator pitch.
-[¶ orthogonal]          "Complementary approaches" (alternative pipelines, other schemes)
-                        in 2–3 sentences, labelled as complementary.
-```
+Group by the question that matters: computational model, supported relations,
+proof notion, recursion method, setup, commitment interface or cost. Chronology
+is useful when explaining a development, but a chronological catalogue alone
+does not establish a contribution. No fixed pair of axes, contrasting verbs,
+bridge paragraph, five-sentence pitch or mandatory “Ours” row is required.
 
-## Rules
+## Source and comparison discipline
 
-- Judge prior work only by **factual limitations**: "they instantiate a single
-  case, leaving open ...", "the required correction is assumed rather than shown to
-  exist". Never "unfortunately", "fail to", "naive".
-- Give each prior work's cost in its concrete form (e.g. O(N + m) field ops and an
-  MSM of size m) and its security notion and model, and verify both against the
-  original paper, not a secondary description.
-- ZK moves fast: cover ePrint, the major project repositories and design documents
-  (grey literature) with access dates, and mark concurrent work as such.
-- The "Ours" row equals, character for character, the formula in the abstract,
-  contribution 3 and the body proposition.
-- Your own earlier papers appear in the third person and receive the same factual
-  critique as anyone else's.
-- When you restate a prior work's bottleneck, reread **that paper's own experiments
-  section**; the bottleneck it states about itself is often different from how later
-  papers paraphrase it, and misattribution is easy to catch.
-- Concurrent work gets its own short labelled paragraph ("Concurrent work.").
+- Prefer relevant published sources and inspect the actual technical passage.
+  If a detail comes from an extended version or preprint, identify that version.
+  A later paper's description is not a substitute for reading the cited original.
+- For claimed bottlenecks, inspect the original analysis or evaluation. Do not
+  automatically turn a measured cost on one workload into an inherent limitation.
+- Map equivalent terms into common prose under the
+  [terminology rules](../references/terminology.md); preserve different definitions,
+  trust boundaries and security notions. Similar names do not imply the same scheme.
+- Compare the strongest relevant alternatives, including complementary results.
+  Not every prior approach must lose or occupy a boundary of our construction.
+- Separate source-reported measurements, our reruns, estimates and asymptotic
+  analysis. Incomparable security levels or statements cannot support a speedup.
+- Cite own previous work in the same manner as other work, subject to venue rules.
+  State factual differences without disparagement or invented shortcomings.
 
 ## Checklist
 
-- [ ] Organised by axis; Table 1 with an "Ours" row.
-- [ ] Contrasting verb pair used for parallel routes.
-- [ ] Bridge paragraph + "Our work" paragraph present.
-- [ ] Each cost formula verified against the source paper.
-- [ ] No evaluative adjectives about others.
+- [ ] Each characterisation has a source/version and technical locator in working notes.
+- [ ] Grouping follows the paper's question; no artificial unification is asserted.
+- [ ] Comparative entries share scope or clearly disclose their differences.
+- [ ] Our positioning agrees with the exact accepted claims and evidence.
+- [ ] Publication status, concurrent work and source-specific vocabulary are accurate.

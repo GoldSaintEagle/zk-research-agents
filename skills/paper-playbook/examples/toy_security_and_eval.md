@@ -1,84 +1,66 @@
-# Toy security statements and evaluation tables — good vs bad
+# Toy formal exposition and evaluation examples
 
-Invented papers T1–T3 (see `toy_abstracts.md`). Every number is **illustrative**
-`[ill.]`; citations like [A23] are placeholders.
+These are synthetic writing exercises, not established cryptographic protocols,
+proofs or benchmark records. They illustrate functional organisation. Any symbols
+for errors or times stand for values a real project must justify; do not copy them
+as a generic security theorem.
 
-## Theorem statements (T1)
+## A theorem before and after scope repair
 
-### Bad
+Bad: “The construction is secure and zero knowledge.”
 
-> **Theorem 1.** ToyLookup is secure.
+Better structure: identify the particular protocol, relation and security experiment;
+state the model, assumptions and adversary/extractor resources; then state the
+property proved and its exact error bound. If only a conditional extraction theorem
+has been established, name its knowledge assumption in the statement. Do not add a
+simulator or a numerical security level to complete a template.
 
-Problems: no notion (soundness? knowledge soundness? ZK?), no model, no setup, no
-error bound, no hypothesis on the field or the table.
+| Unit | Content in a hypothetical extraction result | Why it belongs here |
+|---|---|---|
+| Statement | Under assumption A, the named extractor produces a witness for relation R with the proved failure bound B and total runtime bound T | Makes the guarantee and conditions explicit |
+| Strategy | Explain which transcript information recovers the witness | Gives the reader a route through the proof |
+| Lemmas | Establish extraction, consistency and all applicable bad-event/runtime bounds | Connects the strategy to actual obligations |
+| Conclusion | Combine the lemmas under their common premises | Supports B and T, without inventing their form |
 
-### Good
+Bad inference: “The PCS is hiding, so the protocol is statistically zero knowledge.”
+Repair: determine what transcript values are revealed, supply the actual simulator
+and distribution argument, or remove the unsupported ZK claim. Likewise, an
+interactive error multiplied by a query count is not automatically a valid
+Fiat–Shamir theorem.
 
-> **Theorem 1 (Completeness).** For every (t, C_a; a) ∈ ℛ_lkp and every γ ∈ 𝕂 with
-> γ ≠ −t_j for all j, the honest prover of Protocol 1 makes the verifier accept with
-> probability 1.
->
-> **Theorem 2 (Knowledge soundness of the PIOP).** If char 𝔽 > m, Protocol 1 is knowledge sound with
-> knowledge error ε_PIOP ≤ (m + N)/|𝕂| + μ·2/|𝕂|, where μ = log m is the number of
-> sum-check rounds.
->
-> **Theorem 3 (Compiled argument).** Let PCS be an extractable multilinear PCS with
-> extraction error ε_PCS, and let ℋ be a random oracle. The Fiat–Shamir compilation of
-> Protocol 1 with PCS is a non-interactive argument of knowledge in the ROM with
-> knowledge error at most Q·ε_PIOP + ε_PCS for adversaries making at most Q queries to
-> ℋ, with the setup of PCS. If PCS is hiding, it is (statistical) zero knowledge.
+## A component evaluation without a system claim
 
-## Extractor sketch (T1, body version)
+Synthetic setting: an implementation replaces one commitment subroutine; recorded
+experiments cover only that subroutine. The full recursive prover is unimplemented.
 
-> The extractor ℰ runs 𝒫* and the PCS extractor on the commitments to a, c, h and g,
-> obtaining multilinear polynomials ã, c̃, h̃, g̃ except with probability ε_PCS. If
-> the verifier accepts, the sum-check soundness and Schwartz–Zippel imply, except
-> with probability ε_PIOP, that h_i = 1/(γ + a_i), g_j = c_j/(γ + t_j) and
-> Σ_i h_i = Σ_j g_j as rational functions in γ, hence that every a_i is a pole of the
-> right side, i.e. a_i ∈ {t_j}. ℰ outputs a. The full proof (Appendix A.2) bounds the
-> number of rewinds by the forking lemma for the Fiat–Shamir version.
+| Function | Appropriate prose content | Unsupported extension |
+|---|---|---|
+| Scope | Identify the subroutine inputs and the timed operations | Call the result end-to-end proving time |
+| Conditions | State baseline, inputs, machine, included work and security status | Assert equal security from equal parameter labels |
+| Result | Report the recorded time and uncertainty with its evidence row | Fill missing proof-size or full-system cells |
+| Interpretation | Compare the measured subroutine under those conditions | Infer full-system speedup from one component |
+| Limit | State unmeasured integration, memory or setup costs that matter | Hide them in a distant appendix |
 
-## Simulator sketch (T1, body version)
+Use ratios only for matched measurements. A reported value from another paper
+with different hardware can provide context, with the difference stated, but does
+not acquire comparability by being placed in the same table. An ablation that
+finds no benefit still answers a question; it should not be rewritten to claim
+that all components are necessary.
 
-> The simulator 𝒮 samples γ and the sum-check challenges first and programs ℋ
-> accordingly. It commits to random multilinear polynomials of the right sizes
-> (hiding), runs the sum-check on masked polynomials whose sum is zero by
-> construction, and answers the PCS evaluation queries with uniform values. Because
-> each committed polynomial is masked with enough random coefficients to cover the
-> 2 + μ evaluations revealed [ill.], the transcript is identically distributed.
+## Circuit correctness is a relation claim
 
-Bad version: "zero knowledge follows from the hiding of the PCS". It ignores the
-evaluations revealed by the openings and the sum-check messages.
+Bad: “All witnesses were unique on a small field, so the circuit is correct.”
 
-## Comparison table (T2), good shape
+Better structure: specify the intended relation and allowed witness multiplicity;
+check under- and over-constraint, witness generation, ranges and field wraparound;
+report exactly which exhaustive or differential tests ran, then state their limited
+scope. Uniqueness is a requirement only when the specification needs it. Small-field
+tests do not prove all-field correctness, and range bounds must justify each
+arithmetic operation rather than assume products never wrap.
 
-```latex
-\begin{table}[t]\centering\scriptsize
-\caption{Proving a $2^{24}$-row [ill.] zkVM trace. All systems at 100-bit proven
-soundness [ill.] (\Cref{tab:soundness}); prover time includes trace commitment and
-FRI, excludes witness generation (\Cref{tab:witness}); same GPU, median of 7 runs,
-every proof verified. $\diamond$: as reported by the authors, different GPU.}
-\begin{tabular}{lrrrrr}
-\toprule
-System & P time (s) & V time (ms) & proof (KiB) & peak mem. (GiB) & ratio \\
-\midrule
-{[D23]}          & 41.2 [ill.] & 3.1 [ill.] & 182 [ill.] & 38.0 [ill.] & 1.00 \\
-{[E24]}$^\diamond$ & 30.5 [ill.] & 2.9 [ill.] & 176 [ill.] & 44.1 [ill.] & — \\
-\textbf{ToyProver} & \textbf{24.8} [ill.] & 3.1 [ill.] & 182 [ill.] & \textbf{7.3} [ill.] & 1.66 \\
-\bottomrule
-\end{tabular}\end{table}
-```
+## Deferred proof
 
-What it shows: equal soundness and regime stated in the caption; timing scope
-stated; P, V, proof size and memory together; a reported-only row gets "—" in the
-ratio column; the proof size is identical because the proof is unchanged.
-
-## Circuit-correctness paragraph (T3)
-
-> **Circuit correctness.** Each gadget (range check, limb decomposition, non-native
-> multiplication, signature verification) was checked for under-constraint by
-> enumerating all witnesses for every public input over a 17-element toy field and
-> confirming uniqueness, and by differential testing of the witness generator against
-> the constraints on 10^4 [ill.] random inputs at full size. Range checks bound every
-> limb to 16 bits, so no limb product wraps around the field modulus (Lemma 4). The
-> scripts are part of the artifact.
+The body states the theorem with all assumptions and describes the key reduction.
+The appendix identifies that theorem, recalls the setup, proves the deferred lemmas
+and reconnects them to the result. A precise body pointer reaches the full proof.
+The appendix contains detail, not a previously undisclosed hypothesis.

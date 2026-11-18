@@ -16,7 +16,7 @@ and system names such as ToyLookup, ToyProver or ToyFRI-SNARK do not exist.
 > methods, up to 9.1× [ill.]. Code is available at
 > https://github.com/<real-username>/toylookup.
 
-What is wrong: no bottleneck, no prior routes, no open question; "novel",
+What is wrong: no concrete task or bottleneck; "novel",
 "significantly" without scope; "secure" names neither soundness notion nor model;
 "post-quantum" without the assumption (and the toy scheme uses a pairing-based PCS);
 the ratio has no baseline, no security level, no machine; the link de-anonymises the

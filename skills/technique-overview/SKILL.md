@@ -1,82 +1,83 @@
 ---
 name: technique-overview
-description: Use when writing the Technique Overview ("Our Techniques") subsection: recall prior routes at a mathematical level, reduce the gap to numbered questions, answer each with a declarative "Insight" plus one figure, so a reviewer can restate the core idea.
+description: Draft or revise a technique overview by explaining concrete objects, obstacles, operations and composition dependencies. Uses checked reference passages as structural examples and preserves theorem assumptions, cost boundaries and established terminology.
 ---
 
 # Technique overview
 
-## Goal test
+## Inputs and reader test
 
-After reading only the abstract, introduction and overview, a reviewer can:
-(a) restate the main idea in two sentences, (b) write down the key formula,
-(c) say where each prior work sits relative to it, (d) believe the main theorem is
-plausibly true. Ask `reviewer-sim` (application-and-industry-relevance reviewer, which runs the
-restate-the-idea test) to perform exactly this test.
+Read the actual construction, theorem statements and assumptions, survived/weakened
+CLAIMS, EVIDENCE and checked original references. A reader should be able to restate
+the core operation, identify what enters and leaves each component, and explain
+which premise makes the informal argument valid. Plausibility does not establish
+security; the overview must point to the real proofs.
+
+For a substantial rewrite, use the shared
+[section-planning method](../paper-playbook/references/section-planning.md) and
+[source passage analyses](../paper-playbook/references/front-section-patterns.md).
+The [overview section guide](../paper-playbook/sections/05_technique_overview.md)
+gives its flexible outline. Read only the relevant examples and references.
+
+Follow [clear exposition and contribution emphasis](../paper-playbook/references/clear-exposition.md).
+Carry the reader through the actual objects A → B → C; explain each non-obvious
+transformation before moving to the difficulty it creates. Split distinct problems
+across sentences and signal independent branches. Explain how a group equation
+becomes a polynomial relation when that is the method; naming a certificate is
+not the intervening argument. Keep routine commitment/challenge order and standard
+Fiat–Shamir compilation in their supporting role, preserving their real premises.
 
 ## Procedure
 
-1. **List the prior routes** from `LITERATURE.md` (usually 2, sometimes 3). For each
-   paper in each route write: its key identity/formula, its cost, and the one
-   factual thing it leaves open. Verify each against the original paper.
-2. **Find the common object.** Phrase all routes as acting on the same mathematical
-   object or optimising the same objective (Eq. (1) of the introduction). If no common
-   object exists, the "unification" story is forced; tell the human author and
-   consider a different framing (e.g. "two orthogonal improvements that compose",
-   supported by a measured composition).
-3. **Reduce to questions.** "Whether the routes compose reduces to two questions:
-   (i) ... (ii) ...". Questions must be precise enough that a theorem answers them.
-4. **One Insight per question.** Heading = declarative sentence stating the answer.
-   Body: observation → reformulation → key formula (copied from the body theorem) →
-   conclusion → why the boundary case is tight or where it fails.
-5. **Figure.** A grid/axis diagram (prior works as corners/points, ours as the new
-   region) or a data-flow diagram of the new algorithm. Ask `figure-artist` for it;
-   caption = one sentence stating placement.
-6. **Composition paragraph** with the combined identity and cost.
-7. **Optional scope extender.** One paragraph showing the technique applies to a
-   neighbouring scheme, quantified by formula only (cheap, raises significance). Mark
-   it clearly as not implemented if so.
-8. **Consistency check**: `grep` each displayed formula in the body; string-compare.
+1. Extract the task, obstacle, actual change, required property and cost consequence
+   from the body. Record which parts are new, adapted or reused. A theory result,
+   component improvement and complete system require different explanations.
+2. Inspect the requested references' relevant overview passages. In working notes,
+   record the source/version, paragraph or argument unit, content, function and
+   prerequisites. Analyse individual sentences where a new term or transition
+   needs explanation. Borrow the functional pattern, not names or distinctive prose.
+3. Plan our units before drafting: reader question → concrete objects → operation
+   or obstacle → mechanism → validity intuition → interface/cost consequence.
+   Merge or reorder units when dependencies permit. Questions, failed attempts,
+   numbered Insights, a diagram and a worked example are optional devices.
+4. Describe actions on objects before using unusual names. Follow the
+   [shared-usage terminology rules](../paper-playbook/references/terminology.md):
+   among equivalent names prefer those shared by most relevant independent works
+   consulted, prioritising published sources. Attribute source-specific terminology
+   and keep inequivalent definitions distinct.
+5. Introduce premises before derivations. Reuse formulas from the body; label a
+   simplified case and check the mapping rather than testing string equality alone.
+   Explain what the equation checks and what remains to be proved or verified.
+6. State composition only for actual components. Give each input/output interface
+   and required property; name the theorem supporting the step. If using a PIOP,
+   PCS and Fiat–Shamir compiler, state the required degree/query bounds, commitment
+   properties and model. If the construction is a folding scheme or a circuit,
+   describe that construction directly. Do not invent a final argument.
+7. Connect each gain to its cost measure and material price. Distinguish native
+   operations from in-circuit work, local verification from final verification,
+   and a count from measured runtime. Preserve setup, public-input processing,
+   preprocessing and memory boundaries where they affect the claim.
+8. Check the draft against the body and its evidence. Request a figure only if it
+   clarifies the mechanism. Under the project's review workflow, have an independent
+   reader perform the restatement test and report missing prerequisites or scope
+   mismatches; this editorial test does not replace scientific falsification.
 
-## ZK papers: the layered decomposition
+## Common failure modes
 
-ZK reviewers read a construction as a compiler pipeline. Write the overview in that order and say, per layer,
-whether it is **new**, **adapted** (a known component with a change you name) or **off the shelf** (cite it):
-
-| layer | what to state | typical "new here" |
-|---|---|---|
-| relation / arithmetization | the relation R = {(x; w)} and how a computation becomes it (R1CS, Plonkish, AIR, CCS) | a cheaper encoding, custom gate, lookup layout |
-| PIOP | oracles sent, queries made, degree bounds, rounds; soundness error of the information-theoretic protocol | a new sum-check / permutation / lookup argument |
-| PCS | which commitment instantiates the oracles; what the compilation needs (binding, extractability, hiding for ZK, batch openings) | a new or modified PCS, a cheaper batch opening |
-| compiler | Fiat–Shamir transform (non-interactive), or folding / recursion / proof composition | a new folding scheme, a recursion boundary, round-by-round soundness argument |
-
-Rules for this decomposition:
-
-- Open with one sentence that names the stack: "Our SNARK is the <PIOP> compiled with <PCS> and made
-  non-interactive with Fiat–Shamir." Then one Insight per layer that is **new**; layers that are off the shelf get
-  one sentence and a citation, not an Insight.
-- Each Insight states what the layer below must provide (e.g. "the PIOP queries only multilinear oracles, so any
-  multilinear PCS with extractability suffices"). This is where reviewers look for missing compilation hypotheses.
-- Put the cost of each layer in the same units as the P/V/π columns of the comparison table, so the composition
-  paragraph (step 6) is a sum of per-layer costs.
-- Say where soundness is lost: the PIOP error, the PCS error, and the Fiat–Shamir loss; state whether each is proven
-  or conjectured. Do not introduce a security level here that the soundness table does not contain.
-- The grid figure (step 5) can place prior works on two layer axes (e.g. PIOP × PCS); ours fills the empty cell.
-
-## Style rules
-
-- Describe prior work per paper and mathematically; do not write a tutorial with
-  "Why X is needed / Where the cost goes" headings.
-- Use "Suppose ..." to introduce hypotheses before derivations.
-- For density/asymptotic results: "asymptotic density ..., certified per instance".
-- No new claims that the body does not prove; no numbers that the experiments section
-  does not contain.
-- Keep limitations as short remarks at the end of the relevant insight, not in the
-  contribution list.
+- Treating two unrelated techniques as a unified framework because a template asks
+  for two routes, or placing prior works at geometric corners without a proven map.
+- Explaining a method through undefined labels instead of commitments, evaluations,
+  messages, relations or circuits and the operations performed on them.
+- Repeating the related-work survey instead of explaining the actual change.
+- Assuming ROM security carries over to a chosen hash, or omitting an extra
+  knowledge assumption when moving from a primitive to recursion.
+- Adding an unproved extension, security level, final SNARK or performance claim
+  because it makes the story sound more complete.
 
 ## Output
 
-`paper/sections/overview.tex` (or inside `intro.tex`), figure request in
-`paper/figs/REQUESTS.md`.
-
-Examples: `skills/paper-playbook/sections/05_technique_overview.md`,
-`skills/paper-playbook/examples/toy_overview_and_related.md`.
+The requested section, commonly `paper/sections/overview.tex` or part of `intro.tex`,
+its function/dependency plan in the project's section-planning notes, and a short
+change log. Write a figure request to `paper/figs/REQUESTS.md` only when needed.
+For manuscript edits, compile and run the applicable claim/numerical consistency
+checks; do not run new experiments as part of a prose pass.

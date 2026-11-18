@@ -1,73 +1,64 @@
 # 10 Implementation and evaluation
 
-Full procedure, table set and fairness statements:
-[experiments-writing](../../experiments-writing/SKILL.md). Measurement protocol:
-[bench-protocol](../../bench-protocol/SKILL.md); baselines:
-[baseline-pin](../../baseline-pin/SKILL.md).
+## Reader question and inputs
 
-## Nine-part structure
+What evidence answers the paper's performance or implementation questions, under
+what conditions, and what can it not establish? Use frozen EVIDENCE rows and actual
+logs, implementation scope, baseline manifests and the parameter/security record.
+The writer reports results; missing experiments go back to the experimenter.
 
-```
-[opening]        "We implement <system/circuit> in <language/library>, changing only
-                 <component>; everything else is that of <baseline>, so every gain below
-                 is due to <component> alone." Artifact footnote. Signpost: §x.1 fixes the
-                 setup, §x.2 reports results.
-[baselines]      One bullet per baseline: name + citation + what it is + pinned commit +
-                 where it runs (our pipeline vs their artifact) + repository link.
-                 Paragraph on why some systems are "reported for context" only (different
-                 statement, different setup model).
-[platform]       CPU model and frequency, cores and threads, SIMD/asm features, GPU model
-                 and driver if used, memory, compiler/toolchain and library commits,
-                 repetitions and statistic, "every timed run verifies its proof".
-[parameters]     Table: one row per parameter set: field/curve, PCS parameters (rate,
-                 queries, folding factor), grinding, soundness per term and total,
-                 proven/conjectured (the table from §9 D, or a pointer to it).
-[timing scope]   One sentence fixed for the whole section: whether prover time includes
-                 witness generation, preprocessing and setup; where the excluded parts
-                 are reported.
-[workloads]      The statements proved: circuits or programs, their size in each
-                 system's own unit (constraints, rows × columns, cycles), compiler
-                 versions; why these workloads.
-[results]        Signpost sentence + figure (prover-phase breakdown, or scaling in the
-                 statement size) + main table with P time, V time, proof size, peak
-                 memory, ratio. Three bold-headed claims, e.g.
-                 \textbf{Prover speed-up.} scope → range → two concrete points.
-                 \textbf{The components compose, and neither suffices alone.} ablation.
-                 \textbf{What it costs.} proof size, verifier time, memory, setup.
-[comparison]     Table vs published systems on the same statement and soundness level;
-                 incomparable rows (different statement or soundness level) marked with a
-                 symbol and "—" in the ratio column; measured vs reported numbers both
-                 given; recursion/wrapping costs in their own columns.
-[limitations]    Remarks: where we lose (small statements, verifier time, proof size),
-                 parallelism policy, GPU vs CPU, regime (proven vs conjectured).
-```
+Use [section planning](../references/section-planning.md) and the
+[reference analysis](../references/formal-section-patterns.md). Nova separates IVC
+from compression measurements; KiloNova separates theoretical comparisons from its
+prototype; Quasar explicitly limits its evaluation to components. These are useful
+scope distinctions, not endorsements of their experimental claims.
 
-Application/circuit papers add a **circuit correctness** paragraph before the
-results: how each gadget was checked for under-constraint
-([circuit-audit](../../circuit-audit/SKILL.md)), the test vectors, and the witness-generation cost.
+## Functional outline
 
-## Number discipline (summary)
+| Function | Content | Reader dependency |
+|---|---|---|
+| State the question and scope | Hypothesis being tested, implemented subset and metrics | What a result could establish |
+| Make the comparison interpretable | Baselines, workloads, configurations, units, assumptions and excluded stages | Meaning of each row and ratio |
+| Explain the method | Platform, versions, measurement protocol, repetitions, statistics and verification | Trust and reproducibility of the evidence |
+| Present the result | Table/figure plus a factual scoped observation | Answer to the stated question |
+| Explain the mechanism | Measured phase breakdown, ablation or model comparison when available | Strength and limits of causal attribution |
+| State the trade-off and limit | Added work, unsupported regimes, failures and missing integration | What does not follow from the result |
 
-1. Single data source (EVIDENCE rows → json/csv → tables); no hand-typed numbers.
-2. Scope sentence before every range (workloads, sizes, soundness level and regime).
-3. Exclusions stated explicitly.
-4. Reproduced vs reported baseline numbers both given.
-5. Incomparable is not forced into a ratio; constraint counts from different
-   arithmetizations are not compared as if they were one unit.
-6. Attribute each gain to the right component (prover-phase breakdown).
-7. Disclose costs: proof size, verifier time, memory, setup/SRS, preprocessing.
-8. The ablation is the strongest evidence; include it in the body.
-9. Keep measured ratios; normalised variants go to the appendix.
-10. Baseline configuration details that favour or disfavour the baseline are
-    disclosed (appendix is fine).
+Merge or reorder these functions as the experiment requires. A theory-only cost
+analysis may have no implementation section. Do not invent nine subsections,
+end-to-end timing, a mandatory positive ablation or a numeric security level.
+
+## Evidence and comparison requirements
+
+Follow [experiments-writing](../../experiments-writing/SKILL.md) for drafting,
+[bench-protocol](../../bench-protocol/SKILL.md) for measurement and
+[baseline-pin](../../baseline-pin/SKILL.md) for fair baselines.
+
+- Give concrete instantiation choices here, mapping each value to its symbol
+  from the Preliminaries Notation subsection. Identify the measured/count-only
+  configuration and verify its admissibility conditions; see the
+  [parameter-placement rule](07_preliminaries.md#general-setting-and-the-notation-subsection).
+- State timing boundaries: witness generation, preprocessing, setup, compilation,
+  recursion/wrapping, final verification and amortisation where applicable.
+- Distinguish measured runtime, compiler constraint counts, symbolic operation
+  counts, constructive upper bounds and estimates. Give each system its own size
+  units; unlike arithmetisations are not interchangeable constraint units.
+- A ratio needs compatible statements, security/trust assumptions, hardware and
+  included work. Mark contextual or reported-only results and do not compute an
+  unsupported speedup. If numerical security is unestablished, say so rather than
+  filling a required-looking security column with a nominal parameter.
+- Describe changes to the whole pipeline before attributing a gain to one step.
+  A breakdown suggests where cost occurs; a suitable controlled ablation can test
+  causality. Neither automatically proves a component is necessary.
+- Show relevant costs and regimes where the result loses. Failed verification,
+  timeouts and exclusions stay visible; do not silently discard them.
+- Each own number maps to EVIDENCE, and tables/figures use the same source data.
+  A component result does not imply a full-system improvement.
 
 ## Checklist
 
-- [ ] Opening sentence isolates the changed component.
-- [ ] Platform paragraph has the six elements (toolchain + commits, CPU/GPU, threads,
-      hardware features, repetitions + statistic, proof verification in every run).
-- [ ] Timing-scope sentence present and identical for every arm.
-- [ ] Parameter table has proven and conjectured soundness; every arm at the same level.
-- [ ] P time, V time, proof size and memory reported together.
-- [ ] Ablation in the body.
-- [ ] Every table cell traceable to an EVIDENCE row.
+- [ ] Each result answers a stated question within the implemented/measured scope.
+- [ ] Configurations, baselines, timing boundaries and security status are explicit.
+- [ ] Actual protocol, statistics and correctness checks are reported accurately.
+- [ ] Ratios and causal explanations have supporting evidence; added costs remain.
+- [ ] Numbers are traceable and the numerical audit passes.

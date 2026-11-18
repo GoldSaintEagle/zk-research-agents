@@ -1,45 +1,60 @@
-# 12 Appendix
+# 12 Appendix and supplementary material
 
-## Principle
+## Reader question and inputs
 
-Supplementary material: reviewers are not obliged to read it, so **nothing in the
-appendix may be load-bearing for the body's claims**. Put this as a comment at the
-top of the appendix source so every co-author sees it.
+Where can I check the details supporting a stated result? Use the body statements,
+proof inventory, experiment/artifact records and the actual venue's rules on
+appendices, supplementary files and page counting. Do not assume appendices are
+unlimited, excluded from a limit, or guaranteed to be read.
 
-For journals that count reviewed material toward the page limit (e.g. some IACR
-journals count proofs that require careful review), putting proofs in an appendix
-does not save pages; check the CFP.
+See [section planning](../references/section-planning.md) and
+[reference placement examples](../references/formal-section-patterns.md).
+HyperNova's extended version groups deferred proofs; KiloNova separates formal
+definitions, folding details and PCD details; the inspected Nova proceedings
+version points to its full version. These are alternatives, not a fixed appendix list.
 
-## Organisation
+## Functional outline for each appendix unit
 
-- Each appendix section opens with one paragraph stating which body results it
-  supports, referencing body numbers with `\Cref` (no renumbering of restated
-  theorems).
-- Proofs appear in the order of the body theorems; worked examples come after the
-  theorem they illustrate and must be recomputable by a script listed in EVIDENCE.
-- Algorithms in the appendix use exactly the body's symbols.
-- Appendix tables are generated from the same data files as body tables.
-- Typical ZK appendix: A full proofs (completeness, knowledge soundness with the
-  extractor, ZK with the simulator) in body order; B the soundness calculation per
-  parameter set (every term, proven and conjectured); C circuit specifications and
-  gadget correctness arguments; D experiments: D.1 full workload list with each
-  system's own size unit, D.2 per-phase prover times, D.3 thread scaling and memory,
-  D.4 reproduction (scripts, commands, log paths, commits), D.5 baseline
-  configurations.
-- Every "see the appendix" in the body names the exact subsection label.
-- Do not `\input` files that are entirely commented out.
+| Function | Content | Dependency |
+|---|---|---|
+| Locate the obligation | Exact body theorem, definition, algorithm or comparison supported | Why the reader follows this pointer |
+| Recall the setup | Applicable notation, assumptions and inputs, by reference where possible | Self-contained reading of the detail |
+| Supply the detail | Full derivation, algorithm, dataset/table, parameter computation or reproduction recipe | Evidence needed to check the obligation |
+| Close the link | State what has been established for the referenced result | Connection back to the body |
 
-## Full version vs proceedings version
+Choose grouping by mathematical dependency or by the body results. Not every
+appendix needs every type of content. Keep proofs and extra experiments distinct
+from implementation instructions when that makes navigation easier.
 
-Use one shared source with a switch (e.g. `\newif\iffull`) so the proceedings build
-and the full version (ePrint/artifact) cannot drift apart. Floats that do not fit the
-proceedings limit can live in `\iffull ... \fi`. If the proceedings version points to
-a full version, the full version must actually be published before the camera-ready
-goes out. See `skills/camera-ready`.
+## Placement and consistency
+
+- Unless a proof is short and straightforward, the corresponding appendix is the
+  default home of its complete formal proof. The body retains the full theorem
+  statement and assumptions, plus a concise labelled proof sketch and an explicit
+  destination such as `Appendix~\ref{app:proof-main}`. Follow the
+  [proof-placement rule](09_security_correctness.md#proof-placement) and record any
+  exception required by the venue. Do not hide a premise, essential new mechanism,
+  failed case or interpretation-changing limitation in the appendix.
+- Give specific labels for both directions: the body names the appendix subsection
+  containing the proof, and that subsection names the body theorem it proves.
+  Restated results preserve numbering and statement content; keep shared source to
+  avoid drift. A generic “proofs are in the appendix” is insufficient when readers
+  cannot locate the proof of the particular result.
+- Tables share their data with the body and retain parameters, units and EVIDENCE
+  links. Extra rows must not silently change the headline range or exclusions.
+- Reproduction material identifies actual commands, versions and expected outputs.
+  Label unchecked instructions honestly; an artifact link is not evidence of a run.
+- For separate proceedings/full-version builds, check cross-references in each
+  build and identify exactly which version contains the deferred detail. A claimed
+  public full version must exist at a stable accessible location. Preparation does
+  not authorize publication or upload; follow the project's external-release rule.
+- Count body, references and appendices separately and apply the current CFP's
+  inclusion rules. Source switches may select permitted material; they must not
+  leave a theorem referring to a missing proof without a valid explicit pointer.
 
 ## Checklist
 
-- [ ] "Not load-bearing" comment at the top of the appendix source.
-- [ ] Each appendix section states which body results it supports.
-- [ ] Restated theorems keep body numbering.
-- [ ] All body pointers to the appendix are specific labels.
+- [ ] Every deferred obligation has a precise, available destination.
+- [ ] Main premises, scope and essential reasoning remain visible in the body.
+- [ ] Statements, symbols, data and cross-references agree across versions.
+- [ ] Page counting and supplementary-file rules follow the actual venue.
