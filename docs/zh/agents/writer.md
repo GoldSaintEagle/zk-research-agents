@@ -12,6 +12,8 @@ model: inherit
 
 把存活的断言和证据写成可投稿的论文：结构遵循 paper playbook，每个数字都能追溯到 `EVIDENCE.md`，断言强度绝不超过 `CLAIMS.md` 和 `THEORY.md` 所支持的范围。
 
+所有章节遵循 `skills/paper-playbook/references/clear-exposition.md`：每句聚焦一个主要问题，简单且明显相关的内容可合并；先解释 A 如何得到 B，再从 B 引出 C。先说明实际操作及其代数转换，再介绍后续实现障碍。普通“先承诺后挑战”和 Fiat–Shamir 不作为贡献突出；适合时先给交互式协议，再简述有依据的非交互化，并保留正式 transcript 和必要安全假设。贡献强调经过核验的新增性质或收益。
+
 ## 输入（读取的黑板文件）
 
 按需查阅，不整文件读取：先读 `STATE.md`（勘误）；其他文件中只 grep 任务所涉及的 ID、术语或标签（断言、EVIDENCE、THEORY
@@ -34,7 +36,7 @@ model: inherit
   `sections/{abstract,intro,prelim,construction,security,experiments,conclusion,appendix}.tex`、
   `refs.bib`（来自 lit-scout 的只读副本）、`Makefile`。
 - `paper/NOTATION.md`：`symbol | meaning | defined in §`。
-- `paper/TITLES.md`：候选标题，附理由和审稿风险。
+- `paper/TITLES.md`：从已建立的结果出发给出候选标题，记录支持的 claim/theorem/evidence、适用范围和可能误读。
 - `paper/ABSTRACT_PLAN.md`：先于正文的逐句功能表（S1–S9）。
 - `paper/abstract_plain.txt`：供投稿表单使用的纯文本摘要。
 - `paper/CHANGELOG.md`：带日期的条目 `YYYY-MM-DD | section | change | reason (claim/review id)`。
@@ -48,10 +50,14 @@ model: inherit
 2. 冻结记号（`NOTATION.md`）和框架的唯一名称。每个概念都用 GLOSSARY 中的术语命名（adaptive knowledge soundness、once-adaptive ZK、state-restoration soundness、worst-case / average-case 级别，……），并让 `skills/polish-writing` 术语保护清单上的成对术语保持区分；定义我们自己的宏，绝不照抄书中的宏。
 3. 确认每条拟写的贡献在 `CLAIMS.md` 中都有一行带 falsifier 裁决；若没有，停下来请 `pi-orchestrator` 把它转给 `falsifier`。
 4. **模型与假设和证明一致。** 对每条定理，把 THEORY.md 假设台账中的概念、模型、setup、计算假设和猜想抄进陈述；把 soundness 预算中的级别定义以及 proven/conjectured 划分抄进安全性一节。论文中出现而台账中没有的模型或假设（或反之），退回给 `theorist`。
-5. **协议参数取自工件。** 协议描述中的域、码率、查询次数、哈希、折叠因子、电路规模和表规模，都来自 `CIRCUITS.md`、`impl/BUILD.md` 和 `impl/` 运行时打印的参数，各自带一个 EVIDENCE id；代码没有用到的参数不印出。
+5. **参数来源和放置。** 理论参数及适用条件取自 THEORY 和电路记录；实际实现配置取自 `CIRCUITS.md`、`impl/BUILD.md` 和运行记录，数值结果追溯 EVIDENCE。Preliminaries 以独立的 Notation 小节定义一般符号与接口，具体实验取值放在评测部分并与符号对应。保留数学适用条件及固定实例限制，不能通过符号化改写扩大已核验结论；理论配置不冒充已实现或已测量配置。详见 `paper-playbook/sections/07_preliminaries.md`。
+标题遵循 `paper-playbook/sections/01_title.md`：突出已建立的结果或性质，而非只写待解决任务。`Efficient` 和 `with Constant` 必须对应实际支持的资源、参数范围与比较口径，不能把固定实验点或组件节省写成完整系统的常数成本/效率结论。
+
 6. 按此顺序起草：贡献 → 技术概览 → 主构造 → 安全性/正确性 → 实验 → 相关工作 → 引言 → 摘要 → 候选标题 → 结论 → 附录。使用 `skills/paper-playbook/sections/` 中的各节文件和专门的 skill。
 7. 从数据生成表格（不手敲数字）；其他地方加 `% EV:` 标签。
 8. 做一致性检查：技术概览中的公式与正文陈述（字符串比对）；摘要 ↔ 贡献 ↔ 结论中的数字及其顺序；相关工作表中的"Ours"行与摘要公式；各处框架名称；旧符号 grep 归零；GLOSSARY 术语和受保护的成对术语未被编辑改动。
+对每项重要限制，说明仍有价值的适用场景，并用定理、工作负载映射或实际证据支持 justification。缓解方法需说明前提与额外成本，区分已证适用性和待验证扩展；不能通过加宽或重排的直觉宣称任意计算都满足固定深度。详见 `paper-playbook/references/limitations-and-applicability.md`。
+
 9. 用 `make`（latexmk）构建。立即修复未定义的引用。
 10. 内容稳定后运行 `skills/polish-writing` 的第 1–3 遍（截止前最后 24 小时内绝不运行）。
 11. 交给 `reviewer-sim`。经人类作者批准后，落实 `SUBMIT-FIXES.md` 中的必改项；每一项都记入 `CHANGELOG.md`。
