@@ -1,67 +1,65 @@
-# Toy technique overview and related-work table
+# Synthetic overview and positioning examples
 
-Invented papers; all numbers and citations illustrative.
+All constructions, references and result premises below are hypothetical. They
+illustrate exposition; they do not establish a cryptographic result or provide
+numerical evidence for a real paper.
 
-## Related-work table (T1, lookup arguments)
+## Explain an operation before naming it
 
-```latex
-\begin{table}[t]
-\centering\scriptsize
-\caption{Asymptotic comparison of lookup arguments for $m$ lookups into a table of
-size $N$. Prover: field operations and MSM size (group-based PCS); Proof: group and
-field elements. $\dagger$: table must be preprocessed per circuit.
-$\ddagger$: table must have a succinctly evaluable multilinear extension.
-KS: knowledge soundness; all rows in the ROM.}
-\label{tab:related}
-\renewcommand{\arraystretch}{0.92}
-\begin{tabular}{llcccc}
-\toprule
-Technique & Method & Prover & Proof & Setup & Notion \\
-\midrule
-\multirow{2}{*}{Grand product} & [C20]          & $O(m+N)$, MSM $m+N$ & $O(1)$     & universal & KS \\
-                               & [D22]$^\dagger$ & $O(m)$, MSM $m$     & $O(1)$     & universal & KS \\
-\midrule
-Log. derivative & [A23] & $O(m+N)$, MSM $m+N$ & $O(\log(m+N))$ & universal & KS \\
-\midrule
-\textbf{Ours}$^\ddagger$ & & $O(m)$, MSM $m$ & $O(\log m)$ & universal & KS, ZK \\
-\bottomrule
-\end{tabular}
-\end{table}
-```
+Bad:
 
-Rules shown: caption defines every symbol and the model; daggers mark scope; the
-"Notion" column keeps knowledge soundness and ZK visible; the last row "Ours" matches
-the formula in the abstract.
+> Our adaptive witness bridge enables seamless proof composition through a novel
+> certificate layer.
 
-## Contrasting-verb bullets (T1)
+Better, for a hypothetical construction with the stated checks:
 
-> Recently, two independent lines of work exploit the structure of the multiplicity
-> vector rather than the table size alone:
-> - **Preprocessed lookups** restrict *when* the table is paid for: the table is
->   committed once per circuit and reused [D22]; however, each new table needs a new
->   preprocessing, leaving dynamic tables open.
-> - **Logarithmic-derivative lookups** restrict *how* membership is checked: a
->   rational identity replaces the grand product [A23]; the prover still commits to
->   a vector of length N.
+> The prover commits to the vector before the verifier samples an evaluation
+> point. It then supplies a claimed evaluation, which the verifier checks against
+> the commitment. The next component receives the commitment and the checked
+> evaluation. Its theorem additionally requires that the commitment support the
+> extraction property stated in the preliminaries.
 
-## Bad vs good overview headings
+Function map: fixed object → challenge order → verification action → output
+interface → needed assumption. The text should point to the actual protocol and
+theorem. Calling the interface a new “bridge” would not explain any of these steps.
 
-| bad | good |
-|---|---|
-| "Why lookups are needed" | "The support of the multiplicities, not the table, bounds the prover's commitments." |
-| "Where the cost goes" | "For structured tables the table side is an evaluation the verifier computes itself." |
-| "The streaming schedule" (T2) | "Interleaving extension and hashing makes memory independent of the trace length." |
-| "Our circuit" (T3) | "A 16-bit lookup table replaces every bit decomposition without new witnesses." |
+## A failed approach is optional
 
-## Tiny worked example (T1)
+Use a failed attempt when it explains a specific obstruction. For example, an
+approach may reduce one verification step while leaving a list of commitments
+that the next step must still process. Explain that surviving obligation, then
+the construction's actual change. Do not invent a failure or claim security from
+this intuition. An operation-by-operation explanation may be clearer when no
+failed attempt is needed.
 
-> Over 𝔽₁₇ take the table t = (0, 1, 2, 3), the looked-up vector a = (1, 1, 3) and
-> multiplicities c = (0, 2, 0, 1). At γ = 5 the left side is
-> 1/6 + 1/6 + 1/8 = 3 + 3 + 15 = 4 and the right side is 2·(1/6) + 1·(1/8) = 4, so the
-> identity holds. For a' = (1, 1, 4), which leaves the table, the left side at γ = 5
-> is 3 + 3 + 2 = 8 ≠ 4; exhaustively, the identity with c fails for all 12 admissible
-> γ (the 5 values making a denominator zero are excluded), well below the bound of
-> m + N − 1 = 6 bad challenges.
+## Group related work by the actual comparison
 
-Every number in such an example must be recomputable by a script (e.g. a copy of
-`skills/sage-check/scripts/sanity_check_template.py`) listed in `EVIDENCE.md`.
+Suppose fictional scheme A preprocesses a fixed table, fictional scheme B
+supports changing tables, and our hypothetical result assumes a special table
+representation. A useful working table is:
+
+| Approach | Supported table setting | Work paid before proving | Question for comparison |
+|---|---|---|---|
+| A | Fixed table | Per-table preprocessing | How often is the table reused? |
+| B | Changing tables | Specified in its construction | Does update cost belong to the measured task? |
+| Our result | Tables with the required evaluation property | Representation construction | Are the same inputs supported, and is preprocessing counted? |
+
+This table makes assumptions inspectable without manufacturing a common speedup
+or an empty “region” occupied only by our method. A real table needs original
+source locators and accepted evidence. Unavailable entries remain unavailable.
+
+## Headings and equations
+
+“Committing before the challenge”, “Updating the accumulated instance” and
+“Preprocessing the table” can be informative headings when they describe the
+actual argument. There is no requirement to write “Insight 1” or to use a full
+sentence as every heading. Include an equation when it specifies a check or
+explains why a change works; introduce its domain and symbols first. A simplified
+formula must be mapped back to the formal statement with its assumptions intact.
+
+## What intuition does not establish
+
+A sparse representation does not by itself hide its support. A checked polynomial
+identity does not by itself supply witness extraction. Fewer commitments do not
+by themselves imply lower full-system runtime. The overview should expose the
+corresponding obligations and point to their evidence, not rename them away.

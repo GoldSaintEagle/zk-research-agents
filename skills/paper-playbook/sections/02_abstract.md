@@ -1,59 +1,54 @@
-# 02 Abstract — the three-part paradigm
+# 02 Abstract — order information by reader dependencies
 
-Full procedure and more examples: [abstract-craft](../../abstract-craft/SKILL.md).
+Follow [abstract-craft](../../abstract-craft/SKILL.md), including its
+[sentence-by-sentence Quasar/KiloNova analysis](../../abstract-craft/references/sentence-functions.md).
+Those abstracts illustrate two entry points: a concrete computational bottleneck,
+or an application problem narrowed to a technical gap. They do not establish a
+mandatory paragraph/sentence count or lend their technical claims to another paper.
 
-## Three paragraphs, one job each
+## Outline
 
-| ¶ | job | sentences |
-|---|---|---|
-| ① State of the art | field consensus → the bottleneck → the existing routes (grouped by approach, 1–2 representative works each with venue'year) → what remains open | 4–5 |
-| ② Our technique | "We propose/present X, which views ... as ..." → one sentence per contribution, ordered structure → bound/characterisation → new construction → algorithm → cost formula | 5–8 |
-| ③ Results + artifact | scoping sentence (how many instances, what security level) → range → one or two concrete points readers know → artifact/formalisation sentence | 2–3 |
+| Move | Content |
+|---|---|
+| Context and object | State the task and familiar mathematical/computational objects. |
+| Problem | Identify the operation, limitation and cost unit; explain unfamiliar terms needed to understand it. |
+| Contribution | Name the kind of result and its scope; a new scheme name is optional. |
+| Mechanism | Explain concrete actions and their role before relying on an unfamiliar label. |
+| Guarantee/composition | Follow the actual construction chain; retain theorem premises and bounds. |
+| Evidence/trade-off | Give scope and baseline, distinguish counts from measurements, and state material added costs. |
+| Consequence | State only what the result supports; artifact or formalisation belongs here only if available and useful. |
 
-For LNCS, use `\setlength{\parindent}{2em}` at the start of each paragraph inside
-`abstract` if paragraph separation is desired, and keep title + abstract + keywords
-on page 1 (adjust only abstract-local negative `\vspace`, never global geometry).
+This is a flexible order of functions. Two or three paragraphs may group context,
+technique and results, but no paragraph quota is required. Do not force a claimed
+open problem, a new “viewpoint”, prior-paper venue/year citations, an experimental
+range or a final SNARK into a paper that does not support them. If unification is
+actually claimed, state which earlier methods are covered and under what parameters.
 
-## Sentence rules
+## Checks
 
-1. Sentence one states field consensus and needs no citation.
-2. Group prior work by **route**, not by chronology; cite venue and year in
-   parentheses so reviewers see you compare against the latest top-venue work.
-3. End ¶① with an explicit open question: "However, whether/how ... has remained open."
-4. ¶② sentence one states the **viewpoint** of the framework in one clause.
-5. If you claim to unify prior work, include the sentence that places prior methods
-   inside your framework ("the methods of A and B are the cases w=1 and k=1"). That
-   sentence is the evidence for "unified".
-6. ¶③ scoping first: "On N circuits of 2^a–2^b constraints at λ-bit soundness
-   (proven), with prover time including witness generation, ..." then the range, then
-   concrete points. If the scope changes, recompute every range.
-7. The artifact sentence goes last, with an anonymous link in a footnote during
-   review. Formalisation claims state exactly what was machine-checked.
-8. Budget: the abstract must fit on page 1 with keywords and footnotes. If over,
-   cut adjectives in ¶① first; do not cut ¶③ numbers or their scope.
+- Follow [clear exposition](../references/clear-exposition.md): separate the target
+  operation, its algebraic reduction and subsequent implementation obstacle.
+  Each non-obvious step needs a concrete connecting explanation. Routine
+  Fiat–Shamir and commitment-before-challenge order are not headline contributions.
 
-## Forbidden in abstracts
+- Create `paper/ABSTRACT_PLAN.md` before prose, with each sentence's function,
+  prerequisites, concrete content, claim/evidence and material boundary.
+- Prefer terms shared by relevant independent papers. A reference-specific name
+  needs its role explained; a single citation does not make it familiar.
+- State the actual security model and additional assumptions. Do not imply
+  negligible error, numerical security, succinctness or zero knowledge without the
+  supporting theorem. Keep fixed-hash assumptions distinct from ideal-oracle proofs.
+- Put configuration and comparator before performance numbers; every own number
+  has an EVIDENCE row. Do not infer total speed from a component or selected counts.
+- Keep abstract, contribution list and conclusion consistent in substance. Useful
+  reordering is permitted; claim strengthening is not.
+- Respect the actual venue and submission-form limits. Compile and inspect page 1
+  with the title and keywords. Shorten prose without changing template geometry,
+  font sizes or adding negative spacing to force a fit.
 
-- Words that overstate proof status: "rigorous guarantee", "turns the heuristic into
-  a theorem", "optimal" without a proven optimality statement.
-- Scope that does not match the tables (e.g. counting instances below the stated
-  security level, or a conjectured level stated without saying so).
-- "Post-quantum", "transparent", "zero-knowledge" or "succinct" without the
-  assumption, setup or theorem that backs it.
-- Symbols defined only in the body or appendix.
-- Attributing a composite improvement to a single component.
-- Ratios against an unoptimised or outdated baseline when a stronger baseline exists.
+## Plain-text form
 
-## Plain-text form for submission systems
-
-Prepare a separate plain-text abstract: remove `\cite` numbers, write `sqrt`, `>=`,
-`x` for ×, and never copy from the PDF (hyphenation and ligature garbage). Keep it in
-`paper/abstract_plain.txt` and diff it against the LaTeX abstract before submitting.
-
-## Checklist
-
-- [ ] ¶① ends with an open question; prior routes grouped with venue'year.
-- [ ] ¶② has one sentence per contribution, same order as the contribution list.
-- [ ] ¶③ begins with a scoping sentence; every number has an EVIDENCE row.
-- [ ] No appendix-only symbols; no overstated proof words.
-- [ ] Page 1 holds title, abstract, keywords.
+Generate `paper/abstract_plain.txt` from the same prose, without TeX commands,
+evidence comments, PDF hyphenation or ligature artifacts. Compare it with the LaTeX
+abstract and synchronize any submission-form copy. The plain-text version retains
+all assumptions, scope qualifiers and numerical values.

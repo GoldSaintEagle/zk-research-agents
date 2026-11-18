@@ -1,149 +1,118 @@
-# 09 Security: completeness, knowledge soundness, zero knowledge, concrete soundness
+# 09 Correctness and security
 
-Every ZK construction needs the same four blocks, in this order. Theory papers put the
-full proofs here (or in the appendix with a body sketch); system and application
-papers built on an existing proof system may cite its theorems, but still give block
-D for **their** parameters. Before writing, freeze the definitions and the
-assumption ledger with [zk-definitions](../../zk-definitions/SKILL.md), so the
-model and notions here match §2 exactly.
+## Reader question and inputs
 
-## A. Completeness
+Exactly which guarantee follows for the specified algorithms, against which
+adversaries, in which model, and under which assumptions? Read THEORY.md and its
+assumption ledger, the actual proof and algorithm, CLAIMS verdicts, and any
+applicable [zk-definitions](../../zk-definitions/SKILL.md) or
+[soundness-budget](../../soundness-budget/SKILL.md) records.
 
-- Statement: for every (𝕚, 𝕩; 𝕨) ∈ ℛ, the honest prover makes the verifier accept
-  with probability 1 (perfect) or 1 − δ (state δ and where it comes from, e.g. a
-  division by zero when a challenge hits a root, aborts in rejection sampling).
-- Proof: walk through the numbered verifier checks of the protocol box one by one;
-  each check reduces to an identity that holds for honest messages. Name the identity
-  (sum-check round equation, quotient divisibility by Z_H, grand-product telescoping).
-- Edge cases to mention explicitly: a challenge that collides with a domain element
-  or table entry (γ = −t_j), padding rows, empty tables, the last folding round.
-- Completeness is cheap to check exhaustively over a small field (`skills/sage-check`);
-  say so in a footnote and ship the script.
+Plan by [functions and dependencies](../references/section-planning.md); consult
+the [formal-section examples](../references/formal-section-patterns.md). Security
+may be proved beside each construction or in a separate section. Completeness,
+knowledge soundness, zero knowledge and concrete security are distinct obligations;
+include those claimed, rather than forcing four theorems every paper does not have.
 
-## B. Knowledge soundness (with the extractor)
+## Functional outline
 
-- **Statement first, with the notion and the model.** "Π is knowledge sound with
-  knowledge error κ(λ) = … in the ROM / AGM, for every expected polynomial-time 𝒫*."
-  If only soundness is proven, say "soundness"; if witness-extended emulation is
-  needed (e.g. for composition), prove that.
-- **Write explicit error bounds, not "negl".** State κ as a function of the query
-  bound t, the hash output size λ and the instance parameters, and say which
-  security-level definition turns it into bits (worst-case or average-case,
-  [CY24 §Security levels, section:security-levels]). CY24 is the model for this
-  style: every theorem there carries such an expression; a compact index of them is
-  [CY24 §Error bounds, table:narg-error-bounds, table:commitment-error-bounds].
-- **Split the error.** κ = ε_PIOP + ε_PCS + ε_FS: the information-theoretic PIOP error
-  (Schwartz–Zippel terms, sum-check terms, proximity terms), the PCS extraction /
-  binding failure, and the Fiat–Shamir loss (number of hash queries times the
-  round-by-round or state-restoration error). Each term gets its own lemma. For
-  hash-based compilers the reference statements are
-  [CY24 §Soundness, theorem:bcs-soundness] (IOP + Merkle trees) and
-  [CY24 §Knowledge soundness, theorem:bcs-knowledge-soundness]; for the FS loss,
-  [CY24 §RBR soundness implies SR soundness, theorem:rbr-soundness-to-sr-soundness].
-  For algebraic terms, Schwartz–Zippel and sum-check:
-  [Thaler §3.4, Schwartz-Zippel Lemma], [Thaler §4.1, The Sum-Check Protocol].
-- **Extractor construction, in words before formulas.** Say how ℰ obtains the
-  witness:
-  - *PCS extraction:* run the PCS extractor on every commitment the prover sends
-    (in the AGM: read the polynomial from the algebraic representation; for a
-    Merkle/FRI commitment: extract the codeword from the prover's random-oracle
-    queries, then decode within the proven proximity radius).
-  - *Rewinding:* for special-soundness-style arguments, rewind 𝒫* on fresh challenges
-    until enough accepting transcripts are collected, and interpolate; bound the
-    expected running time (forking lemma or a tree-of-transcripts argument).
-  - *Consistency:* show that the extracted polynomials satisfy the relation except
-    with probability ε_PIOP, by the PIOP soundness theorem.
-- **Reduction structure.** Write each reduction as: the adversary, the experiment it
-  plays, the event that counts as success, and the explicit loss, in the order
-  CY24 uses for its proofs (e.g. Merkle extraction from the adversary's oracle
-  queries, [CY24 §Extractability, lemma:mt-multi-configuration-multi-extractability];
-  extraction from trees of transcripts,
-  [CY24 §Extraction from forks and trees, definition:ss-tree-of-transcripts]).
-  Cite these as the reference version of the step, in your own notation.
-- **Model-specific obligations.** In the ROM, account for programming vs observing
-  the oracle; in the AGM, say which group elements the adversary outputs; with a
-  trusted setup, say which trapdoor must be unknown.
-- **Conjectures in the theorem, not in a footnote.** If the proximity term uses a
-  conjectured bound beyond the proven range, the theorem says "under Conjecture k".
+| Function | What the prose/formula must establish | Dependency |
+|---|---|---|
+| Fix the experiment | Parties, adaptive choices, public/auxiliary input, oracle access, setup and success event | Defines the claim's meaning |
+| State the theorem | Exact quantifiers, notion, hypotheses, error and resource bound as established | Delimits what is being proved |
+| Explain the argument | Key invariant, reduction or extraction/simulation strategy in words | Makes proof obligations visible |
+| Discharge obligations | Lemmas tied to algorithm checks; each imported result's hypotheses checked | Connects the stated algorithm to the guarantee |
+| Compose bounds | All bad events, reductions, runtime and repetition losses for the actual composition | Justifies the final bound |
+| Interpret the scope | Conditional, asymptotic or numerical status, and remaining restrictions | Prevents stronger downstream claims |
 
-## C. Zero knowledge (the simulator)
+## Proof placement
 
-- **Notion:** honest-verifier ZK (HVZK) for the PIOP, then ZK for the compiled
-  argument; statistical, perfect or computational; with or without a trusted setup.
-  For a non-interactive argument in the ROM, the simulator programs the random oracle;
-  say so, and whether salts make the ZK error explicit
-  ([CY24 §Zero knowledge, theorem:hashchain-fs-zero-knowledge, theorem:bcs-zero-knowledge]).
-  Masking polynomials and commit-and-prove: [Thaler §13.3, Zero-Knowledge via Masking Polynomials],
-  [Thaler §13.1, Proof Length of Witness Size Plus Multiplicative Complexity].
-- **Simulator construction:** sample the verifier's challenges first, then produce
-  the prover messages with the right distribution:
-  - masking: show that the evaluations the verifier sees (including **all PCS
-    openings and the points queried by FRI-style tests**) are uniformly distributed
-    given the masking polynomials' degree; count the number of evaluations revealed
-    and size the masks accordingly;
-  - hiding commitments: replace commitments by commitments to 0 (perfect/statistical
-    hiding) or invoke the hiding assumption (computational);
-  - programmability: set ℋ at the transcript prefixes the simulator needs.
-- **The leak you forgot:** the number of PCS openings, the queried positions in a
-  Merkle tree, the degree bound of a committed polynomial, the size of a lookup table,
-  timing of the prover. State which of these the simulator reproduces and which are
-  public by definition.
-- If the argument is only HVZK, write "honest-verifier zero knowledge" in the title,
-  abstract and theorem; do not upgrade it silently.
-- Simulation-extractability, if claimed, gets its own theorem and proof.
+Unless the proof is short and straightforward, place the complete formal proof in
+the corresponding appendix. In the body, keep the full theorem statement and its
+material assumptions, then a concise paragraph labelled **Proof sketch** explaining
+the key invariant, reduction or lemma dependencies. End with an explicit pointer,
+for example: `The complete proof appears in Appendix~\ref{app:proof-main}.`
+Use a dedicated appendix subsection label when an appendix contains several proofs.
 
-## D. Concrete soundness table
+A short direct derivation from already stated definitions or lemmas can remain in
+the body as a complete proof. A proof needing substantial case analysis, multiple
+hybrids, a recursive extraction argument or a long technical derivation normally
+belongs in the appendix. Judge simplicity by the actual argument, not by calling
+a difficult step “standard” or omitting it; there is no universal line-count cutoff.
 
-Every parameter set used anywhere in the paper appears as a row. Generate the table
-from the soundness calculator output
-([soundness-budget](../../soundness-budget/SKILL.md)), with an EVIDENCE row per number.
+The sketch should explain why the theorem follows without repeating the complete
+derivation. Retain the statement's quantifiers, conditions and guaranteed bounds
+in the body; do not hide a hypothesis in the appendix. Keep the complete proof
+available and consistent with that exact statement. Record each nontrivial result's
+proof destination in the existing section plan, and check the cross-reference in
+the compiled manuscript. A sketch is not a substitute for completing the proof.
 
-```latex
-\begin{table}[t]\centering\scriptsize
-\caption{Concrete knowledge soundness (bits) per parameter set. ``Proven'': the
-proximity term uses a proven bound (unique decoding / Johnson bound). ``Conj.'': it
-uses Conjecture~1. Algebraic: Schwartz--Zippel, sum-check and lookup terms over
-$\mathbb{K}$. Totals are computed by the soundness script after the Fiat--Shamir loss
-for $2^{64}$ hash queries. All values illustrative.}
-\begin{tabular}{lcccc|ccc|cc}
-\toprule
- & & & & & & \multicolumn{2}{c|}{proximity} & \multicolumn{2}{c}{total} \\
-Set & $|\mathbb{K}|$ & rate & queries & grinding & algebraic & proven & conj. & proven & conj. \\
-\midrule
-P1 & $2^{128}$ & $1/2$ & 120 & 16 & 118 & 96  & 136 & 96  & 118 \\
-P2 & $2^{128}$ & $1/4$ & 100 & 16 & 117 & 104 & 216 & 104 & 117 \\
-\bottomrule
-\end{tabular}\end{table}
-```
+Apply actual venue requirements if they explicitly constrain this placement, and
+record any necessary exception. Here “formal proof” means the complete mathematical
+argument; it does not by itself imply machine-checked formalisation.
 
-Rules:
+## Proof obligations, when applicable
 
-- **Two columns, never one:** proven and conjectured totals side by side. The headline
-  number in the abstract states which one it is.
-- **Each term separately:** algebraic terms (Schwartz–Zippel, sum-check, lookup),
-  proximity/query terms, grinding, hash output length, curve or group security (a
-  pairing-friendly curve's real security can be below its label), Fiat–Shamir loss.
-  The total is the union bound (the sum) of the terms, computed by the script, not
-  by hand; the minimum of per-term bits overstates it.
-- **Same table for the baselines** when the paper compares performance: the
-  comparison is only fair at the same row values.
-- **Field size for challenges:** say whether challenges come from 𝔽 or an extension
-  𝕂, and use |𝕂| in every algebraic term.
+**Correctness/completeness.** Walk through the verifier checks or transition
+invariant for honest inputs. Treat aborts, division by zero, empty/padded cases and
+recursive base cases explicitly; name any nonzero completeness error. Small-field
+checks and formalisation support, but do not replace, the stated general proof.
 
-## Pre-emptive defence of a known weakness
+**Soundness/extraction.** Define the adversary, extractor access (including
+rewinding or oracle programming), output relation, success probability and total
+running time. For recursion include depth, branching, repeated predecessors and
+all replay costs where they enter the proof. Do not infer knowledge soundness from
+ordinary soundness. State whether outputs or distributions are preserved if the
+composition relies on that property. Use the extraction procedure actually proved;
+binding commitments alone do not give an extractor, and collecting transcripts
+requires a justified probability and runtime argument.
 
-Four layers, as for any known limitation: acknowledge ("our argument is only proven
-sound under the list-decoding conjecture at rate 1/2") → relocate ("the conjecture
-affects only the query count, not the PIOP") → quantify ("in the proven regime the
-query count grows by 23% [ill.], proof size by 18% [ill.]") → price the fallback
-(report performance in the proven regime too, in the main table or a dedicated one).
+**Zero knowledge.** State honest-verifier or full ZK, perfect/statistical/
+computational indistinguishability and simulator resources. Describe how the
+simulator reproduces the complete claimed view, including revealed evaluations,
+commitment openings and public sizes. Account for oracle programming and hiding
+hybrids when used. Commitments being hiding is insufficient by itself. A non-ZK
+intermediate state and a ZK final proof are different objects.
+
+**Composition.** Check relation and interface compatibility, adversary model,
+setup, extractability and runtime conditions of every theorem invoked. Separate
+interactive security, ROM compilation and concrete-hash assumptions. State new
+knowledge assumptions and conjectures in the theorem premises; a published
+example of such an assumption is not a proof of it. System or circuit changes
+require their own argument that the imported theorem still applies.
+
+## Error bounds and numerical security
+
+- Give the bound the proof actually establishes. Keep an asymptotic negligible
+  claim asymptotic unless a concrete reduction is available; an unquantified
+  assumption cannot be turned into a numerical security level by choosing a field.
+- Itemise applicable bad events and reduction losses. A PIOP/PCS/Fiat–Shamir split
+  is useful for that compiler, not a universal formula. Do not assume losses add
+  or equal query count times interactive error without the relevant theorem.
+- When numerical security is claimed, use the soundness-budget record with
+  parameters, attack/query budget, level definition, source and status of each
+  term. Sum probabilities as justified, not just the minimum of per-term bits.
+  Distinguish proven bounds, conjectures and heuristic estimates. Separate totals
+  are needed when reporting different regimes, not empty conjecture columns when
+  no conjecture is used.
+- If a term is unknown or an assumption unquantified, show that gap and limit the
+  conclusion. Comparisons labelled equal-security require compatible guarantees;
+  descriptive component costs may be reported without that label.
+- Record all own printed numerical bounds in EVIDENCE. Keep limitations beside the
+  affected theorem; explain their consequence and supported applicability using
+  [limitations and applicability](../references/limitations-and-applicability.md).
+  A depth/arity or representation workaround must preserve relation semantics and
+  account for its changed extraction resources and failure bound; motivation does
+  not discharge those obligations.
 
 ## Checklist
 
-- [ ] Completeness proven check by check, with edge cases; small-field script shipped.
-- [ ] Knowledge soundness (not just soundness) if "argument of knowledge" is claimed;
-      error split into PIOP, PCS and Fiat–Shamir terms; extractor described.
-- [ ] ZK notion stated precisely; simulator covers every PCS opening and query.
-- [ ] Model, setup and every conjecture appear in the theorem statements.
-- [ ] Concrete soundness table with proven and conjectured columns for every
-      parameter set used, generated from a script with EVIDENCE rows.
+- [ ] Every claimed property has a matching definition, theorem and actual proof.
+- [ ] Quantifiers, model, setup, assumptions and extractor/simulator resources match.
+- [ ] All composition premises and relevant errors/runtime losses are accounted for.
+- [ ] Numerical, asymptotic and conditional guarantees remain distinguishable.
+- [ ] Nontrivial full proofs are in their corresponding appendices; body sketches
+      are concise, labelled, and explicitly reference the exact proof destinations.
+- [ ] Any full proof retained in the body is short and straightforward, or its
+      required venue-specific exception is recorded.
+- [ ] Computational checks do not become universal proofs; all deferred proofs exist.

@@ -1,29 +1,32 @@
 # 11 Conclusion
 
-Two to three sentences, no new information, at most half a page.
+## Reader question and inputs
 
-## Template
+What should the reader retain about the result and its significance? Read the
+accepted contribution list, actual theorems, evaluation and abstract together.
+Use [section planning](../references/section-planning.md) and the
+[source examples](../references/formal-section-patterns.md). A conclusion is not
+required in every paper: the inspected Nova proceedings paper ends its technical
+development before the references, while Quasar has a separate conclusion.
 
-> We presented <framework/construction> in which <structural statement>, so that
-> <prior works> become special cases of <one cost formula / one family>.
-> More importantly, <structure> yields <new construction> for <coverage>, and
-> <algorithm> accelerates <stage> by <range> over <strongest baseline>.
-> [Optional] <One or two open problems / invitation for third-party analysis.>
+## Functional outline
 
-## Rules
+| Function | Content | Dependency |
+|---|---|---|
+| Recall the result | Concrete task and construction, theorem or analysis delivered | Established contributions |
+| Explain its significance | What the mechanism or evidence changes for that task | Supported interpretation of results |
+| Preserve the boundary | Material assumptions, costs or scope that constrain the interpretation | Theorem/evaluation limitations |
+| Identify a next question, if useful | A specific unsolved extension and why it matters | An actual remaining gap |
 
-- Same numbers, scope and wording as the abstract. No claim that the abstract lacks.
-- System papers: name the regime (proven or conjectured soundness) of the headline
-  numbers again, and publish the benchmark scripts.
-- Theory papers: one or two precise open problems are welcome.
-- If pages are tight, the optional third sentence is the first thing to go; the
-  conclusion must still end on the last allowed body page.
-- Do not "summarise the sections" ("In Section 3 we ...").
+Usually a short paragraph or two suffices. Sentence count is flexible. A conclusion
+may omit repeated numbers and need not claim unification, speedup, a new framework
+or future work. It may also be merged with discussion when appropriate.
 
-## Toy (T2, illustrative)
+## Checks
 
-> We showed that interleaving the low-degree extension with Merkle hashing lets an
-> FRI-based prover commit to a trace with peak memory O(√n) columns, without changing
-> the proof. On zkVM traces of 2^{22}–2^{26} rows at 100-bit proven soundness, proving
-> is 1.4–1.9× faster [illustrative] than the strongest streaming baseline on the same
-> GPU. Extending the schedule to multilinear commitments is left open.
+- [ ] No new result, evidence, security property or application appears only here.
+- [ ] The same objects, assumptions and comparison scope appear in the body and
+      abstract; shorter wording does not strengthen the result.
+- [ ] Any repeated number comes from the same EVIDENCE row; no new rounding or range.
+- [ ] Proposed future work is labelled as such, not promised or implied complete.
+- [ ] The conclusion explains the result's meaning instead of listing section numbers.

@@ -1,67 +1,69 @@
-# 04 Our Contributions
+# 04 Contributions
 
-About one LNCS page: a lead-in sentence and three or four bullets (or bold-titled
-paragraphs).
+## Reader's question and inputs
 
-## Lead-in template
+What are the paper's distinct deliverables, and where are they justified? Start
+from survived CLAIMS rows or the exact weakened wording, the actual theorem
+statements, implementation scope and EVIDENCE. A contribution list summarises
+these inputs; it does not create new results.
 
-> Inspired by <structural observation>, we determine <bound / characterisation>.
-> Building on it, we propose <framework/construction name> that <what it subsumes or
-> enables>. Our main contributions are summarised below:
+Follow [contribution emphasis](../references/clear-exposition.md): exclude ordinary
+Fiat–Shamir, commitment-before-challenge ordering and other standard protocol
+steps from the claimed novelty. For an integration, identify the precise new
+property or benefit and its evidence. Use separate sentences for distinct results
+whose premises need explanation; do not mix a routine step with a new theorem to
+make the step sound novel.
 
-## Fixed order: structure → framework → algorithm → numbers
+Use [section planning](../references/section-planning.md) and the
+[reference contribution patterns](../references/front-section-patterns.md).
 
-1. `\textbf{From <structure> to <new construction>.}` What structure was found; the
-   characterisation it yields; the new object it produces; one coverage sentence with
-   a single percentage or count (pointing to a table, not a lemma).
-2. `\textbf{A unified <framework>.}` Key observation → framework → where each prior
-   work sits inside it → why interior points beat the corners → "for any instance,
-   the best configuration is selected by a closed-form rule".
-3. `\textbf{A <algorithm> with <property>.}` "the first ... that exploits both ... at
-   once" → what it does → cost formula → the theory that supports it → optional "As a
-   bonus, ..." sentence.
-4. `\textbf{<Metric> improvements.}` Only the two most recognisable numbers, plus
-   "verified against the baselines in \Cref{tab:main}".
+## Functional outline
 
-## Two formats
+| Function | Content and prerequisite |
+|---|---|
+| Identify the result | State the construction, theorem, algorithm, implementation, analysis or negative finding in ordinary technical terms. The opening context must already explain its objects. |
+| Explain the difference | Name the new operation, property or scope relative to the checked baseline. Do not assume a method name communicates the contribution. |
+| State conditions and consequence | Include material premises, the exact notion established and any trade-off needed to interpret the result. |
+| Provide a destination | Point to the relevant theorem, construction, section, figure or table. Choose the pointer that helps verify the claim. |
 
-- **A. `itemize`/`enumerate` bullets** when contributions are independent.
-- **B. Bold-titled paragraphs** ("Our first contribution is ...", "As a final
-  contribution, ...") when they build on one another; numbers can close each
-  paragraph.
-- **Roadmap style** (design papers): walk through the sections ("In Section 3 we
-  introduce ...; the rationale is developed in Section 4; ...") and embed the key
-  ratio in the evaluation sentence.
-- **One discovery, everything derived** (cryptanalysis papers): "Our main
-  contribution is the discovery of <property>, on which all our other results are
-  based." This is the strongest single-idea narrative.
+These functions can occupy one paragraph, several bullets, or subsections. Use
+dependency order for a primitive followed by a compiler or application; group
+independent results by importance or theme. A single main result does not need
+three additional bullets. Theory-only work does not need an implementation claim.
 
-## Wording rules
+## Wording and scope
 
-- **No Lemma/Theorem numbers** in contribution bullets; point to tables/figures
-  (`\Cref{tab:...}`). Contributions read as results, not as proof references.
-- **No concessions or comparisons** inside contributions; limitations go to the
-  overview remarks or the evaluation section.
-- **Numbers only in bullet 1 (a coverage percentage) and bullet 4 (ratios).**
-- Each bullet: verb + deliverable + section pointer; 3–5 sentences; intra-bullet
-  connectives "Building on", "More importantly", "Consequently".
-- Strong verbs in order of force: prove / establish / show that > identify / observe >
-  introduce / propose > give / provide > implement / measure / validate. Avoid
-  "study", "investigate", "explore", "try to".
-- The sentence "where each prior work sits" must be **identical in substance** in
-  contribution 2, the related-work bridge paragraph and the overview figure caption.
-
-## Pre-flight
-
-Before prose: each bullet exists as a row in `CLAIMS.md` with status `survived` or
-`weakened` (then the bullet uses the weakened wording). Never promise a theorem the
-body does not contain.
-
-See `examples/toy_intro_and_contributions.md` for good/bad toy bullets.
+- Choose verbs by evidence, not a ranking of rhetorical force: prove a theorem,
+  construct a scheme, implement a component, measure a runtime, or analyse a
+  limitation. Do not replace an accurate modest verb with a stronger one.
+- Explain the result before its pointer. Theorem references are useful and allowed;
+  a list consisting only of theorem numbers is uninformative.
+- Conditions and necessary trade-offs belong beside the affected contribution.
+  Do not remove them to make the contribution list sound stronger. Detailed
+  qualification can be elsewhere when the short statement remains accurate.
+- Explain why a restricted result still matters in a concrete supported setting.
+  Follow [limitations and applicability](../references/limitations-and-applicability.md):
+  state the workload mapping, any mitigation and its price, and distinguish
+  established applicability from a proposed extension. Do not guarantee relevance
+  by asserting that arbitrary computations fit an unproved transformation.
+- Put numbers where they support the corresponding deliverable, with EVIDENCE
+  and comparison scope. There is no rule restricting numbers to selected bullets.
+- A claim of subsuming prior methods needs an actual correspondence under stated
+  hypotheses. Do not require a unified framework, coverage percentage, optimal
+  selection rule or final SNARK when the paper establishes none.
+- Keep costs and security properties distinct. Operation counts are not total
+  runtime; a component is not a complete recursive system; an extra knowledge
+  assumption is not an inherited theorem. Attribute reused components.
+- Use established terms shared by relevant independent literature where their
+  definitions match. A name can be retained for a genuinely distinct recurring
+  concept, with its role explained before it carries the argument.
 
 ## Checklist
 
-- [ ] 3–4 bullets in structure → framework → algorithm → numbers order.
-- [ ] No lemma numbers; numbers only in bullets 1 and 4.
-- [ ] Every bullet has a CLAIMS row that survived falsification.
-- [ ] Placement-of-prior-work sentence consistent in three places.
+- [ ] Every deliverable has an accepted claim and an exact supporting location.
+- [ ] Distinct contributions are not repeated under new names.
+- [ ] Assumptions, comparison boundaries and necessary costs remain visible.
+- [ ] Number and order of items follow the actual results, not a fixed template.
+- [ ] Abstract, contribution statements and conclusion make compatible claims.
+
+See [the synthetic examples](../examples/toy_intro_and_contributions.md).

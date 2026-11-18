@@ -1,108 +1,109 @@
 # 07 Preliminaries
 
-## Job
+## Reader question and inputs
 
-Fix notation and recall exactly the background the later sections use. Nothing more:
-standard material that is not referenced later goes to an appendix or is cited.
-For a ZK paper the preliminaries fix four things that the security section quantifies
-over: the **relation**, the **interactive model** (IOP/PIOP), the **commitment
-scheme**, and the **Fiat–Shamir** compilation.
+What objects, interfaces and security notions must I understand before reading the
+construction? Read the actual construction and theorem statements first, then
+select only background they use. Inputs are the notation list, relation definitions,
+THEORY.md assumption ledger and source-checked definitions from LITERATURE.md.
 
-## Structure
+Plan using [section functions and dependencies](../references/section-planning.md).
+The [reference analysis](../references/formal-section-patterns.md) contrasts Nova's
+commitment/argument/IVC interfaces with Quasar's polynomial/IOR background and
+KiloNova's sum-check/PCS/proof-system interfaces. None is a universal subsection list.
 
-```
-2.1 Notation              compact table (symbol | meaning), 8–15 rows, 2 columns or a
-                          4-column (symbol | meaning | symbol | meaning) layout
-2.2 Relations and arguments   indexed relation, interactive argument, security notions
-2.3 (Polynomial) IOPs     the oracle model the construction is stated in
-2.4 Polynomial commitments    the PCS interface and the properties the compiler needs
-2.5 Fiat–Shamir           the transform and the soundness notion it preserves
-2.6 <prior technique>     one subsection per prior PIOP/gadget the construction builds
-                          on (sum-check, grand product, log-derivative lookup, FRI ...),
-                          stated as definitions/lemmas with citations
-```
+## General setting and the Notation subsection
 
-## Standard notation (adapt, but declare deviations)
+Start Preliminaries with a dedicated `\subsection{Notation}`. This subsection
+explains the symbols used in the general setting; its title is **Notation**,
+not **Notion** (security notions are separate definitions). Prefer the primary
+baseline's conventions when their meanings match, as required by the
+[notation-alignment rule](../references/terminology.md#align-notation-with-prior-work-and-the-baseline).
 
-Terms (and the notions behind them) follow the repository glossary,
-[references/books/GLOSSARY.md](../../../references/books/GLOSSARY.md), which maps each term to its CY24 or
-Thaler source. Use the glossary's *names* and define the symbols yourself: the macros in
-`templates/paper/` are ours; do **not** copy the books' macro packages or class files (CY24 is CC BY-SA, which
-would bind the paper's source). For the definitions themselves, write them in your notation and cite where
-the reader finds the reference version, e.g. adaptive soundness
-[CY24 §Non-interactive arguments, definition:narg-adaptive-soundness], straightline knowledge soundness
-[CY24 §Knowledge soundness, definition:adaptive-straightline-knowledge-soundness], indexed relations
-[CY24 §The preprocessing setting, definition:indexed-relation-and-language], polynomial IOPs
-[Thaler §10.2, Polynomial IOPs and Associated Succinct Arguments], the random oracle model
-[CY24 §Definition, definition:the-rom].
+- Introduce groups, fields, operations, identities and generators only as needed.
+  For example, when applicable, let $\mathbb G$ be a cyclic group of prime order
+  $r$, write its operation additively, and use $\mathbb F_r$ for scalars. For an
+  elliptic-curve subgroup over $\mathbb F_p$, distinguish the base field from the
+  scalar field and the subgroup from the full curve group. These are illustrative
+  conventions, not mandatory letters or assumptions for every construction.
+- Define instance/witness notation, vector and matrix conventions, index sets,
+  dimensions, degree bounds and the security parameter before their use. State
+  each parameter's type/domain and the dependencies needed by later definitions.
+  A compact table may supplement the prose; include no unused symbol catalogue.
+- Present the general interfaces and symbolic parameters here. Put the actual
+  numerical assignments used for evaluation in the experiments/evaluation
+  section: selected curve/field and modulus values, bit widths, capacities,
+  arities, round/query counts and workload sizes. Do not open the preliminaries
+  with an implementation parameter table or repeatedly embed those assignments
+  in the background definitions.
+- Keep mathematical admissibility conditions beside the definitions or theorems
+  that need them: order/characteristic requirements, degree-versus-field bounds,
+  capacity inequalities and model or assumption restrictions. Deferring concrete
+  values does not defer a premise or remove mathematical constants from formulas.
+- Symbolic presentation does not establish a general theorem. Preserve the exact
+  supported parameter domain and fixed-instantiation dependencies; replacing a
+  constant or a fixed hash by an unconstrained symbol must not enlarge a claim.
+  If only a fixed instantiation was verified, say so and point to its explicit
+  selection in evaluation. A broader result needs separate scientific validation.
+- In evaluation, map each chosen value back to the same symbol and identify
+  which configuration was measured, counted or only specified. Check the required
+  conditions for that configuration. A theory-only paper need not invent
+  experiments: if a concrete illustration is needed, place it in a later, clearly
+  labelled instantiation or cost-analysis subsection, separate from Preliminaries.
 
-| object | notation | remarks |
+## Functional outline
+
+| Function | Content | What it enables next |
 |---|---|---|
-| security parameter | λ | concrete bits are a separate quantity; never write "λ = 128" for a soundness level without saying which term |
-| field, extension | 𝔽 (or 𝔽_p), 𝕂 ⊇ 𝔽 for challenges | say explicitly when challenges are drawn from 𝕂 |
-| indexed relation | ℛ = {(𝕚, 𝕩; 𝕨)}: index 𝕚 (circuit/constraint system), instance 𝕩 (public input), witness 𝕨 | drop 𝕚 if there is no preprocessing; ℒ(ℛ) for the language |
-| argument | Π = (Setup, 𝒫, 𝒱) or (𝒢, 𝒫, 𝒱) with preprocessing ℐ | ⟨𝒫(𝕩, 𝕨), 𝒱(𝕩)⟩ = b for the interaction output |
-| polynomials | 𝔽[X]_{<d} (univariate, degree < d); 𝔽[X₁,…,X_μ]^{≤1} (multilinear); \tilde{f} for the multilinear extension | domain H ⊂ 𝔽, vanishing polynomial Z_H, boolean hypercube {0,1}^μ |
-| PIOP | rounds k, oracles [[f]], queries, degree bound d, soundness error ε | state the query complexity and the proof length per round |
-| PCS | PCS = (Setup, Commit, Open, Eval) or (Setup, Com, Open, Verify); commitment C = Com(f) | name the properties used: binding, evaluation binding, knowledge soundness / extractability, hiding |
-| random oracle | ℋ (one per domain-separated use) | write the transcript explicitly: ρ_i = ℋ(𝕚, 𝕩, C_1, …, C_i) |
-| adversary | 𝒜, extractor ℰ, simulator 𝒮 | expected vs strict polynomial time stated in the definitions |
-| negligible | negl(λ) | concrete bounds are expressions, not "negl" |
+| Establish notation and the general setting | Dedicated Notation subsection; symbolic parameters, groups/fields, domains, sizes and parties, with necessary admissibility conditions | Well-typed definitions and algorithms; concrete evaluation choices are stated later |
+| Identify the relation | Public parameters, index or structure if present, public instance and private witness; satisfaction condition | A precise statement of what verification establishes |
+| Recall required primitives | Typed algorithms and the exact properties invoked later, with sources | Component calls and composition hypotheses |
+| Define claimed notions | Adversary interface, quantifiers, auxiliary input, extractor/simulator access and running time, setup and model | Theorem statements with unambiguous scope |
+| Supply reused facts | Lemma, applicable hypotheses, source and brief operational explanation | The exact reduction or cost step that cites the fact |
 
-## Rules
+Order by dependencies. A new relation or primitive may belong at its first use in
+the construction rather than among established background. Give a short explanation
+before a dense definition when the reader needs its purpose; do not add a fixed
+number of introductory sentences or a glossary of unused concepts.
 
-- The notation table stays inside the Notation subsection, is short, and lists only
-  symbols reused at least twice.
-- **Write the relation out** with its public and private parts before any protocol.
-  An ambiguous split between instance and witness is the most common source of a
-  wrong soundness statement (the "statement" the verifier binds to must include every
-  public value).
-- **Define the security notions you prove, not the ones you wish you had.** Give the
-  precise definitions of completeness, (knowledge) soundness or witness-extended
-  emulation, and zero knowledge (honest-verifier or full; statistical, perfect or
-  computational), and say whether the adversary chooses the instance adaptively. If
-  simulation-extractability is claimed, define it here.
-- **State the model once.** ROM, AGM, GGM or standard model; trusted, universal /
-  updatable, or transparent setup. CY24 covers the pure ROM only; AGM/GGM and pairing
-  assumptions come from other sources (an entry point:
-  [Thaler §15.2, KZG: Univariate Polynomial Commitments from Pairings and a Trusted Setup]). Every later theorem refers back to this paragraph.
-- **PCS properties as a checklist.** The compilation theorem (§3 or §4) needs
-  specific properties; list them in a definition so the theorem can cite them by name.
-  For a hiding PCS, say whether hiding is perfect, statistical or computational.
-- **Fiat–Shamir:** state which interactive notion is preserved (e.g. round-by-round
-  soundness or state-restoration soundness; definitions:
-  [CY24 §State restoration, definition:ip-state-restoration-soundness],
-  [CY24 §Definition, def:iop-round-by-round-soundness]) and that the transcript includes the
-  index, the instance and all prior prover messages. Do not write "apply Fiat–Shamir"
-  without saying what is hashed.
-- Distinguish fields precisely (𝔽_p vs 𝔽_{p^e} vs a binary tower field); define the
-  domain (multiplicative subgroup, coset, hypercube, circle domain) used for each
-  oracle.
-- Prior techniques (sum-check, grand-product, lookup, FRI) are recalled at the level
-  needed to state your theorems, in your notation, with the original soundness error
-  and cost formula, verified against the source paper.
-- Short proofs of recalled facts may be given in place if a reviewer asked for them
-  or if they fix a gap in the literature; otherwise cite.
-- If a reviewer is likely to be unfamiliar with the area (general IACR audience),
-  keep one paragraph of intuition per subsection; newcomers flag "background too
-  brief" as a weakness.
+## Definition discipline
 
-## Toy fragment (T1, illustrative)
-
-> **Definition 1 (Lookup relation).** For a field 𝔽 and sizes m, N, let
-> ℛ_lkp = {(𝕚 = t ∈ 𝔽^N, 𝕩 = C_a; 𝕨 = a ∈ 𝔽^m) : C_a = Com(a) ∧ ∀ i, a_i ∈ {t_1,…,t_N}}.
-> **Definition 2 (Knowledge soundness).** Π has knowledge error κ if there is an
-> expected-polynomial-time extractor ℰ such that for every 𝒫* that makes 𝒱 accept on
-> 𝕩 with probability ε > κ, ℰ^{𝒫*}(𝕩) outputs 𝕨 with (𝕚, 𝕩; 𝕨) ∈ ℛ with probability
-> at least ε − κ.
+- Follow [shared terminology](../references/terminology.md). Use definitions from
+  relevant primary sources, prioritising published versions. A source-specific
+  name does not establish common usage. Preserve a distinct object rather than
+  renaming it to a familiar but inequivalent one.
+- Prefer notation from directly relevant prior papers or the primary baseline
+  for matching definitions. Check the source's object types, domains and parameter
+  meanings before adopting symbols. Avoid unnecessary changes to letters, indices,
+  vector/matrix conventions or operators. Follow the
+  [notation-alignment rule](../references/terminology.md#align-notation-with-prior-work-and-the-baseline).
+- Keep a compact notation table when useful, without a row quota. Define symbols
+  before use, including the distinction between the security parameter and a
+  numerical security level, base and scalar fields, challenge extensions, and
+  total versus individual polynomial degree. Explain necessary departures from
+  the baseline near the definition and record the source-to-paper mapping in the
+  working notation table; do not make different concepts look identical.
+- State every public/private split. For preprocessing, distinguish the index from
+  its verifier encoding. For folding or reductions, distinguish input/output
+  relations, compatibility conditions and the witness accompanying a reduced claim.
+- Define only the security properties actually claimed: soundness is different
+  from knowledge soundness; HVZK differs from full ZK. State adaptive choices,
+  strict or expected running time, and bounded-depth restrictions where applicable.
+- If a PCS is used, list the actual binding, extraction, hiding or homomorphism
+  properties needed. Hiding alone does not imply a zero-knowledge protocol.
+- If Fiat–Shamir is used, specify the model and the applicable interactive notion;
+  put the complete transcript in the construction. An ROM theorem does not by
+  itself prove security of a fixed-hash recursive circuit.
+- A recalled lemma retains its domain, exceptional events and error/cost parameters.
+  Cite the exact version or section. Do not silently strengthen a source definition.
 
 ## Checklist
 
-- [ ] Every symbol in the notation table is used in ≥ 2 sections.
-- [ ] The relation is written out with index, instance and witness.
-- [ ] Definitions match exactly the notions the theorems claim (soundness vs knowledge
-      soundness; HVZK vs ZK; adaptive or not).
-- [ ] Model and setup stated once and referenced by every theorem.
-- [ ] PCS properties the compiler needs are defined by name.
-- [ ] Fiat–Shamir transcript contents stated.
-- [ ] No material here that no later section uses.
+- [ ] Each background item has a downstream use; new contributions are identified.
+- [ ] A dedicated Notation subsection defines the general symbols before use.
+- [ ] Concrete evaluation assignments appear in evaluation, with an explicit symbol-to-value mapping.
+- [ ] Mathematical conditions and fixed-instantiation dependencies remain explicit; symbolic notation has not broadened the result.
+- [ ] Every protocol input and theorem parameter has a definition and domain.
+- [ ] Notions, quantifiers, model and setup match the theorem and assumption ledger.
+- [ ] Imported properties are source-checked, and any adaptation is explicit.
+- [ ] Unusual terminology is explained through its mathematical role before use.

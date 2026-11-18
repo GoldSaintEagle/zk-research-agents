@@ -1,109 +1,103 @@
 ---
 name: related-work-writing
-description: Use when writing or auditing the Related Work section. Organises prior work by axis rather than chronology, builds the asymptotic comparison table with an "Ours" row, writes the bridge and "Our work" paragraphs, and checks every characterisation of prior work against its source.
+description: Draft or audit related work using original sources, comparison scope and paragraph functions. Explains technical relationships without forced axes or unification, preserves definition and security differences, and uses tables when the evidence supports comparison.
 ---
 
 # Related-work writing
 
+Use [clear exposition and contribution emphasis](../paper-playbook/references/clear-exposition.md):
+keep each comparison focused, connect successive technical differences, and
+attribute standard ingredients before identifying the supported new result.
+Routine use of a commitment or Fiat–Shamir is not itself a novelty distinction.
+
 ## Inputs
 
-`LITERATURE.md` (related-work matrix from `lit-scout`), `refs.bib` (verified), the
-objective equation and framework from the introduction/overview.
+Read `LITERATURE.md`, the verified `refs.bib`, the paper's actual task and accepted
+contributions, and the original passages supporting technical comparisons. An
+objective equation or framework is not required. Use
+[section planning](../paper-playbook/references/section-planning.md),
+[the section guide](../paper-playbook/sections/06_related_work.md), and
+[reference passage analyses](../paper-playbook/references/front-section-patterns.md)
+when planning or restructuring the section.
 
 ## Procedure
 
-1. **Choose axes.** From the literature matrix pick one or two axes along which all
-   relevant works improve (what they reduce, what structure they exploit). Write them
-   as a pair of contrasting verbs if possible ("restricts where" / "restricts how";
-   "smaller proofs" / "faster provers"). For ZK, the default axes are the
-   **arithmetization** (R1CS / Plonkish / AIR / CCS) and the **PCS** family (pairing-based
-   KZG; discrete-log IPA; hash-based FRI / STIR / WHIR / Brakedown / Binius); see
-   "Organising ZK related work" below.
-2. **Place each work.** For each work record: axis, method in one line, cost formula
-   in its own notation translated to ours, scope restrictions (†/‡), venue'year.
-   Verify each cost formula against the original (page/section noted in
-   `LITERATURE.md`). Where later papers paraphrase an earlier paper's bottleneck,
-   compare with the earlier paper's own experiments section.
-3. **Build the table** (`templates/paper/sections/related_table.tex` style): grouped
-   rows, last row `\textbf{Ours}`, caption defines all symbols. For SNARK papers use the
-   standard comparison table below.
-4. **Write the paragraphs**: lead-in (3 sentences) → classic works on axis 1 (one
-   sentence each, shared limitation last) → recent works (two contrasting bullets) →
-   bridge (`\textbf{Insight from ...}`) → `\textbf{Our work.}` (five sentences) →
-   complementary approaches → concurrent work.
-5. **Tone filter**: remove "unfortunately", "fail", "naive", "suffer", "only";
-   replace with factual scope statements ("... assumes ... rather than showing ...",
-   "... instantiates a single case, leaving open ...").
-6. **Self-citation check**: own prior work in third person, critiqued like others.
-7. **Coverage check** with `lit-scout`: the last 12–18 months of ePrint plus the
-   grey-literature pass for the topic keywords; any close concurrent work gets a
-   labelled paragraph.
-8. **Bib hygiene**: published versions over preprints when they exist; ePrint entries
-   with the exact author list of the ePrint page; braces around acronyms in titles for
-   `splncs04`. (Bib verification itself is owned by `lit-scout`.)
+1. Define what is being compared: computation, relation, proof notion, recursion
+   method, trust model, setup or cost. Identify closest competitors and genuinely
+   complementary work. Do not select categories to make our row uniquely favourable.
+2. For each substantive description, inspect the original definition, theorem,
+   algorithm or experiment. Record source/version and exact locator in working
+   notes. A published version takes priority when it contains the relevant detail;
+   identify extended/preprint-only details separately. Do not upgrade publication
+   status or use a blog's paraphrase as proof of a technical result.
+3. Analyse relevant reference paragraphs by content, role and dependency. Choose
+   a grouping that explains the differences: e.g. model, supported relation,
+   commitment interface or proof-composition method. One or two axes can help but
+   are not mandatory. Chronology can explain development when that is the point.
+4. Plan paragraphs as comparison scope → approach and supported result → relation
+   to the present task. A source-specific distinction may require its own paragraph;
+   unrelated work need not be forced into one cost model. Avoid a catalogue of
+   summaries without explaining relevance.
+5. Apply the [shared-usage terminology rules](../paper-playbook/references/terminology.md).
+   Verify semantic equivalence before normalising terms; prefer usage shared by
+   most relevant independent works consulted, prioritising published work. One
+   paper's unusual label is not a field convention. Explain and attribute distinct
+   definitions rather than renaming them to resemble ours.
+6. Add a comparison table when several properties or systems need parallel
+   inspection. Include an “Ours” row if comparable; its location and emphasis are
+   editorial choices. Use the table discipline below. A short precise paragraph
+   is sufficient for a small or mostly qualitative comparison.
+7. State our supported difference with its premises and cost. Not every prior
+   work must have a defect, and complementary methods may be better for another
+   objective. Do not claim that all earlier methods are special cases unless an
+   actual correspondence is established. Cross-reference the contribution instead
+   of repeating a fixed elevator pitch.
+8. Check coverage against the existing literature search and the task's freshness
+   needs. Route missing or stale searches to `lit-scout`; distinguish concurrent
+   and subsequent versions by dates. Grey literature may supply leads or public
+   implementation facts, but identify its status and retain primary technical
+   sources where available. Keep bibliography verification with `bib-verify`.
 
-## SNARK comparison table (standard)
+## Comparison-table discipline
 
-Reviewers expect this table; leaving it out is a common revision request. One row per system, grouped by PCS or
-arithmetization, `\textbf{Ours}` last. All columns are filled from the related-work matrix (`LITERATURE.md`).
+Select columns that answer the question. Possible columns are relation/setting,
+setup and assumptions, guarantee, prover work, verifier work, proof size, recursion
+cost, preprocessing and memory. A component comparison need not fill a full-SNARK
+table or claim post-quantum security.
 
-```latex
-\begin{table}[t]\centering\scriptsize
-\caption{Comparison of SNARKs for <relation>. $n$: number of constraints/gates; $|\mathbb{G}|$, $|\mathbb{F}|$:
-group/field elements; $H$: hash evaluations. Setup: T = trusted (circuit-specific), U = universal, Tr = transparent.
-PQ: plausibly post-quantum under the stated assumption. Concrete numbers at $n=2^{k}$ and $\lambda$-bit soundness
-(p = proven, c = conjectured); \diamond{} = as reported in the cited paper, otherwise measured by us (same machine).}
-\begin{tabular}{l c l c c c c c}
-\toprule
-System & Setup & Assumptions & PQ & $|\pi|$ & $P$ time & $V$ time & Concrete ($|\pi|$ / $P$ / $V$) \\
-\midrule
-\multicolumn{8}{l}{\emph{pairing-based PCS}} \\
-<A>   & U  & AGM, ROM, q-type & no  & $O(1)\,|\mathbb{G}|$ & $O(n\log n)$ & $O(1)$ & \ldots \\
-\multicolumn{8}{l}{\emph{hash-based PCS}} \\
-<B>   & Tr & ROM, CR hash     & yes & $O(\log^2 n)\,H$ & $O(n\log n)$ & $O(\log^2 n)$ & \ldots \\
-\midrule
-\textbf{Ours} & & & & & & & \\
-\bottomrule
-\end{tabular}
-\end{table}
-```
+- Define parameters and units in the caption; state whether costs are per step,
+  amortised, online, recursive or final. Native and in-circuit operations are
+  different measures. Translate notation only after checking the definitions.
+- Distinguish formulas, estimates, source-reported measurements and our reruns.
+  Our printed numerical results need EVIDENCE rows; cited source numbers need
+  precise provenance and the project's applicable audit annotations.
+- Compare the same task and compatible security premises before reporting ratios.
+  Mark unavailable or incomparable entries as such and explain why. Do not silently
+  combine different hardware, security levels, trust boundaries or circuit encodings.
+- Retain proven/conjectured/heuristic status, knowledge assumptions and setup
+  distinctions. A universal SRS is not transparent; a hash-based construction is
+  not automatically proven post-quantum; soundness is not knowledge soundness.
+- Keep our entries consistent with the body and abstract under the same
+  configuration. Symbolic simplifications need a checked equivalence, not merely
+  matching strings.
 
-Column rules: **Setup** and **Assumptions** match the matrix exactly (no upgrading "universal" to "transparent");
-**PQ** is "yes" only with the assumption shown; **P/V/π** use the same cost measure for every row; **concrete
-numbers** state security level and proven/conjectured status, and rows at a different level are marked, not
-silently mixed. Incomparable rows get "—" and a caption note.
+## Tone and attribution
 
-## Organising ZK related work
+Use factual descriptions of assumptions, supported settings and measured costs.
+Avoid disparagement, unsubstantiated “first/best” claims and invented shortcomings.
+Inspect an earlier work's own analysis or experiments before attributing a
+bottleneck to it. Cite the authors' earlier papers consistently with other work
+and the venue's anonymity policy. Do not copy distinctive wording or import a
+reference's evaluation of its competitors as an independently verified fact.
 
-- **By arithmetization**: one paragraph per family (R1CS-based, Plonkish, AIR/STARK, CCS-based folding), each ending
-  with the limitation our work addresses in that family.
-- **By PCS**: pairing-based, discrete-log, hash-based (and lattice-based only if relevant to the claim); state what
-  the PCS choice implies for setup, proof size and post-quantum status.
-- **Compiler layer**: folding, recursion and proof composition as a separate paragraph when the contribution
-  touches it.
-- **Orthogonal / complementary**: hardware acceleration, zkVMs and circuit DSLs, when they compose with ours.
-- **Grey literature**: results known only from project docs or blogs are cited as `@misc` with access date and
-  archive link (see `eprint-search`, `bib-verify`); say "described in" rather than "proved in".
+## Output and checks
 
-## Placement in the paper
+Write the requested section, commonly `paper/sections/related.tex` or part of
+`intro.tex`, and a table only if useful. Keep source/version/locator and
+definition-mapping notes in `LITERATURE.md` or its linked research notes.
 
-- IACR LNCS: usually §1.1 inside the introduction.
-- Design papers: a "State of the art" subsection in the constraints/design section,
-  one paragraph per competitor: who → technical core → its trade-off; last sentence
-  points to the performance comparison section.
-- Security conferences: often a separate section near the end; keep a short
-  positioning paragraph in the introduction anyway.
-
-## Anti-patterns
-
-- A chronological list of summaries without a thesis.
-- Characterising a prior work by a number from a secondary source.
-- Calling a system "transparent", "post-quantum" or "128-bit secure" when its paper says "universal",
-  "plausibly post-quantum" or "128-bit conjectured".
-- A table whose "Ours" row differs from the abstract formula.
-- Omitting the strongest baseline because it is inconvenient (reviewers will name it).
-
-## Output
-
-`paper/sections/related.tex`, table in the same file or `related_table.tex`,
-verification notes appended to `LITERATURE.md`.
+- [ ] Every substantive comparison has an inspected primary source.
+- [ ] Grouping and scope explain relevance without forcing a superiority narrative.
+- [ ] Source versions, guarantees, units and trust boundaries remain distinct.
+- [ ] Our statements use accepted claims and properly scoped evidence.
+- [ ] The section uses familiar terms where definitions match and attributes exceptions.
