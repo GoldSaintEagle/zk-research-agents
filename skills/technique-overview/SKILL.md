@@ -1,6 +1,6 @@
 ---
 name: technique-overview
-description: Draft or revise a technique overview by explaining concrete objects, obstacles, operations and composition dependencies. Uses checked reference passages as structural examples and preserves theorem assumptions, cost boundaries and established terminology.
+description: Use when writing the Technique Overview ("Our Techniques") subsection: recall prior routes at a mathematical level, reduce the gap to numbered questions, answer each with a declarative "Insight" plus one figure, so a reviewer can restate the core idea.
 ---
 
 # Technique overview

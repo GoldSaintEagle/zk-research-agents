@@ -1,6 +1,6 @@
 ---
 name: paper-playbook
-description: Plan, draft or restructure ZK paper sections from source-checked examples, reader questions and information dependencies. Provides adaptable outlines from title to appendix while preserving established terminology, theorem premises, evidence and comparison scope.
+description: Use when drafting or restructuring a ZK paper (protocol, system or application) for IACR or security venues: skeleton, page budget per paper type, and the moves of every section (preliminaries, protocol boxes, completeness / knowledge soundness / ZK / concrete soundness), with toy examples.
 ---
 
 # Paper playbook
